@@ -1,0 +1,10 @@
+{
+  "id": "theotherside",
+  "name": "The Other Side",
+  "version": "0.0.1",
+  "side": "universal",
+  "initializer": "ru.fewizz.theotherside.Mod",
+  "mixins": {
+    "common": "mixins.hack.common.json"
+  }
+}

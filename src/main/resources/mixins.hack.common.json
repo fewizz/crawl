@@ -1,0 +1,6 @@
+{
+  "package": "ru.fewizz.theotherside.launch",
+  "plugin": "ru.fewizz.theotherside.launch.HackPlugin",
+  "mixins": [
+  ]
+}
