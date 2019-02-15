@@ -3,8 +3,8 @@
   "name": "The Other Side",
   "version": "0.0.1",
   "side": "universal",
-  "initializer": "ru.fewizz.theotherside.Mod",
+  "initializer": "ru.fewizz.theotherside.CrawlMod",
   "mixins": {
-    "common": "mixins.hack.common.json"
+    "common": "mixins.crawl.json"
   }
 }

@@ -3,25 +3,19 @@ buildscript {
 		jcenter()
 		maven {
 			name = 'Fabric'
-			url = 'http://maven.modmuss50.me/'
+			url = 'https://maven.fabricmc.net/'
 		}
 	}
 	dependencies {
-		classpath "net.fabricmc:fabric-loom:0.0.13-SNAPSHOT"
+		classpath "net.fabricmc:fabric-loom:0.2.0-SNAPSHOT"
 	}
-}
-
-plugins {
-	id 'java'
-	id 'eclipse'
-	id 'idea'
 }
 
 repositories {
 	jcenter()
 	maven {
 		name = 'Fabric'
-		url = 'http://maven.modmuss50.me/'
+		url = 'https://maven.fabricmc.net/'
 	}
 }
 
@@ -41,7 +35,9 @@ minecraft {
 }
 
 dependencies {
-	minecraft "com.mojang:minecraft:18w45a"
-	mappings "net.fabricmc:pomf:18w45a.7"
-	modCompile "net.fabricmc:fabric-loader:18w44a-0.1.0.45"
+	minecraft "com.mojang:minecraft:19w06a"
+	mappings "net.fabricmc:yarn:19w06a.4"
+	modCompile "net.fabricmc:fabric-loader:0.3.5.106"
+	modCompile "net.fabricmc:fabric:0.2.0.92"
+	//modCompile "net.minecraft:launchwrapper:1.12"
 }
