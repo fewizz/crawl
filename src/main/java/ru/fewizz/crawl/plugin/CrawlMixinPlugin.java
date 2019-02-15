@@ -1,11 +1,10 @@
-package ru.fewizz.theotherside.plugin;
+package ru.fewizz.crawl.plugin;
 
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.lwjgl.glfw.GLFW;
-import org.spongepowered.asm.lib.Opcodes;
 import org.spongepowered.asm.lib.tree.ClassNode;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
@@ -29,12 +28,12 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import ru.fewizz.theotherside.CrawlMod;
-import ru.fewizz.theotherside.CrawlMod.Client;
-import ru.fewizz.theotherside.CrawlMod.Shared;
+import ru.fewizz.crawl.CrawlMod;
+import ru.fewizz.crawl.CrawlMod.Client;
+import ru.fewizz.crawl.CrawlMod.Shared;
 
 
-public class CrawlMixinPlugin implements IMixinConfigPlugin, Opcodes {
+public class CrawlMixinPlugin implements IMixinConfigPlugin {
 	@Mixin(PlayerEntity.class)
 	public static abstract class MixinPlayerEntity extends Entity {
 
@@ -55,15 +54,6 @@ public class CrawlMixinPlugin implements IMixinConfigPlugin, Opcodes {
 		}
 	}
 	
-	/*@Mixin(Entity.class)
-	public static abstract class MixinEntity {
-		@Inject(method="setSneaking", at=@At("HEAD"))
-		public void onSetSneaking(boolean val, CallbackInfo ci) {
-			Object ths = this;
-			if(ths instanceof PlayerEntity)
-				Shared.onSetSneaking((PlayerEntity)ths, val);
-		}
-	}*/
 	
 	@Mixin(ClientPlayerEntity.class)
 	static abstract class MixinClientPlayerEntity extends PlayerEntity {
@@ -82,7 +72,7 @@ public class CrawlMixinPlugin implements IMixinConfigPlugin, Opcodes {
 	      	}
 		}
 		
-		@Inject(method="updateMovement", at=@At(value="INVOKE", target="net/minecraft/client/network/AbstractClientPlayerEntity.updateMovement"))
+		@Inject(method="updateMovement", at=@At(value="INVOKE", target="net/minecraft/client/network/AbstractClientPlayerEntity.updateMovement()V"))
 		public void beforeSuperMovementUpdate(CallbackInfo ci) {
 			Client.logic((ClientPlayerEntity)(Object)this);
 		}

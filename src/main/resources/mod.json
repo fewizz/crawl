@@ -1,9 +1,9 @@
 {
-  "id": "theotherside",
-  "name": "The Other Side",
+  "id": "crawl",
+  "name": "Crawl",
   "version": "0.0.1",
   "side": "universal",
-  "initializer": "ru.fewizz.theotherside.CrawlMod",
+  "initializer": "ru.fewizz.crawl.CrawlMod",
   "mixins": {
     "common": "mixins.crawl.json"
   }

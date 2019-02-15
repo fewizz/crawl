@@ -1,6 +1,6 @@
 {
-  "package": "ru.fewizz.theotherside.plugin",
-  "plugin": "ru.fewizz.theotherside.plugin.CrawlMixinPlugin",
+  "package": "ru.fewizz.crawl.plugin",
+  "plugin": "ru.fewizz.crawl.plugin.CrawlMixinPlugin",
   "mixins": [
   ]
 }

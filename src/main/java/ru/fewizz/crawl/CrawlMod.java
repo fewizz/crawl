@@ -1,4 +1,4 @@
-package ru.fewizz.theotherside;
+package ru.fewizz.crawl;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -8,7 +8,6 @@ import io.netty.buffer.Unpooled;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.keybinding.FabricKeyBinding;
-import net.fabricmc.fabric.api.event.world.WorldTickCallback;
 import net.fabricmc.fabric.impl.client.keybinding.KeyBindingRegistryImpl;
 import net.fabricmc.fabric.impl.network.ServerSidePacketRegistryImpl;
 import net.minecraft.client.MinecraftClient;
@@ -34,18 +33,6 @@ public class CrawlMod implements ModInitializer, ClientModInitializer {
     
 	@Override
 	public void onInitialize() {
-        LOGGER.info("Init");
-        
-        WorldTickCallback.EVENT.register(world -> {
-        	if(!world.isClient) {
-        		return;
-        	}
-        	
-        	MinecraftClient mc = MinecraftClient.getInstance();
-        	
-        	
-        });
-        
         ServerSidePacketRegistryImpl.INSTANCE.register(CRAWL_IDENTIFIER, (context, buf) -> {
         	boolean val = buf.readByte() == 1;
         	Shared.trySetPlayerCrawling(context.getPlayer(), val);
@@ -60,21 +47,19 @@ public class CrawlMod implements ModInitializer, ClientModInitializer {
 	    }
 		
 		public static boolean trySetPlayerCrawling(PlayerEntity player, boolean b) {
-			if(b && (player.isSwimming() || player.isFallFlying()))
+			if(b && (player.isSwimming() || player.isFallFlying())) {
 				return false;
+			}
 			if(isPlayerCrawling(player) && !b && !player.getEntityWorld().isEntityColliding(
-        			player, player.getBoundingBox().expand(0, 0.6F, 0).offset(0, 0.6F, 0)
-        		))
+					player, player.getBoundingBox().expand(0, 0.6F, 0).offset(0, 0.6F, 0)
+				)
+			) {
 				return false;
+			}
+			player.setSprinting(false);
 	    	player.getDataTracker().set(IS_CRAWLING, b);
 	    	return true;
 	    }
-		
-		/*public static void onSetSneaking(PlayerEntity p, boolean val) {
-			if(!val) {
-				Shared.setPlayerCrawling(p, false);
-			}
-		}*/
 	}
 	
 	public static class Client {
@@ -92,19 +77,29 @@ public class CrawlMod implements ModInitializer, ClientModInitializer {
 		}
 		
 		public static void logic(ClientPlayerEntity player) {
-			if(!Shared.isPlayerCrawling(mc.player) && Client.keyCrawl.isPressed()) {
-        			MinecraftClient.getInstance().getNetworkHandler().sendPacket(
-        				new CustomPayloadServerPacket(CRAWL_IDENTIFIER, new PacketByteBuf(Unpooled.wrappedBuffer(new byte[] {1}))));
-        		}
-        		else if(Shared.isPlayerCrawling(mc.player) && !Client.keyCrawl.isPressed()) {
-        			MinecraftClient.getInstance().getNetworkHandler().sendPacket(
-        				new CustomPayloadServerPacket(CRAWL_IDENTIFIER, new PacketByteBuf(Unpooled.wrappedBuffer(new byte[] {0}))));
-        		}
+			if(!Shared.isPlayerCrawling(player) && Client.keyCrawl.isPressed()) {
+    			MinecraftClient.getInstance().getNetworkHandler().sendPacket(
+    				new CustomPayloadServerPacket(CRAWL_IDENTIFIER, new PacketByteBuf(Unpooled.wrappedBuffer(new byte[] {1}))));
+    		}
+    		else if(Shared.isPlayerCrawling(player) && !Client.keyCrawl.isPressed()) {
+    			MinecraftClient.getInstance().getNetworkHandler().sendPacket(
+    				new CustomPayloadServerPacket(CRAWL_IDENTIFIER, new PacketByteBuf(Unpooled.wrappedBuffer(new byte[] {0}))));
+    		}
+			
 			if(Shared.isPlayerCrawling(player)) {
 				player.setSprinting(false);
 				player.input.field_3905*=0.25F;
 				player.input.field_3907*=0.25F;
 			}
+		}
+		
+		static float func(double rad) {
+			rad = rad % (Math.PI * 2);
+			if(rad <= Math.PI / 2.0)
+				return (float) Math.cos(rad*2.0);
+			return (float)(
+				-Math.cos((rad - Math.PI / 2.0) * (2.0 / 3.0))
+			);
 		}
 		
 		@SuppressWarnings("rawtypes")
@@ -121,7 +116,7 @@ public class CrawlMod implements ModInitializer, ClientModInitializer {
 		        model.head.rotationPointY = 0.0F;
 		        
 		        float yOffset = 20 + (e.isSneaking() ? -5.5F : 0);
-		        float as = 1F;
+		        float as = 1.2F;
 
 		        model.head.rotationPointY = yOffset;
 		        model.head.rotationPointZ = -6;
@@ -132,14 +127,16 @@ public class CrawlMod implements ModInitializer, ClientModInitializer {
 		        model.body.rotationPointX = 0;
 		        model.body.pitch = (float) (Math.PI / 2);
 		        model.body.yaw = (float) -(Math.sin(dist * as)) / 10F;
-		        model.body.roll = (float) (Math.cos(dist * as)) / 5F;
+		        model.body.roll = (float) -(Math.sin(dist * as)) / 5F;
 		        
-		        model.legLeft.rotationPointZ = 6 + (float) -(Math.sin(dist * as) + 1)*3;
+		        model.legLeft.rotationPointX = 1.9F + -(float)Math.sin(dist * as);
+		        model.legLeft.rotationPointZ = 6 + (float) -(Math.sin(dist * as) + 1)*2;
 		        model.legLeft.rotationPointY = yOffset;
 		        model.legLeft.pitch = (float) (Math.PI / 2);
-		        model.legLeft.yaw = (float) (Math.sin(dist * as) + .7F) / 3F;
+		        model.legLeft.yaw = (float) (Math.cos(dist * as) + .7F) / 3F;
 		        
-		        model.legRight.rotationPointZ = 6 + (float) -Math.pow((Math.cos(dist * as) + 1), 2);
+		        model.legRight.rotationPointX = -1.9F + -(float)Math.sin(dist * as);
+		        model.legRight.rotationPointZ = 6 + (float) -(Math.cos(dist * as) + 1)*2;
 		        model.legRight.rotationPointY = yOffset;
 		        model.legRight.pitch = (float) (Math.PI / 2);
 		        model.legRight.yaw = (float) (Math.sin(dist * as) - .7F) / 3F;
@@ -150,16 +147,16 @@ public class CrawlMod implements ModInitializer, ClientModInitializer {
 		        if(!player.isUsingItem()) {
 		        	model.armLeft.roll = (float) (-Math.PI / 2);
 		        	model.armLeft.yaw = 0;
-		        	model.armLeft.pitch = -1 + (float) Math.cos(dist * as) / 2F;
+		        	model.armLeft.pitch = -1.3F + (float) func(dist * as + Math.PI / 2.0);
 		        }
 		        
 		        model.armRight.rotationPointX = -6;
 		        model.armRight.rotationPointY = 2 + yOffset;
 		        model.armRight.rotationPointZ = -4 + -2 + (float) Math.sin(dist*as)*3;
 		        if(!player.isUsingItem()) {
-		        	model.armRight.roll = (float) (Math.PI / 2);
+		        	model.armRight.roll = (float) (Math.PI / 2 + 0.2);
 		        	model.armRight.yaw = 0;
-		        	model.armRight.pitch = -1 + (float) Math.sin(dist*as) / 2F;
+		        	model.armRight.pitch = -1.3F + (float) func(dist * as - Math.PI / 2.0);
 		        }
 
 			}
