@@ -19,7 +19,7 @@ import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.server.network.packet.CustomPayloadServerPacket;
+import net.minecraft.server.network.packet.CustomPayloadC2SPacket;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.PacketByteBuf;
 
@@ -79,11 +79,11 @@ public class CrawlMod implements ModInitializer, ClientModInitializer {
 		public static void logic(ClientPlayerEntity player) {
 			if(!Shared.isPlayerCrawling(player) && Client.keyCrawl.isPressed()) {
     			MinecraftClient.getInstance().getNetworkHandler().sendPacket(
-    				new CustomPayloadServerPacket(CRAWL_IDENTIFIER, new PacketByteBuf(Unpooled.wrappedBuffer(new byte[] {1}))));
+    				new CustomPayloadC2SPacket(CRAWL_IDENTIFIER, new PacketByteBuf(Unpooled.wrappedBuffer(new byte[] {1}))));
     		}
     		else if(Shared.isPlayerCrawling(player) && !Client.keyCrawl.isPressed()) {
     			MinecraftClient.getInstance().getNetworkHandler().sendPacket(
-    				new CustomPayloadServerPacket(CRAWL_IDENTIFIER, new PacketByteBuf(Unpooled.wrappedBuffer(new byte[] {0}))));
+    				new CustomPayloadC2SPacket(CRAWL_IDENTIFIER, new PacketByteBuf(Unpooled.wrappedBuffer(new byte[] {0}))));
     		}
 			
 			if(Shared.isPlayerCrawling(player)) {
@@ -115,7 +115,7 @@ public class CrawlMod implements ModInitializer, ClientModInitializer {
 		        model.legLeft.rotationPointY = 12.0F;
 		        model.head.rotationPointY = 0.0F;
 		        
-		        float yOffset = 20 + (e.isSneaking() ? -5.5F : 0);
+		        float yOffset = 20 + (e.isSneaking() ? -((0.125F + 0.2F) * 16.0F) : 0);
 		        float as = 1.2F;
 
 		        model.head.rotationPointY = yOffset;
