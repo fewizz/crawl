@@ -24,8 +24,8 @@ apply plugin: net.fabricmc.loom.LoomGradlePlugin
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
-archivesBaseName = "theotherside"
-version = "0"
+archivesBaseName = "crawl"
+version = "0.0.1"
 
 configurations {
 	runtimeOnly.extendsFrom mappings

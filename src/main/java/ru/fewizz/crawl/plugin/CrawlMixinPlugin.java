@@ -3,6 +3,7 @@ package ru.fewizz.crawl.plugin;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.lwjgl.glfw.GLFW;
 import org.spongepowered.asm.lib.tree.ClassNode;
@@ -16,12 +17,18 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyConstant;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import com.google.common.collect.Lists;
 import com.mojang.authlib.GameProfile;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.Mouse;
+import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.network.ClientPlayerEntity;
+import net.minecraft.client.render.entity.EntityRenderDispatcher;
+import net.minecraft.client.render.entity.LivingEntityRenderer;
+import net.minecraft.client.render.entity.PlayerEntityRenderer;
 import net.minecraft.client.render.entity.model.BipedEntityModel;
+import net.minecraft.client.render.entity.model.PlayerEntityModel;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -54,7 +61,6 @@ public class CrawlMixinPlugin implements IMixinConfigPlugin {
 		}
 	}
 	
-	
 	@Mixin(ClientPlayerEntity.class)
 	static abstract class MixinClientPlayerEntity extends PlayerEntity {
 
@@ -79,12 +85,33 @@ public class CrawlMixinPlugin implements IMixinConfigPlugin {
 	}
 	
 	@Mixin(BipedEntityModel.class)
-	public static class MixinBipedEntityModel {
+	public static class MixinBipedEntityModel<E extends LivingEntity> {
 		
-		@SuppressWarnings("rawtypes")
+		@SuppressWarnings("unchecked")
 		@Inject(method="method_17087", at=@At("RETURN"))
 		void postSetAngles(LivingEntity e, float f1, float f2, float f3, float f4, float f5, float f6, CallbackInfo ci) {
-			CrawlMod.Client.postTransformModel((BipedEntityModel)(Object)this, e, f1);
+			CrawlMod.Client.postTransformModel((BipedEntityModel<E>)(Object)this, e, f1);
+		}
+	}
+	
+	@Mixin(PlayerEntityRenderer.class)
+	static abstract class MixinPlayerEntityRenderer extends LivingEntityRenderer<AbstractClientPlayerEntity, PlayerEntityModel<AbstractClientPlayerEntity>> {
+
+		public MixinPlayerEntityRenderer(EntityRenderDispatcher entityRenderDispatcher_1,
+				PlayerEntityModel<AbstractClientPlayerEntity> entityModel_1, float float_1) {
+			super(entityRenderDispatcher_1, entityModel_1, float_1);
+		}
+
+		@Inject(method="method_4220", at=@At("HEAD"))
+		public void onRightArmRender(CallbackInfo ci) {
+			CrawlMod.Client.transformArms = false;
+			Client.tryRestorePlayerModel(this.getModel());
+		}
+		
+		@Inject(method="method_4221", at=@At("HEAD"))
+		public void onLeftArmRender(CallbackInfo ci) {
+			CrawlMod.Client.transformArms = false;
+			Client.tryRestorePlayerModel(this.getModel());
 		}
 	}
 	
@@ -100,13 +127,21 @@ public class CrawlMixinPlugin implements IMixinConfigPlugin {
 	
 	@Override
     public List<String> getMixins() {
-		return Lists.newArrayList(
-        		"MixinPlayerEntity",
-        		//"MixinEntity",
-        		"MixinClientPlayerEntity",
-        		"MixinBipedEntityModel",
-        		"MixinMouseHack"
-        ).stream().map(cn -> getClass().getSimpleName() + "$" + cn).collect(Collectors.toList());
+		return 
+		Stream.concat(
+			Stream.of("MixinPlayerEntity"),
+        	FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT
+        		?
+    			Stream.of(
+					"MixinClientPlayerEntity",
+					"MixinBipedEntityModel",
+					"MixinPlayerEntityRenderer",
+	        		"MixinMouseHack"
+    			)
+    			:
+    			Stream.empty()
+    	)
+		.map(cn -> getClass().getSimpleName() + "$" + cn).collect(Collectors.toList());
     }
 	
 	@Override

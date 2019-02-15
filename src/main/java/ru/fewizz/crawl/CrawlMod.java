@@ -1,15 +1,15 @@
 package ru.fewizz.crawl;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.lwjgl.glfw.GLFW;
 
 import io.netty.buffer.Unpooled;
-import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.keybinding.FabricKeyBinding;
 import net.fabricmc.fabric.impl.client.keybinding.KeyBindingRegistryImpl;
 import net.fabricmc.fabric.impl.network.ServerSidePacketRegistryImpl;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.render.entity.model.BipedEntityModel;
@@ -23,8 +23,7 @@ import net.minecraft.server.network.packet.CustomPayloadC2SPacket;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.PacketByteBuf;
 
-public class CrawlMod implements ModInitializer, ClientModInitializer {
-    static final Logger LOGGER = LogManager.getLogger("theotherside");
+public class CrawlMod implements ModInitializer {
     static final Identifier CRAWL_IDENTIFIER = Identifier.create("mod_crawl");
 
     public void onInitializeClient() {
@@ -33,7 +32,14 @@ public class CrawlMod implements ModInitializer, ClientModInitializer {
     
 	@Override
 	public void onInitialize() {
-        ServerSidePacketRegistryImpl.INSTANCE.register(CRAWL_IDENTIFIER, (context, buf) -> {
+		//System.out.println("On init");
+		registerListener();
+		if(FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT)
+			onInitializeClient();
+	}
+	
+	void registerListener() {
+		ServerSidePacketRegistryImpl.INSTANCE.register(CRAWL_IDENTIFIER, (context, buf) -> {
         	boolean val = buf.readByte() == 1;
         	Shared.trySetPlayerCrawling(context.getPlayer(), val);
         });
@@ -62,6 +68,7 @@ public class CrawlMod implements ModInitializer, ClientModInitializer {
 	    }
 	}
 	
+	@Environment(EnvType.CLIENT)
 	public static class Client {
 		public static FabricKeyBinding keyCrawl;
 		
@@ -102,19 +109,13 @@ public class CrawlMod implements ModInitializer, ClientModInitializer {
 			);
 		}
 		
-		@SuppressWarnings("rawtypes")
-		public static void postTransformModel(BipedEntityModel model, LivingEntity e, float dist) {
+		public static boolean transformArms = true; // Super hack #9000
+		
+		public static <E extends LivingEntity> void postTransformModel(BipedEntityModel<E> model, LivingEntity e, float dist) {
 			if(!(e instanceof PlayerEntity))
 				return;
 			PlayerEntity player = (PlayerEntity)e;
 			if(Shared.isPlayerCrawling(player)) {
-				model.body.pitch = 0.0F;
-		        model.legRight.rotationPointZ = 0.1F;
-		        model.legLeft.rotationPointZ = 0.1F;
-		        model.legRight.rotationPointY = 12.0F;
-		        model.legLeft.rotationPointY = 12.0F;
-		        model.head.rotationPointY = 0.0F;
-		        
 		        float yOffset = 20 + (e.isSneaking() ? -((0.125F + 0.2F) * 16.0F) : 0);
 		        float as = 1.2F;
 
@@ -141,38 +142,58 @@ public class CrawlMod implements ModInitializer, ClientModInitializer {
 		        model.legRight.pitch = (float) (Math.PI / 2);
 		        model.legRight.yaw = (float) (Math.sin(dist * as) - .7F) / 3F;
 		        
+		        if(!transformArms) {
+		        	transformArms = true;
+		        	return;
+		        }
 		        model.armLeft.rotationPointX = 6;
 		        model.armLeft.rotationPointY = 2 + yOffset;
 		        model.armLeft.rotationPointZ = -4 + -2 + (float) Math.cos(dist * as)*3;
-		        if(!player.isUsingItem()) {
-		        	model.armLeft.roll = (float) (-Math.PI / 2);
-		        	model.armLeft.yaw = 0;
-		        	model.armLeft.pitch = -1.3F + (float) func(dist * as + Math.PI / 2.0);
-		        }
-		        
+
 		        model.armRight.rotationPointX = -6;
 		        model.armRight.rotationPointY = 2 + yOffset;
 		        model.armRight.rotationPointZ = -4 + -2 + (float) Math.sin(dist*as)*3;
-		        if(!player.isUsingItem()) {
+		        
+		        if(!player.isUsingItem() && model.swingProgress <= 0) {
+		        	model.armLeft.roll = (float) (-Math.PI / 2);
+		        	model.armLeft.yaw = 0;
+		        	model.armLeft.pitch = -1.3F + (float) func(dist * as + Math.PI / 2.0);
+		        	
 		        	model.armRight.roll = (float) (Math.PI / 2 + 0.2);
 		        	model.armRight.yaw = 0;
 		        	model.armRight.pitch = -1.3F + (float) func(dist * as - Math.PI / 2.0);
 		        }
 
 			}
-			else {
-				model.head.rotationPointY = 0;
-		        model.head.rotationPointZ = 0;
-		        model.head.rotationPointX = 0;
-		        
-		        model.body.roll = 0;
-				model.body.rotationPointY = 0;
-		        model.body.rotationPointZ = 0;
-		        model.body.rotationPointX = 0;
-		        
-		        model.armLeft.rotationPointY = 2;
-		        model.armRight.rotationPointY = 2;
-			}
+			else tryRestorePlayerModel(model);
+		}
+		
+		public static <E extends LivingEntity> void tryRestorePlayerModel(BipedEntityModel<E> model) {
+			model.head.rotationPointY = 0;
+	        model.head.rotationPointZ = 0;
+	        model.head.rotationPointX = 0;
+	        
+	        model.body.roll = 0;
+			model.body.rotationPointY = 0;
+	        model.body.rotationPointZ = 0;
+	        model.body.rotationPointX = 0;
+	        
+	        model.legLeft.rotationPointX = 1.9F;
+	        model.legRight.rotationPointX = -1.9F;
+	        
+	        model.armLeft.rotationPointX = 5;
+	        model.armLeft.rotationPointY = 2;
+	        model.armLeft.rotationPointZ = 0;
+	        //model.armLeft.pitch = 0;
+	        //model.armLeft.roll = 0;
+	        //model.armLeft.yaw = 0;
+	        
+	        model.armRight.rotationPointX = -5;
+	        model.armRight.rotationPointY = 2;
+	        model.armRight.rotationPointZ = 0;
+	        //model.armRight.pitch = 0;
+	        //model.armRight.roll = 0;
+	        //model.armRight.yaw = 0;
 		}
 	}
 }
