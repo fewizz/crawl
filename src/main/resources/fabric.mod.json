@@ -1,10 +1,13 @@
 {
-  "id": "crawl",
-  "name": "Crawl",
-  "version": "0.0.1",
-  "side": "universal",
-  "initializer": "ru.fewizz.crawl.CrawlMod",
-  "mixins": {
-    "common": "mixins.crawl.json"
-  }
+	"id": "crawl",
+	"name": "Crawl",
+	"version": "0.0.2",
+	"side": "universal",
+	"initializers": [
+		"ru.fewizz.crawl.CrawlMod",
+		"ru.fewizz.crawl.CrawlMod$Client"
+	],
+  	"mixins": {
+    		"common": "mixins.crawl.json"
+	}
 }

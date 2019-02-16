@@ -3,13 +3,13 @@ package ru.fewizz.crawl;
 import org.lwjgl.glfw.GLFW;
 
 import io.netty.buffer.Unpooled;
+import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.keybinding.FabricKeyBinding;
 import net.fabricmc.fabric.impl.client.keybinding.KeyBindingRegistryImpl;
 import net.fabricmc.fabric.impl.network.ServerSidePacketRegistryImpl;
-import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.render.entity.model.BipedEntityModel;
@@ -25,16 +25,10 @@ import net.minecraft.util.PacketByteBuf;
 
 public class CrawlMod implements ModInitializer {
     static final Identifier CRAWL_IDENTIFIER = Identifier.create("mod_crawl");
-
-    public void onInitializeClient() {
-    	Client.init();
-    }
     
 	@Override
 	public void onInitialize() {
 		registerListener();
-		if(FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT)
-			onInitializeClient(); // Kind of hack
 	}
 	
 	void registerListener() {
@@ -68,10 +62,11 @@ public class CrawlMod implements ModInitializer {
 	}
 	
 	@Environment(EnvType.CLIENT)
-	public static class Client {
+	public static class Client implements ClientModInitializer {
 		public static FabricKeyBinding keyCrawl;
 		
-		public static void init() {
+		@Override
+		public void onInitializeClient() {
 			keyCrawl =
 					FabricKeyBinding.Builder.create(
 							new Identifier("crawl:key"),
