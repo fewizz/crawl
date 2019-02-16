@@ -1,6 +1,14 @@
 {
-  "package": "ru.fewizz.crawl.plugin",
-  "plugin": "ru.fewizz.crawl.plugin.CrawlMixinPlugin",
-  "mixins": [
-  ]
+	"package": "ru.fewizz.mixin",
+	"minVersion": "0.7.11",
+	"mixins": [
+		"Mixins$MixinPlayerEntity"
+	],
+	"client": [
+		"Mixins$MixinClientPlayerEntity",
+		"Mixins$MixinBipedEntityModel",
+		"Mixins$MixinPlayerEntityRenderer",
+		"Mixins$MixinMouseHack"
+	]
+
 }

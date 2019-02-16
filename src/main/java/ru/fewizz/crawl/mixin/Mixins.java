@@ -1,16 +1,8 @@
-package ru.fewizz.crawl.plugin;
-
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+package ru.fewizz.crawl.mixin;
 
 import org.lwjgl.glfw.GLFW;
-import org.spongepowered.asm.lib.tree.ClassNode;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
-import org.spongepowered.asm.mixin.extensibility.IMixinConfigPlugin;
-import org.spongepowered.asm.mixin.extensibility.IMixinInfo;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Constant;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -19,8 +11,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.mojang.authlib.GameProfile;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.Mouse;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.network.ClientPlayerEntity;
@@ -40,7 +30,7 @@ import ru.fewizz.crawl.CrawlMod.Client;
 import ru.fewizz.crawl.CrawlMod.Shared;
 
 
-public class CrawlMixinPlugin implements IMixinConfigPlugin {
+public class Mixins {
 	@Mixin(PlayerEntity.class)
 	public static abstract class MixinPlayerEntity extends Entity {
 
@@ -124,49 +114,4 @@ public class CrawlMixinPlugin implements IMixinConfigPlugin {
 			return disableCursorDisabling ? GLFW.GLFW_CURSOR_NORMAL : old;
 		}
 	}
-	
-	@Override
-    public List<String> getMixins() {
-		return 
-		Stream.concat(
-			Stream.of("MixinPlayerEntity"),
-        	FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT
-        		?
-    			Stream.of(
-					"MixinClientPlayerEntity",
-					"MixinBipedEntityModel",
-					"MixinPlayerEntityRenderer",
-	        		"MixinMouseHack"
-    			)
-    			:
-    			Stream.empty()
-    	)
-		.map(cn -> getClass().getSimpleName() + "$" + cn).collect(Collectors.toList());
-    }
-	
-	@Override
-    public void postApply(String targetClassName, ClassNode targetClass, String mixinClassName, IMixinInfo mixinInfo) {
-    }
-	
-	@Override
-    public void onLoad(String mixinPackage) {
-    }
-
-    @Override
-    public String getRefMapperConfig() {
-        return null;
-    }
-
-    @Override
-    public boolean shouldApplyMixin(String targetClassName, String mixinClassName) {
-        return true;
-    }
-
-    @Override
-    public void acceptTargets(Set<String> myTargets, Set<String> otherTargets) {
-    }
-
-    @Override
-    public void preApply(String targetClassName, ClassNode targetClass, String mixinClassName, IMixinInfo mixinInfo) {
-    }
 }

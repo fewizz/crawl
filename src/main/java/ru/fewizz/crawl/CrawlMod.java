@@ -32,7 +32,8 @@ public class CrawlMod implements ModInitializer {
     
 	@Override
 	public void onInitialize() {
-		//System.out.println("On init");
+		//
+		System.out.println("On init");
 		registerListener();
 		if(FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT)
 			onInitializeClient();
@@ -184,16 +185,10 @@ public class CrawlMod implements ModInitializer {
 	        model.armLeft.rotationPointX = 5;
 	        model.armLeft.rotationPointY = 2;
 	        model.armLeft.rotationPointZ = 0;
-	        //model.armLeft.pitch = 0;
-	        //model.armLeft.roll = 0;
-	        //model.armLeft.yaw = 0;
 	        
 	        model.armRight.rotationPointX = -5;
 	        model.armRight.rotationPointY = 2;
 	        model.armRight.rotationPointZ = 0;
-	        //model.armRight.pitch = 0;
-	        //model.armRight.roll = 0;
-	        //model.armRight.yaw = 0;
 		}
 	}
 }
