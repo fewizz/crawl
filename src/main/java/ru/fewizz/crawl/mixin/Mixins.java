@@ -58,7 +58,6 @@ public class Mixins {
 			super(world_1, gameProfile_1);
 		}
 		
-		// Ohh.. Why?
 		@Overwrite
 		private boolean method_3150(BlockPos blockPos_1) {
 			if (this.isSwimming() || CrawlMod.Shared.isPlayerCrawling(this)) {
@@ -70,7 +69,7 @@ public class Mixins {
 		
 		@Inject(method="updateMovement", at=@At(value="INVOKE", target="net/minecraft/client/network/AbstractClientPlayerEntity.updateMovement()V"))
 		public void beforeSuperMovementUpdate(CallbackInfo ci) {
-			Client.logic((ClientPlayerEntity)(Object)this);
+			Client.onPlayerInput((ClientPlayerEntity)(Object)this);
 		}
 	}
 	

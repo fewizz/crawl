@@ -1,5 +1,5 @@
 {
-	"package": "ru.fewizz.mixin",
+	"package": "ru.fewizz.crawl.mixin",
 	"minVersion": "0.7.11",
 	"mixins": [
 		"Mixins$MixinPlayerEntity"

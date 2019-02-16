@@ -32,11 +32,9 @@ public class CrawlMod implements ModInitializer {
     
 	@Override
 	public void onInitialize() {
-		//
-		System.out.println("On init");
 		registerListener();
 		if(FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT)
-			onInitializeClient();
+			onInitializeClient(); // Kind of hack
 	}
 	
 	void registerListener() {
@@ -84,14 +82,16 @@ public class CrawlMod implements ModInitializer {
 			KeyBindingRegistryImpl.INSTANCE.register(keyCrawl);
 		}
 		
-		public static void logic(ClientPlayerEntity player) {
+		public static void onPlayerInput(ClientPlayerEntity player) {
 			if(!Shared.isPlayerCrawling(player) && Client.keyCrawl.isPressed()) {
     			MinecraftClient.getInstance().getNetworkHandler().sendPacket(
     				new CustomPayloadC2SPacket(CRAWL_IDENTIFIER, new PacketByteBuf(Unpooled.wrappedBuffer(new byte[] {1}))));
+    			Shared.trySetPlayerCrawling(player, true);
     		}
     		else if(Shared.isPlayerCrawling(player) && !Client.keyCrawl.isPressed()) {
     			MinecraftClient.getInstance().getNetworkHandler().sendPacket(
     				new CustomPayloadC2SPacket(CRAWL_IDENTIFIER, new PacketByteBuf(Unpooled.wrappedBuffer(new byte[] {0}))));
+    			Shared.trySetPlayerCrawling(player, false);
     		}
 			
 			if(Shared.isPlayerCrawling(player)) {
