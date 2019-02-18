@@ -90,18 +90,6 @@ public class Mixins {
 				PlayerEntityModel<AbstractClientPlayerEntity> entityModel_1, float float_1) {
 			super(entityRenderDispatcher_1, entityModel_1, float_1);
 		}
-
-		@Inject(method="method_4220", at=@At("HEAD"))
-		public void onRightArmRender(CallbackInfo ci) {
-			CrawlMod.Client.transformArms = false;
-			Client.tryRestorePlayerModel(this.getModel());
-		}
-		
-		@Inject(method="method_4221", at=@At("HEAD"))
-		public void onLeftArmRender(CallbackInfo ci) {
-			CrawlMod.Client.transformArms = false;
-			Client.tryRestorePlayerModel(this.getModel());
-		}
 	}
 	
 	@Mixin(Mouse.class)
