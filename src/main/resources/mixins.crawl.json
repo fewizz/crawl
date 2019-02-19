@@ -2,13 +2,14 @@
 	"package": "ru.fewizz.crawl.mixin",
 	"minVersion": "0.7.11",
 	"mixins": [
-		"Mixins$MixinPlayerEntity"
+		"MixinPlayerEntity"
 	],
 	"client": [
-		"Mixins$MixinClientPlayerEntity",
-		"Mixins$MixinBipedEntityModel",
-		"Mixins$MixinPlayerEntityRenderer",
-		"Mixins$MixinMouseHack"
+		"client.MixinClientPlayerEntity",
+		"client.MixinKeyboardInput",
+		"client.MixinPlayerEntityModel",
+		"client.MixinPlayerEntityRenderer",
+		"client.MixinMouseHack"
 	]
 
 }
