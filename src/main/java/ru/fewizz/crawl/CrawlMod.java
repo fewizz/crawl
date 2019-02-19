@@ -32,9 +32,11 @@ public class CrawlMod implements ModInitializer {
 	
 	void registerListener() {
 		ServerSidePacketRegistryImpl.INSTANCE.register(CRAWL_IDENTIFIER, (context, buf) -> {
-        	boolean val = buf.readByte() == 1;
-        	Shared.trySetCrawling(context.getPlayer(), val);
-        });
+			context.getTaskQueue().execute(() -> {
+				boolean val = buf.readByte() == 1;
+        		Shared.trySetCrawling(context.getPlayer(), val);
+			});
+		});
 	}
 	
 	public static class Shared {
