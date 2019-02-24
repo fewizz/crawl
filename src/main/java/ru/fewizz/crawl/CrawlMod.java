@@ -13,6 +13,8 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.entity.model.BipedEntityModel;
 import net.minecraft.client.render.entity.model.PlayerEntityModel;
 import net.minecraft.client.util.InputUtil;
+import net.minecraft.entity.EntityPose;
+import net.minecraft.entity.EntitySize;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
@@ -32,14 +34,16 @@ public class CrawlMod implements ModInitializer {
 	
 	void registerListener() {
 		ServerSidePacketRegistryImpl.INSTANCE.register(CRAWL_IDENTIFIER, (context, buf) -> {
+			boolean val = buf.readByte() == 1;
 			context.getTaskQueue().execute(() -> {
-				boolean val = buf.readByte() == 1;
-        		Shared.trySetCrawling(context.getPlayer(), val);
+				Shared.trySetCrawling(context.getPlayer(), val);
 			});
 		});
 	}
 	
 	public static class Shared {
+		public static EntityPose CRAWLING;// = Enum.valueOf(EntityPose.class, "CRAWLING");//EnumHack.addEnum(EntityPose.class, "CRAWLING");
+		public static final EntitySize CRAWLING_SIZE = new EntitySize(0.6F, 0.6F, false);
 		public static final TrackedData<Boolean> IS_CRAWLING = DataTracker.registerData(PlayerEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
 		
 		public static boolean isCrawling(PlayerEntity player) {
@@ -115,7 +119,7 @@ public class CrawlMod implements ModInitializer {
 			
 			MinecraftClient mc = MinecraftClient.getInstance();
 			
-			if((player == mc.player && mc.options.field_1850 == 0) || !Shared.isCrawling(player)) {
+			if((player == mc.player && mc.options.perspective == 0) || !Shared.isCrawling(player)) {
 				tryRestorePlayerModel(model);
 				return;
 			}

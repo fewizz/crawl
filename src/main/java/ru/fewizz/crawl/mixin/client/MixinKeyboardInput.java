@@ -40,8 +40,8 @@ abstract class MixinKeyboardInput extends Input {
 	void onTickEnd(CallbackInfo ci) {
 		if(!Shared.isCrawling(MinecraftClient.getInstance().player))
 			return;
-		field_3905 *= 0.3;
-		field_3907 *= 0.3;
+		movementForward *= 0.3;
+		movementSideways *= 0.3;
 	}
 	
 	@Redirect(
