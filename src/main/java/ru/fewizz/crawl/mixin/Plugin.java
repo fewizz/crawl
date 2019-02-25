@@ -1,5 +1,6 @@
 package ru.fewizz.crawl.mixin;
 
+import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
@@ -18,10 +19,27 @@ import org.spongepowered.asm.lib.tree.LdcInsnNode;
 import org.spongepowered.asm.lib.tree.MethodInsnNode;
 import org.spongepowered.asm.lib.tree.MethodNode;
 import org.spongepowered.asm.lib.tree.TypeInsnNode;
+import org.spongepowered.asm.lib.util.Textifier;
+import org.spongepowered.asm.lib.util.TraceMethodVisitor;
 import org.spongepowered.asm.mixin.extensibility.IMixinConfigPlugin;
 import org.spongepowered.asm.mixin.extensibility.IMixinInfo;
 
+import net.fabricmc.loader.launch.common.FabricLauncherBase;
+
 public class Plugin implements IMixinConfigPlugin, Opcodes {
+	static final String NAMED_NAME = "net/minecraft/entity/EntityPose";
+	final String envDependedName = FabricLauncherBase.getLauncher().isDevelopment() ? NAMED_NAME :
+		FabricLauncherBase
+		.getLauncher()
+		.getMappings()
+		.getClassEntries()
+		.stream()
+		.filter(e -> e.get("named").equals(NAMED_NAME))
+		.findFirst()
+		.get()
+		.get("intermediary");
+	final String dottedEnvDependedName = envDependedName.replace('/', '.');
+	final String descripor = "L" + envDependedName + ";";
 
 	@Override
 	public void onLoad(String mixinPackage) {
@@ -46,16 +64,17 @@ public class Plugin implements IMixinConfigPlugin, Opcodes {
 		return Arrays.asList(new String[] {"MixinEntityPose"});
 	}
 
+	// Sorry for that
 	@Override
 	public void preApply(String targetClassName, ClassNode targetClass, String mixinClassName, IMixinInfo mixinInfo) {
-		if(!targetClassName.equals("net.minecraft.entity.EntityPose"))
+		if(!targetClassName.equals(dottedEnvDependedName))
 			return;
 		
 		targetClass.fields.add(
 			new FieldNode(
 				ACC_PUBLIC | ACC_STATIC | ACC_FINAL | ACC_ENUM,
 				"CRAWLING",
-				"Lnet/minecraft/entity/EntityPose;",
+				descripor,
 				null,
 				null
 			)
@@ -75,15 +94,24 @@ public class Plugin implements IMixinConfigPlugin, Opcodes {
 			}
 		}
 		
+		AbstractInsnNode arraySize = null;
+		for(Iterator<AbstractInsnNode> it = init.instructions.iterator(); it.hasNext();) {
+			AbstractInsnNode insn = it.next();
+			if(insn.getType() == AbstractInsnNode.INT_INSN && ((IntInsnNode)insn).operand == enums) {
+				arraySize = insn;
+				break;
+			}
+		}
+		init.instructions.set(arraySize, new IntInsnNode(Opcodes.BIPUSH, enums + 1));
+		
 		InsnList varInit = new InsnList();
-		varInit.add(new TypeInsnNode(NEW, "net/minecraft/entity/EntityPose"));
+		varInit.add(new TypeInsnNode(NEW, envDependedName));
 		varInit.add(new InsnNode(DUP));
 		varInit.add(new LdcInsnNode("CRAWLING"));
 		varInit.add(new IntInsnNode(BIPUSH, enums));
-		varInit.add(new MethodInsnNode(INVOKESPECIAL, "net/minecraft/entity/EntityPose", "<init>", "(Ljava/lang/String;I)V", false));
-		varInit.add(new FieldInsnNode(PUTSTATIC, "net/minecraft/entity/EntityPose", "CRAWLING", "Lnet/minecraft/entity/EntityPose;"));
+		varInit.add(new MethodInsnNode(INVOKESPECIAL, envDependedName, "<init>", "(Ljava/lang/String;I)V", false));
+		varInit.add(new FieldInsnNode(PUTSTATIC, envDependedName, "CRAWLING", descripor));
 		
-		init.instructions.set(lastEnumInit.getNext().getNext(), new IntInsnNode(Opcodes.BIPUSH, enums + 1));
 		init.instructions.insert(lastEnumInit.getNext(), varInit); // Skip putstatic
 		
 		AbstractInsnNode putArray = null;
@@ -95,7 +123,7 @@ public class Plugin implements IMixinConfigPlugin, Opcodes {
 		InsnList addElement = new InsnList();
 		addElement.add(new InsnNode(DUP)); // Dup array
 		addElement.add(new IntInsnNode(BIPUSH, enums)); // index in array
-		addElement.add(new FieldInsnNode(GETSTATIC, "net/minecraft/entity/EntityPose", "CRAWLING", "Lnet/minecraft/entity/EntityPose;"));
+		addElement.add(new FieldInsnNode(GETSTATIC, envDependedName, "CRAWLING", descripor));
 		addElement.add(new InsnNode(AASTORE));
 		
 		init.instructions.insert(putArray.getPrevious(), addElement);
