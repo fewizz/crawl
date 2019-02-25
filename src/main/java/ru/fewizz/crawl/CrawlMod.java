@@ -42,7 +42,7 @@ public class CrawlMod implements ModInitializer {
 	}
 	
 	public static class Shared {
-		public static EntityPose CRAWLING;// = Enum.valueOf(EntityPose.class, "CRAWLING");//EnumHack.addEnum(EntityPose.class, "CRAWLING");
+		public static final EntityPose CRAWLING = Enum.valueOf(EntityPose.class, "CRAWLING");//EnumHack.addEnum(EntityPose.class, "CRAWLING");
 		public static final EntitySize CRAWLING_SIZE = new EntitySize(0.6F, 0.6F, false);
 		public static final TrackedData<Boolean> IS_CRAWLING = DataTracker.registerData(PlayerEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
 		

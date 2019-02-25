@@ -10,6 +10,7 @@ import org.spongepowered.asm.lib.Opcodes;
 import org.spongepowered.asm.lib.tree.AbstractInsnNode;
 import org.spongepowered.asm.lib.tree.ClassNode;
 import org.spongepowered.asm.lib.tree.FieldInsnNode;
+import org.spongepowered.asm.lib.tree.FieldNode;
 import org.spongepowered.asm.lib.tree.InsnList;
 import org.spongepowered.asm.lib.tree.InsnNode;
 import org.spongepowered.asm.lib.tree.IntInsnNode;
@@ -20,7 +21,7 @@ import org.spongepowered.asm.lib.tree.TypeInsnNode;
 import org.spongepowered.asm.mixin.extensibility.IMixinConfigPlugin;
 import org.spongepowered.asm.mixin.extensibility.IMixinInfo;
 
-public class Plugin implements IMixinConfigPlugin {
+public class Plugin implements IMixinConfigPlugin, Opcodes {
 
 	@Override
 	public void onLoad(String mixinPackage) {
@@ -47,8 +48,19 @@ public class Plugin implements IMixinConfigPlugin {
 
 	@Override
 	public void preApply(String targetClassName, ClassNode targetClass, String mixinClassName, IMixinInfo mixinInfo) {
-		if(!targetClassName.equals("EntityPose"))
+		if(!targetClassName.equals("net.minecraft.entity.EntityPose"))
 			return;
+		
+		targetClass.fields.add(
+			new FieldNode(
+				ACC_PUBLIC | ACC_STATIC | ACC_FINAL | ACC_ENUM,
+				"CRAWLING",
+				"Lnet/minecraft/entity/EntityPose;",
+				null,
+				null
+			)
+		);
+		
 		MethodNode init =
 			StreamSupport.stream(targetClass.methods.spliterator(), false).filter(mn -> mn.name.equals("<clinit>")).findFirst().get();
 		
@@ -64,16 +76,29 @@ public class Plugin implements IMixinConfigPlugin {
 		}
 		
 		InsnList varInit = new InsnList();
-		varInit.add(new TypeInsnNode(Opcodes.NEW, targetClass.signature));
-		varInit.add(new InsnNode(Opcodes.DUP));
+		varInit.add(new TypeInsnNode(NEW, "net/minecraft/entity/EntityPose"));
+		varInit.add(new InsnNode(DUP));
 		varInit.add(new LdcInsnNode("CRAWLING"));
-		varInit.add(new IntInsnNode(Opcodes.BIPUSH, enums));
-		varInit.add(new MethodInsnNode(Opcodes.INVOKESPECIAL, targetClassName, "<init>", "(Ljava/lang/String;I)V", false));
-		varInit.add(new FieldInsnNode(Opcodes.PUTSTATIC, "ru/fewizz/crawl/CrawlMod$Shared", "CRAWLING", "Lnet/minecraft/entity/EntityPose;"));
+		varInit.add(new IntInsnNode(BIPUSH, enums));
+		varInit.add(new MethodInsnNode(INVOKESPECIAL, "net/minecraft/entity/EntityPose", "<init>", "(Ljava/lang/String;I)V", false));
+		varInit.add(new FieldInsnNode(PUTSTATIC, "net/minecraft/entity/EntityPose", "CRAWLING", "Lnet/minecraft/entity/EntityPose;"));
 		
-		init.instructions.set(lastEnumInit.getNext().getNext().getNext(), new IntInsnNode(Opcodes.BIPUSH, enums + 1));
-		init.instructions.insert(lastEnumInit.getNext()); // Skip putstatic
+		init.instructions.set(lastEnumInit.getNext().getNext(), new IntInsnNode(Opcodes.BIPUSH, enums + 1));
+		init.instructions.insert(lastEnumInit.getNext(), varInit); // Skip putstatic
 		
+		AbstractInsnNode putArray = null;
+		for(Iterator<AbstractInsnNode> it = init.instructions.iterator(); it.hasNext();) {
+			AbstractInsnNode insn = it.next();
+			if(insn.getType() == AbstractInsnNode.FIELD_INSN)
+				putArray = insn;
+		}
+		InsnList addElement = new InsnList();
+		addElement.add(new InsnNode(DUP)); // Dup array
+		addElement.add(new IntInsnNode(BIPUSH, enums)); // index in array
+		addElement.add(new FieldInsnNode(GETSTATIC, "net/minecraft/entity/EntityPose", "CRAWLING", "Lnet/minecraft/entity/EntityPose;"));
+		addElement.add(new InsnNode(AASTORE));
+		
+		init.instructions.insert(putArray.getPrevious(), addElement);
 	}
 
 	@Override
