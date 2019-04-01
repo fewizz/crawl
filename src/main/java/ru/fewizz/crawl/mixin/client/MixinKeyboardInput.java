@@ -23,22 +23,26 @@ abstract class MixinKeyboardInput extends Input {
 	@Inject(method="tick", at=@At("HEAD"))
 	void onTickBegin(CallbackInfo ci) {
 		// Why it's here? ah, ok, nevermind..
-		PlayerEntity p = MinecraftClient.getInstance().player;
+		PlayerEntity player = MinecraftClient.getInstance().player;
+		
 		boolean newCrawlState = Client.keyCrawl.isPressed();
-		if(newCrawlState != Shared.isCrawling(p)) {
-			if(Shared.trySetCrawling(p, newCrawlState))
-				MinecraftClient.getInstance().getNetworkHandler().sendPacket(
-					new CustomPayloadC2SPacket(
-						CrawlMod.CRAWL_IDENTIFIER,
-						new PacketByteBuf(Unpooled.wrappedBuffer(new byte[] { (byte) (newCrawlState ? 1 : 0)}))
-					)
-				);
+		boolean oldCrawlState = player.getPose() == Shared.CRAWLING;
+		
+		if(newCrawlState != oldCrawlState) {
+			MinecraftClient.getInstance().getNetworkHandler().sendPacket(
+				new CustomPayloadC2SPacket(
+					CrawlMod.CRAWL_IDENTIFIER,
+					new PacketByteBuf(Unpooled.wrappedBuffer(new byte[] { (byte) (newCrawlState ? 1 : 0)}))
+				)
+			);
+			player.getDataTracker().set(Shared.CRAWLING_REQUEST, newCrawlState);
 		}
+		
 	}
 	
 	@Inject(method="tick", at=@At("RETURN"))
 	void onTickEnd(CallbackInfo ci) {
-		if(!Shared.isCrawling(MinecraftClient.getInstance().player))
+		if(MinecraftClient.getInstance().player.getPose() != Shared.CRAWLING)
 			return;
 		movementForward *= 0.3;
 		movementSideways *= 0.3;
@@ -54,6 +58,6 @@ abstract class MixinKeyboardInput extends Input {
 		require=1
 	)
 	void onSneakingStateSave(KeyboardInput thisO, boolean sneakingState) {
-		this.sneaking = sneakingState && !Shared.isCrawling(MinecraftClient.getInstance().player);
+		this.sneaking = sneakingState && MinecraftClient.getInstance().player.getPose() != Shared.CRAWLING;
 	}
 }

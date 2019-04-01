@@ -1,6 +1,5 @@
 package ru.fewizz.crawl.mixin;
 
-import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
@@ -19,8 +18,6 @@ import org.spongepowered.asm.lib.tree.LdcInsnNode;
 import org.spongepowered.asm.lib.tree.MethodInsnNode;
 import org.spongepowered.asm.lib.tree.MethodNode;
 import org.spongepowered.asm.lib.tree.TypeInsnNode;
-import org.spongepowered.asm.lib.util.Textifier;
-import org.spongepowered.asm.lib.util.TraceMethodVisitor;
 import org.spongepowered.asm.mixin.extensibility.IMixinConfigPlugin;
 import org.spongepowered.asm.mixin.extensibility.IMixinInfo;
 

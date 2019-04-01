@@ -25,14 +25,16 @@ public abstract class MixinPlayerEntity extends Entity {
 
 	@Inject(method="initDataTracker", at=@At("HEAD"))
 	public void onInitDataDtracker(CallbackInfo ci) {
-		getDataTracker().startTracking(CrawlMod.Shared.IS_CRAWLING, false);
+		getDataTracker().startTracking(CrawlMod.Shared.CRAWLING_REQUEST, false);
 	}
 	
 	@Inject(method="updateSize", at=@At("HEAD"), cancellable=true)
-	public void onPreSetSize(CallbackInfo ci) {
+	public void onPreUpdateSize(CallbackInfo ci) {
 		PlayerEntity p = (PlayerEntity)(Object)this;
 		
-		if(!Shared.isCrawling(p))
+		if(world.doesNotCollide(this))
+			if(!p.getDataTracker().get(Shared.CRAWLING_REQUEST)
+				|| p.isSwimming() || p.isFallFlying() || !p.onGround)
 			return;
 		
 		ci.cancel();
@@ -41,17 +43,15 @@ public abstract class MixinPlayerEntity extends Entity {
 			EntitySize size = CrawlMod.Shared.CRAWLING_SIZE;
 			BoundingBox bb = this.getBoundingBox();
 			bb = new BoundingBox(bb.minX, bb.minY, bb.minZ, bb.minX + size.width, bb.minY + size.height, bb.minZ + size.width);
-			if (this.world.isEntityColliding(this, bb))
+			if (this.world.doesNotCollide(this, bb))
 				this.setPose(Shared.CRAWLING);
 		}
 	}
 	
-	@Inject(method="updateSize", at=@At("HEAD"))
-	public void onSetSize(CallbackInfo ci) {
-		PlayerEntity p = (PlayerEntity)(Object)this;
-		
-		if(Shared.shouldCrawl(p))
-			Shared.setCrawlingForce(p);
+	@Inject(method="updateSize", at=@At("TAIL"), cancellable=true)
+	public void onPostUpdateSize(CallbackInfo ci) {
+		if(!world.doesNotCollide(this))
+			this.setPose(Shared.CRAWLING);
 	}
 	
 	@Inject(method="getSize", at=@At("HEAD"), cancellable=true)

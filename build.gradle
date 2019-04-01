@@ -25,7 +25,7 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 archivesBaseName = "crawl"
-version = "0.1.1"
+version = "0.3.0"
 
 configurations {
 	runtimeOnly.extendsFrom mappings
@@ -35,10 +35,10 @@ minecraft {
 }
 
 dependencies {
-	minecraft "com.mojang:minecraft:19w08b"
-	mappings "net.fabricmc:yarn:19w08b.6"
+	minecraft "com.mojang:minecraft:19w13b"
+	mappings "net.fabricmc:yarn:19w13b.7"
 	modCompile "net.fabricmc:fabric-loader:0.3.7.109"
-	modCompile "net.fabricmc:fabric:0.2.3.104"
+	modCompile "net.fabricmc:fabric:0.2.6.117"
 }
 
 runClient.args+="-Xmx3G"

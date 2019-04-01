@@ -21,7 +21,7 @@ abstract class MixinPlayerEntityRenderer extends LivingEntityRenderer<AbstractCl
 	
 	@Redirect(method="method_4215", at=@At(value="INVOKE", target="net/minecraft/client/network/AbstractClientPlayerEntity.isSneaking()Z"), require = 1)
 	public boolean catchOnSneaking(AbstractClientPlayerEntity p) {
-		if(Shared.isCrawling(p))
+		if(p.getPose() == Shared.CRAWLING)
 			return false;
 		return p.isSneaking();
 	}
