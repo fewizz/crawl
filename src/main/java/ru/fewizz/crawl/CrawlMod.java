@@ -11,7 +11,6 @@ import net.fabricmc.fabric.impl.client.keybinding.KeyBindingRegistryImpl;
 import net.fabricmc.fabric.impl.network.ServerSidePacketRegistryImpl;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.entity.model.BipedEntityModel;
-import net.minecraft.client.render.entity.model.PlayerEntityModel;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.entity.EntityPose;
 import net.minecraft.entity.EntitySize;
@@ -72,7 +71,7 @@ public class CrawlMod implements ModInitializer {
 		}
 		
 		// That's bad for comp. with other mods, temp. solution..
-		public static <E extends LivingEntity> void postTransformModel(PlayerEntityModel<E> model, LivingEntity e, float dist) {
+		public static <E extends LivingEntity> void postTransformModel(BipedEntityModel<E> model, LivingEntity e, float dist) {
 			PlayerEntity player = (PlayerEntity)e;
 			
 			MinecraftClient mc = MinecraftClient.getInstance();

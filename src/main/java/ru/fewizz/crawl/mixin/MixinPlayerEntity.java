@@ -3,6 +3,7 @@ package ru.fewizz.crawl.mixin;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
@@ -11,7 +12,6 @@ import net.minecraft.entity.EntityPose;
 import net.minecraft.entity.EntitySize;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.math.BoundingBox;
 import net.minecraft.world.World;
 import ru.fewizz.crawl.CrawlMod;
 import ru.fewizz.crawl.CrawlMod.Shared;
@@ -28,30 +28,21 @@ public abstract class MixinPlayerEntity extends Entity {
 		getDataTracker().startTracking(CrawlMod.Shared.CRAWLING_REQUEST, false);
 	}
 	
-	@Inject(method="updateSize", at=@At("HEAD"), cancellable=true)
-	public void onPreUpdateSize(CallbackInfo ci) {
-		PlayerEntity p = (PlayerEntity)(Object)this;
+	@Redirect(
+		method="updateSize",
+		at=@At(
+			value="INVOKE",
+			target = "net/minecraft/entity/player/PlayerEntity.setPose(Lnet/minecraft/entity/EntityPose;)V"
+		),
+		require = 1
+		)
+	public void onPreSetPose(PlayerEntity pl, EntityPose pose) {
+		boolean replaceSwimming = pose == EntityPose.SWIMMING && !pl.isSwimming();
+		boolean crawl = pl.getDataTracker().get(Shared.CRAWLING_REQUEST) && !pl.isSwimming() && !pl.isFallFlying() && pl.onGround;
 		
-		if(world.doesNotCollide(this))
-			if(!p.getDataTracker().get(Shared.CRAWLING_REQUEST)
-				|| p.isSwimming() || p.isFallFlying() || !p.onGround)
-			return;
-		
-		ci.cancel();
-		
-		if(p.getPose() != CrawlMod.Shared.CRAWLING) {
-			EntitySize size = CrawlMod.Shared.CRAWLING_SIZE;
-			BoundingBox bb = this.getBoundingBox();
-			bb = new BoundingBox(bb.minX, bb.minY, bb.minZ, bb.minX + size.width, bb.minY + size.height, bb.minZ + size.width);
-			if (this.world.doesNotCollide(this, bb))
-				this.setPose(Shared.CRAWLING);
-		}
-	}
-	
-	@Inject(method="updateSize", at=@At("TAIL"), cancellable=true)
-	public void onPostUpdateSize(CallbackInfo ci) {
-		if(!world.doesNotCollide(this))
-			this.setPose(Shared.CRAWLING);
+		if(replaceSwimming || crawl)
+			pose = Shared.CRAWLING;
+		setPose(pose);
 	}
 	
 	@Inject(method="getSize", at=@At("HEAD"), cancellable=true)
