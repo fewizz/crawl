@@ -1,10 +1,8 @@
 package ru.fewizz.crawl.mixin.client;
 
-import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import io.netty.buffer.Unpooled;
@@ -46,18 +44,6 @@ abstract class MixinKeyboardInput extends Input {
 			return;
 		movementForward *= 0.3;
 		movementSideways *= 0.3;
-	}
-	
-	@Redirect(
-		method="tick",
-		at=@At(
-			value="FIELD",
-			opcode=Opcodes.PUTFIELD,
-			target="net/minecraft/client/input/KeyboardInput.sneaking:Z"
-		),
-		require=1
-	)
-	void onSneakingStateSave(KeyboardInput thisO, boolean sneakingState) {
-		this.sneaking = sneakingState && MinecraftClient.getInstance().player.getPose() != Shared.CRAWLING;
+		sneaking = false;
 	}
 }

@@ -54,7 +54,7 @@ public class CrawlMod implements ModInitializer {
 			keyCrawl =
 				FabricKeyBinding.Builder.create(
 					new Identifier("crawl:key"),
-					InputUtil.Type.KEY_KEYBOARD,
+					InputUtil.Type.KEYSYM,
 					GLFW.GLFW_KEY_C,
 					"key.categories.movement"
 				).build();
@@ -118,12 +118,12 @@ public class CrawlMod implements ModInitializer {
 			if(player.isUsingItem())
 				return;
 			
-			if(model.swingProgress <= 0 || player.preferredHand != Hand.OFF) {
+			if(model.handSwingProgress <= 0 || player.preferredHand != Hand.OFF) {
 				model.armLeft.roll = (float) (-Math.PI / 2);
 				model.armLeft.yaw = 0;
 				model.armLeft.pitch = -1.3F + (float) func(dist * as + Math.PI / 2.0);
 			}
-			if(model.swingProgress <= 0 || player.preferredHand != Hand.MAIN) {
+			if(model.handSwingProgress <= 0 || player.preferredHand != Hand.MAIN) {
 				model.armRight.roll = (float) (Math.PI / 2);
 				model.armRight.yaw = 0;
 				model.armRight.pitch = -1.3F + (float) func(dist * as - Math.PI / 2.0);
