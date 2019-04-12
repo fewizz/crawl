@@ -53,9 +53,9 @@ public class CrawlMod implements ModInitializer {
 		public void onInitializeClient() {
 			keyCrawl =
 				FabricKeyBinding.Builder.create(
-					new Identifier("crawl:key"),
+					new Identifier("crawl:crawl"),
 					InputUtil.Type.KEYSYM,
-					GLFW.GLFW_KEY_C,
+					GLFW.GLFW_KEY_B,
 					"key.categories.movement"
 				).build();
 			KeyBindingRegistryImpl.INSTANCE.register(keyCrawl);
@@ -84,13 +84,10 @@ public class CrawlMod implements ModInitializer {
 			float yOffset = 20;
 			float as = 1F;
 
-			model.head.rotationPointY = yOffset;
-			model.head.rotationPointZ = -6;
-			model.head.rotationPointX = 0;
+			model.head.setRotationPoint(0, yOffset, -6);
+			model.headwear.setRotationPoint(0, yOffset, -6);
 			
-			model.body.rotationPointY = yOffset;
-			model.body.rotationPointZ = -6;
-			model.body.rotationPointX = 0;
+			model.body.setRotationPoint(0, yOffset, -6);
 			model.body.pitch = (float) (Math.PI / 2);
 			model.body.yaw = (float) -(Math.sin(dist * as)) / 10F;
 			model.body.roll = (float) -(Math.sin(dist * as)) / 5F;
@@ -131,25 +128,17 @@ public class CrawlMod implements ModInitializer {
 		}
 		
 		public static <E extends LivingEntity> void tryRestorePlayerModel(BipedEntityModel<E> model) {
-			model.head.rotationPointY = 0;
-			model.head.rotationPointZ = 0;
-			model.head.rotationPointX = 0;
+			model.head.setRotationPoint(0, 0, 0);
+			model.headwear.setRotationPoint(0, 0, 0);
 			
 			model.body.roll = 0;
-			model.body.rotationPointY = 0;
-			model.body.rotationPointZ = 0;
-			model.body.rotationPointX = 0;
+			model.body.setRotationPoint(0, 0, 0);
 			
 			model.legLeft.rotationPointX = 1.9F;
 			model.legRight.rotationPointX = -1.9F;
 			
-			model.armLeft.rotationPointX = 5;
-			model.armLeft.rotationPointY = 2;
-			model.armLeft.rotationPointZ = 0;
-			
-			model.armRight.rotationPointX = -5;
-			model.armRight.rotationPointY = 2;
-			model.armRight.rotationPointZ = 0;
+			model.armLeft.setRotationPoint(5, 2, 0);
+			model.armRight.setRotationPoint(-5, 2, 0);
 		}
 	}
 }
