@@ -38,7 +38,7 @@ public abstract class MixinPlayerEntity extends Entity {
 		)
 	public void onPreSetPose(PlayerEntity pl, EntityPose pose) {
 		boolean replaceSwimming = pose == EntityPose.SWIMMING && !pl.isSwimming();
-		boolean crawl = pl.getDataTracker().get(Shared.CRAWLING_REQUEST) && !pl.isSwimming() && !pl.isFallFlying() && pl.onGround;
+		boolean crawl = pl.getDataTracker().get(Shared.CRAWLING_REQUEST) && !pl.isSwimming();
 		
 		if(replaceSwimming || crawl)
 			pose = Shared.CRAWLING;

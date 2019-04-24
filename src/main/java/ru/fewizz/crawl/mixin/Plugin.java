@@ -28,6 +28,7 @@ public class Plugin implements IMixinConfigPlugin, Opcodes {
 	final String envDependedName = FabricLauncherBase.getLauncher().isDevelopment() ? NAMED_NAME :
 		FabricLauncherBase
 		.getLauncher()
+		.getMappingConfiguration()
 		.getMappings()
 		.getClassEntries()
 		.stream()
