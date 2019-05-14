@@ -23,7 +23,7 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 
 public class CrawlMod implements ModInitializer {
-    public static final Identifier CRAWL_IDENTIFIER = Identifier.create("mod_crawl");
+    public static final Identifier CRAWL_IDENTIFIER = new Identifier("crawl:identifier");
     
 	@Override
 	public void onInitialize() {
@@ -92,38 +92,46 @@ public class CrawlMod implements ModInitializer {
 			model.body.yaw = (float) -(Math.sin(dist * as)) / 10F;
 			model.body.roll = (float) -(Math.sin(dist * as)) / 5F;
 			
-			model.legLeft.rotationPointX = 1.9F + -(float)Math.sin(dist * as);
-			model.legLeft.rotationPointZ = 6 + (float) -(Math.sin(dist * as) + 1)*2;
-			model.legLeft.rotationPointY = yOffset + 0.2F;
-			model.legLeft.pitch = (float) (Math.PI / 2);
-			model.legLeft.yaw = (float) (Math.cos(dist * as) + .7F) / 3F;
+			model.leftLeg.setRotationPoint(
+				1.9F + -(float)Math.sin(dist * as),
+				yOffset + 0.2F,
+				6 + (float) -(Math.sin(dist * as) + 1)*2
+			);
+			model.leftLeg.pitch = (float) (Math.PI / 2);
+			model.leftLeg.yaw = (float) (Math.cos(dist * as) + .7F) / 3F;
 			
-			model.legRight.rotationPointX = -1.9F + -(float)Math.sin(dist * as);
-			model.legRight.rotationPointZ = 6 + (float) -(Math.cos(dist * as) + 1)*2;
-			model.legRight.rotationPointY = yOffset + 0.2F;
-			model.legRight.pitch = (float) (Math.PI / 2);
-			model.legRight.yaw = (float) (Math.sin(dist * as) - .7F) / 3F;
+			model.rightLeg.setRotationPoint(
+				-1.9F + -(float)Math.sin(dist * as),
+				yOffset + 0.2F,
+				6 + (float) -(Math.cos(dist * as) + 1)*2
+			);
+			model.rightLeg.pitch = (float) (Math.PI / 2);
+			model.rightLeg.yaw = (float) (Math.sin(dist * as) - .7F) / 3F;
 			
-			model.armLeft.rotationPointX = 5;
-			model.armLeft.rotationPointY = 2 + yOffset;
-			model.armLeft.rotationPointZ = -4 + -2 + (float) Math.cos(dist * as)*3;
+			model.leftArm.setRotationPoint(
+				5,
+				2 + yOffset,
+				-4 + -2 + (float) Math.cos(dist * as)*3
+			);
 
-			model.armRight.rotationPointX = -5;
-			model.armRight.rotationPointY = 2 + yOffset;
-			model.armRight.rotationPointZ = -4 + -2 + (float) Math.sin(dist*as)*3;
+			model.rightArm.setRotationPoint(
+				-5,
+				2 + yOffset,
+				-4 + -2 + (float) Math.sin(dist*as)*3
+			);
 			
 			if(player.isUsingItem())
 				return;
 			
-			if(model.handSwingProgress <= 0 || player.preferredHand != Hand.OFF) {
-				model.armLeft.roll = (float) (-Math.PI / 2);
-				model.armLeft.yaw = 0;
-				model.armLeft.pitch = -1.3F + (float) func(dist * as + Math.PI / 2.0);
+			if(model.handSwingProgress <= 0 || player.preferredHand != Hand.OFF_HAND) {
+				model.leftArm.roll = (float) (-Math.PI / 2);
+				model.leftArm.yaw = 0;
+				model.leftArm.pitch = -1.3F + (float) func(dist * as + Math.PI / 2.0);
 			}
-			if(model.handSwingProgress <= 0 || player.preferredHand != Hand.MAIN) {
-				model.armRight.roll = (float) (Math.PI / 2);
-				model.armRight.yaw = 0;
-				model.armRight.pitch = -1.3F + (float) func(dist * as - Math.PI / 2.0);
+			if(model.handSwingProgress <= 0 || player.preferredHand != Hand.MAIN_HAND) {
+				model.rightArm.roll = (float) (Math.PI / 2);
+				model.rightArm.yaw = 0;
+				model.rightArm.pitch = -1.3F + (float) func(dist * as - Math.PI / 2.0);
 			}
 		}
 		
@@ -134,11 +142,11 @@ public class CrawlMod implements ModInitializer {
 			model.body.roll = 0;
 			model.body.setRotationPoint(0, 0, 0);
 			
-			model.legLeft.rotationPointX = 1.9F;
-			model.legRight.rotationPointX = -1.9F;
+			model.leftLeg.rotationPointX = 1.9F;
+			model.rightLeg.rotationPointX = -1.9F;
 			
-			model.armLeft.setRotationPoint(5, 2, 0);
-			model.armRight.setRotationPoint(-5, 2, 0);
+			model.leftArm.setRotationPoint(5, 2, 0);
+			model.rightArm.setRotationPoint(-5, 2, 0);
 		}
 	}
 }

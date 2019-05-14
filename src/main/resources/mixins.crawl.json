@@ -10,7 +10,8 @@
 		"client.MixinClientPlayerEntity",
 		"client.MixinKeyboardInput",
 		"client.MixinBipedEntityModel",
-		"client.MixinMouseHack"
+		"client.MixinMouseHack",
+		"client.MixinEntityRenderer"
 	]
 
 }

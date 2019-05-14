@@ -19,8 +19,8 @@ abstract class MixinClientPlayerEntity extends AbstractClientPlayerEntity {
 		super(clientWorld_1, gameProfile_1);
 	}
 	
-	@Inject(method="updateState", at=@At(value="INVOKE", target="net/minecraft/client/network/AbstractClientPlayerEntity.updateState()V"))
-	public void beforeSuperMovementUpdate(CallbackInfo ci) {
+	@Inject(method="tickMovement", at=@At(value="INVOKE", target="net/minecraft/client/network/AbstractClientPlayerEntity.tickMovement()V"))
+	public void beforeSuperMovementTick(CallbackInfo ci) {
 		if(getPose() == Shared.CRAWLING)
 			setSprinting(false);
 	}
