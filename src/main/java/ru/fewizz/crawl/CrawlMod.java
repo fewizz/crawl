@@ -2,6 +2,8 @@ package ru.fewizz.crawl;
 
 import org.lwjgl.glfw.GLFW;
 
+import com.chocohead.mm.api.ClassTinkerers;
+
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -40,7 +42,7 @@ public class CrawlMod implements ModInitializer {
 	}
 	
 	public static class Shared {
-		public static final EntityPose CRAWLING = Enum.valueOf(EntityPose.class, "CRAWLING");//EnumHack.addEnum(EntityPose.class, "CRAWLING");
+		public static final EntityPose CRAWLING = ClassTinkerers.getEnum(EntityPose.class, EntityPoseHack.CRAWLING);
 		public static final EntityDimensions CRAWLING_SIZE = new EntityDimensions(0.6F, 0.6F, false);
 		public static final TrackedData<Boolean> CRAWLING_REQUEST = DataTracker.registerData(PlayerEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
 	}
