@@ -9,8 +9,9 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.keybinding.FabricKeyBinding;
-import net.fabricmc.fabric.impl.client.keybinding.KeyBindingRegistryImpl;
-import net.fabricmc.fabric.impl.network.ServerSidePacketRegistryImpl;
+import net.fabricmc.fabric.api.client.keybinding.KeyBindingRegistry;
+import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
+
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.entity.model.BipedEntityModel;
 import net.minecraft.client.util.InputUtil;
@@ -33,7 +34,7 @@ public class CrawlMod implements ModInitializer {
 	}
 	
 	void registerListener() {
-		ServerSidePacketRegistryImpl.INSTANCE.register(CRAWL_IDENTIFIER, (context, buf) -> {
+		ServerSidePacketRegistry.INSTANCE.register(CRAWL_IDENTIFIER, (context, buf) -> {
 			boolean val = buf.readBoolean();
 			context.getTaskQueue().execute(() -> {
 				context.getPlayer().getDataTracker().set(Shared.CRAWLING_REQUEST, val);
@@ -60,7 +61,7 @@ public class CrawlMod implements ModInitializer {
 					GLFW.GLFW_KEY_B,
 					"key.categories.movement"
 				).build();
-			KeyBindingRegistryImpl.INSTANCE.register(keyCrawl);
+			KeyBindingRegistry.INSTANCE.register(keyCrawl);
 		}
 		
 		static float func(double rad) {
