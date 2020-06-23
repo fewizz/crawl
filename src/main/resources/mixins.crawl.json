@@ -10,7 +10,7 @@
 		"client.MixinKeyboardInput",
 		"client.MixinBipedEntityModel",
 		"client.MixinMouseHack",
-		"client.MixinEntityRenderer"
+		"client.MixinElytraEntityModel"
 	]
 
 }
