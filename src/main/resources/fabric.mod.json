@@ -2,9 +2,9 @@
 	"schemaVersion": 1,
 	"id": "crawl",
 	"name": "Crawl",
-	"version": "0.6.0",
+	"version": "0.7.0",
 	"authors": [
-		"Fewizz_",
+		"fewizz",
 		"McSkinnerOG",
 		"Chocohead"
 	],

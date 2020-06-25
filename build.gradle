@@ -1,14 +1,6 @@
-buildscript {
-	repositories {
-		jcenter()
-		maven {
-			name = 'Fabric'
-			url = 'https://maven.fabricmc.net/'
-		}
-	}
-	dependencies {
-		classpath "net.fabricmc:fabric-loom:0.4-SNAPSHOT"
-	}
+plugins {
+    id 'fabric-loom' version '0.4-SNAPSHOT'
+    id 'com.github.fudge.forgedflowerloom' version '2.0.0'
 }
 
 repositories {
@@ -19,8 +11,6 @@ repositories {
 	}
 }
 
-apply plugin: net.fabricmc.loom.LoomGradlePlugin
-
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
@@ -28,8 +18,8 @@ archivesBaseName = "crawl"
 version = "0.7.0"
 
 dependencies {
-	minecraft "com.mojang:minecraft:1.16-rc1"
-	mappings "net.fabricmc:yarn:1.16-rc1+build.9"
+	minecraft "com.mojang:minecraft:1.16.1"
+	mappings "net.fabricmc:yarn:1.16.1+build.6"
 	modCompile "net.fabricmc:fabric-loader:0.8.8+build.202"
 	modCompile "net.fabricmc.fabric-api:fabric-api:0.13.1+build.370-1.16"
 
