@@ -15,7 +15,7 @@ public class MixinLivingEntity {
 	@Shadow
 	private float lastLeaningPitch;
 	
-	@Redirect(method = "updateLeaningPitch", at = @At(value = "INVOKE", target = "isInSwimmingPose"))
+	@Redirect(method = "updateLeaningPitch", at = @At(value = "INVOKE", target = "net/minecraft/entity/LivingEntity.isInSwimmingPose()Z"))
 	boolean isInSwimmingPoseIn(LivingEntity ths) {
 		return ths.isInSwimmingPose() || ths.getPose() == Shared.CRAWLING;
 	}

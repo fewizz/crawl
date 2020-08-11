@@ -26,7 +26,7 @@ public abstract class MixinBipedEntityModel<T extends LivingEntity> extends Enti
 		CrawlMod.Client.postTransformModel((BipedEntityModel<T>)(Object)this, e, f);
 	}
 	
-	@Redirect(method = "animateModel", at = @At(value = "INVOKE", target = "getLeaningPitch"))
+	@Redirect(method = "animateModel", at = @At(value = "INVOKE", target = "net/minecraft/entity/LivingEntity.getLeaningPitch(F)F"))
 	float getLeaningPitchRedirect(LivingEntity p, float delta) {
 		return p.getPose() == Shared.CRAWLING ? 0 : p.getLeaningPitch(delta);
 	}

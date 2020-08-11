@@ -11,7 +11,7 @@ import ru.fewizz.crawl.CrawlMod.Shared;
 @Mixin(PlayerEntityRenderer.class)
 public class MixinPlayerEntityRenderer {
 	
-	@Redirect(method = "setupTransforms", at = @At(value = "INVOKE", target = "getLeaningPitch"))
+	@Redirect(method = "setupTransforms", at = @At(value = "INVOKE", target = "net/minecraft/client/network/AbstractClientPlayerEntity.getLeaningPitch(F)F"))
 	float getLeaningPitchRedirect(AbstractClientPlayerEntity p, float delta) {
 		return p.getPose() == Shared.CRAWLING ? 0 : p.getLeaningPitch(delta);
 	}
