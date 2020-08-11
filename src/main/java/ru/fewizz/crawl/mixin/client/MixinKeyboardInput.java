@@ -21,6 +21,7 @@ abstract class MixinKeyboardInput extends Input {
 	@Inject(method="tick", at=@At("HEAD"))
 	void onTickBegin(CallbackInfo ci) {
 		// Why it's here? ah, ok, nevermind..
+		@SuppressWarnings("resource")
 		PlayerEntity player = MinecraftClient.getInstance().player;
 		
 		boolean newCrawlState = Client.keyCrawl.isPressed();

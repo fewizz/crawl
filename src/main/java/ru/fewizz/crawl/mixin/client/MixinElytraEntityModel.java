@@ -49,7 +49,7 @@ public class MixinElytraEntityModel {
 	void postSetAngles(LivingEntity e, float f, float g, float h, float i, float j, CallbackInfo ci) {
 		MinecraftClient client = MinecraftClient.getInstance();
 		LivingEntityRenderer<?, ?> r =
-				(LivingEntityRenderer<?, ?>) client.getEntityRenderManager().getRenderer(e);
+				(LivingEntityRenderer<?, ?>) client.getEntityRenderDispatcher().getRenderer(e);
 
 		if(e.getPose() != CrawlMod.Shared.CRAWLING
 			|| !(r.getModel() instanceof BipedEntityModel)) {

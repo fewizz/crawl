@@ -23,6 +23,7 @@ import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.MathHelper;
 
 public class CrawlMod implements ModInitializer {
     public static final Identifier CRAWL_IDENTIFIER = new Identifier("crawl:identifier");
@@ -76,7 +77,7 @@ public class CrawlMod implements ModInitializer {
 		public static <E extends LivingEntity> void postTransformModel(BipedEntityModel<E> model, LivingEntity e, float dist) {
 			MinecraftClient mc = MinecraftClient.getInstance();
 			
-			if((mc.player == e && mc.options.perspective == 0)
+			if((mc.player == e && mc.options.getPerspective().isFirstPerson())
 				|| e.getPose() != Shared.CRAWLING) {
 				tryRestorePlayerModel(model);
 				return;
@@ -84,60 +85,64 @@ public class CrawlMod implements ModInitializer {
 			
 			float yOffset = 20;
 			float as = 1F;
+			float pitchMul = e.getLeaningPitch(mc.getTickDelta());
 
-			model.head.setPivot(0, yOffset, -6);
-			model.helmet.setPivot(0, yOffset, -6);
+			model.head.setPivot(0, yOffset*pitchMul, -6*pitchMul);
+			model.helmet.setPivot(0, yOffset*pitchMul, -6*pitchMul);
 			
-			model.torso.setPivot(0, yOffset, -6);
-			model.torso.pitch = (float) (Math.PI / 2);
-			model.torso.yaw = (float) -(Math.sin(dist * as)) / 10F;
-			model.torso.roll = (float) -(Math.sin(dist * as)) / 5F;
+			model.torso.setPivot(0, yOffset*pitchMul, -6*pitchMul);
+			model.torso.pitch = (float) (Math.PI / 2)*pitchMul;
+			model.torso.yaw = (float) -(Math.sin(dist * as))*pitchMul / 10F;
+			model.torso.roll = (float) -(Math.sin(dist * as))*pitchMul / 5F;
 			
 			model.leftLeg.setPivot(
-				1.9F + -(float) Math.sin(dist * as),
-				yOffset + 0.2F,
-				6 + (float) -(Math.sin(dist * as) + 1)*2
+				1.9F + -(float) Math.sin(dist * as)*pitchMul,
+				MathHelper.lerp(pitchMul, 12, yOffset + 0.2F),
+				(6.5F + (float) -(Math.sin(dist * as) + 1)*2)*pitchMul
 			);
-			model.leftLeg.pitch = (float) (Math.PI / 2);
-			model.leftLeg.yaw = (float) (Math.cos(dist * as) + .7F) / 3F;
+			model.leftLeg.pitch = (float) (Math.PI / 2)*pitchMul;
+			model.leftLeg.yaw = MathHelper.lerp(pitchMul, model.leftLeg.yaw, (float) (Math.cos(dist * as) + .7F) / 3F);
 			
 			model.rightLeg.setPivot(
-				-1.9F + -(float) Math.sin(dist * as),
-				yOffset + 0.2F,
-				6 + (float) -(Math.cos(dist * as) + 1)*2
+				-1.9F + -(float) Math.sin(dist * as)*pitchMul,
+				MathHelper.lerp(pitchMul, 12, yOffset + 0.2F),
+				(6.5F + (float) -(Math.cos(dist * as) + 1)*2)*pitchMul
 			);
-			model.rightLeg.pitch = (float) (Math.PI / 2);
+			model.rightLeg.pitch = (float) (Math.PI / 2)*pitchMul;
 			model.rightLeg.yaw = (float) (Math.sin(dist * as) - .7F) / 3F;
 			
 			model.leftArm.setPivot(
 				5,
-				2 + yOffset,
-				-4 + -2 + (float) Math.cos(dist * as)*3
+				2 + yOffset*pitchMul,
+				(-4 + -2 + (float) Math.cos(dist * as)*3)*pitchMul
 			);
 
 			model.rightArm.setPivot(
 				-5,
-				2 + yOffset,
-				-4 + -2 + (float) Math.sin(dist*as)*3
+				2 + yOffset*pitchMul,
+				(-4 + -2 + (float) Math.sin(dist*as)*3)*pitchMul
 			);
 			
-			if(e.isUsingItem())
+			if(e.isUsingItem()) {
 				return;
+			}
 			
 			if(model.handSwingProgress <= 0 || e.preferredHand != Hand.OFF_HAND) {
-				model.leftArm.roll = (float) (-Math.PI / 2);
+				model.leftArm.roll = MathHelper.lerp(pitchMul, model.leftArm.roll, (float) (-Math.PI / 2));
 				model.leftArm.yaw = 0;
-				model.leftArm.pitch = -1.3F + (float) someFunc(dist * as + Math.PI / 2.0);
+				model.leftArm.pitch = MathHelper.lerp(pitchMul, model.leftArm.pitch, -1.3F + (float) someFunc(dist * as + Math.PI / 2.0));
 			}
 			if(model.handSwingProgress <= 0 || e.preferredHand != Hand.MAIN_HAND) {
-				model.rightArm.roll = (float) (Math.PI / 2);
+				model.rightArm.roll = MathHelper.lerp(pitchMul, model.rightArm.roll, (float) (Math.PI / 2));
 				model.rightArm.yaw = 0;
-				model.rightArm.pitch = -1.3F + (float) someFunc(dist * as - Math.PI / 2.0);
+				model.rightArm.pitch = MathHelper.lerp(pitchMul, model.rightArm.pitch, -1.3F + (float) someFunc(dist * as - Math.PI / 2.0));
 			}
 		}
 		
 		static <E extends LivingEntity> void tryRestorePlayerModel(BipedEntityModel<E> model) {
 			model.head.setPivot(0, 0, 0);
+			//model.head.pitch = 0;
+			model.head.roll = 0;
 			model.helmet.setPivot(0, 0, 0);
 			
 			model.torso.roll = 0;

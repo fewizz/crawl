@@ -3,14 +3,16 @@
 	"minVersion": "0.8",
 	"required": "true",
 	"mixins": [
-		"MixinPlayerEntity"
+		"MixinPlayerEntity",
+		"MixinLivingEntity"
 	],
 	"client": [
 		"client.MixinClientPlayerEntity",
 		"client.MixinKeyboardInput",
 		"client.MixinBipedEntityModel",
 		"client.MixinMouseHack",
-		"client.MixinElytraEntityModel"
+		"client.MixinElytraEntityModel",
+		"client.MixinPlayerEntityRenderer"
 	]
 
 }
