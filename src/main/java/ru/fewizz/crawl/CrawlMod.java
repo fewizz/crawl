@@ -109,12 +109,12 @@ public class CrawlMod implements ModInitializer {
 				(6.5F + (float) -(Math.cos(dist * as) + 1)*2)*pitchMul
 			);
 			model.rightLeg.pitch = (float) (Math.PI / 2)*pitchMul;
-			model.rightLeg.yaw = (float) (Math.sin(dist * as) - .7F) / 3F;
+			model.rightLeg.yaw = MathHelper.lerp(pitchMul, model.rightLeg.yaw, (float) (Math.sin(dist * as) - .7F) / 3F);
 			
 			model.leftArm.setPivot(
 				5,
 				2 + yOffset*pitchMul,
-				(-4 + -2 + (float) Math.cos(dist * as)*3)*pitchMul
+				(-4 + -2 + (float) Math.cos(dist*as)*3)*pitchMul
 			);
 
 			model.rightArm.setPivot(
