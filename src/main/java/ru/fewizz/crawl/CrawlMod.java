@@ -36,15 +36,13 @@ public class CrawlMod implements ModInitializer {
 	void registerListener() {
 		ServerSidePacketRegistry.INSTANCE.register(CRAWL_IDENTIFIER, (context, buf) -> {
 			boolean val = buf.readBoolean();
-			context.getTaskQueue().execute(() -> {
-				context.getPlayer().getDataTracker().set(Shared.CRAWLING_REQUEST, val);
-			});
+			context.getTaskQueue().execute(() -> context.getPlayer().getDataTracker().set(Shared.CRAWLING_REQUEST, val));
 		});
 	}
 	
 	public static class Shared {
 		public static final EntityPose CRAWLING = ClassTinkerers.getEnum(EntityPose.class, EntityPoseHack.CRAWLING);
-		public static final EntityDimensions CRAWLING_SIZE = new EntityDimensions(0.6F, 0.6F, false);
+		public static final EntityDimensions CRAWLING_DIMENSIONS = new EntityDimensions(0.6F, 0.6F, false);
 		public static final TrackedData<Boolean> CRAWLING_REQUEST = DataTracker.registerData(PlayerEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
 	}
 	
@@ -73,7 +71,6 @@ public class CrawlMod implements ModInitializer {
 		}
 		
 		// That's bad for comp. with other mods, temp. solution..
-		@SuppressWarnings("unused")
 		public static <E extends LivingEntity> void postTransformModel(BipedEntityModel<E> model, LivingEntity e, float dist) {
 			MinecraftClient mc = MinecraftClient.getInstance();
 			
@@ -110,17 +107,18 @@ public class CrawlMod implements ModInitializer {
 			);
 			model.rightLeg.pitch = (float) (Math.PI / 2)*pitchMul;
 			model.rightLeg.yaw = MathHelper.lerp(pitchMul, model.rightLeg.yaw, (float) (Math.sin(dist * as) - .7F) / 3F);
-			
+
+			float xArmOffset = 4.2F;
 			model.leftArm.setPivot(
-				5,
+				xArmOffset,
 				2 + yOffset*pitchMul,
-				(-4 + -2 + (float) Math.cos(dist*as)*3)*pitchMul
+				(-6 + (float) Math.cos(dist*as)*2)*pitchMul
 			);
 
 			model.rightArm.setPivot(
-				-5,
+				-xArmOffset,
 				2 + yOffset*pitchMul,
-				(-4 + -2 + (float) Math.sin(dist*as)*3)*pitchMul
+				(-6 + (float) Math.sin(dist*as)*2)*pitchMul
 			);
 			
 			if(e.isUsingItem()) {
@@ -130,12 +128,12 @@ public class CrawlMod implements ModInitializer {
 			if(model.handSwingProgress <= 0 || e.preferredHand != Hand.OFF_HAND) {
 				model.leftArm.roll = MathHelper.lerp(pitchMul, model.leftArm.roll, (float) (-Math.PI / 2));
 				model.leftArm.yaw = 0;
-				model.leftArm.pitch = MathHelper.lerp(pitchMul, model.leftArm.pitch, -1.3F + (float) someFunc(dist * as + Math.PI / 2.0));
+				model.leftArm.pitch = MathHelper.lerp(pitchMul, model.leftArm.pitch, -1.3F + someFunc(dist * as + Math.PI / 2.0));
 			}
 			if(model.handSwingProgress <= 0 || e.preferredHand != Hand.MAIN_HAND) {
 				model.rightArm.roll = MathHelper.lerp(pitchMul, model.rightArm.roll, (float) (Math.PI / 2));
 				model.rightArm.yaw = 0;
-				model.rightArm.pitch = MathHelper.lerp(pitchMul, model.rightArm.pitch, -1.3F + (float) someFunc(dist * as - Math.PI / 2.0));
+				model.rightArm.pitch = MathHelper.lerp(pitchMul, model.rightArm.pitch, -1.3F + someFunc(dist * as - Math.PI / 2.0));
 			}
 		}
 		

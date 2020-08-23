@@ -9,6 +9,7 @@ import net.minecraft.client.Mouse;
 
 @Mixin(Mouse.class)
 abstract class MixinMouseHack {
+	// =D
 	private static boolean disableCursorDisabling = Boolean.parseBoolean(System.getProperty("Crawl.disableCursorDisabling", "false"));
 	
 	@ModifyConstant(method="lockCursor", constant = @Constant(intValue = GLFW.GLFW_CURSOR_DISABLED))

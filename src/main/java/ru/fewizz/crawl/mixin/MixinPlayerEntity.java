@@ -38,9 +38,9 @@ public abstract class MixinPlayerEntity extends Entity {
 		)
 	public void onPreSetPose(PlayerEntity pl, EntityPose pose) {
 		boolean replaceSwimming = pose == EntityPose.SWIMMING && !pl.isSwimming();
-		boolean crawl = pl.getDataTracker().get(Shared.CRAWLING_REQUEST) && !pl.isSwimming();
+		boolean crawl_request = pl.getDataTracker().get(Shared.CRAWLING_REQUEST) && !pl.isSwimming();
 		
-		if((replaceSwimming || crawl) && !pl.isFallFlying())
+		if((replaceSwimming || crawl_request) && !pl.isFallFlying() && !pl.hasVehicle())
 			pose = Shared.CRAWLING;
 		setPose(pose);
 	}
@@ -48,12 +48,12 @@ public abstract class MixinPlayerEntity extends Entity {
 	@Inject(method="getDimensions", at=@At("HEAD"), cancellable=true)
 	public void onGetDimensions(EntityPose pose, CallbackInfoReturnable<EntityDimensions> ci) {
 		if(pose == CrawlMod.Shared.CRAWLING)
-			ci.setReturnValue(CrawlMod.Shared.CRAWLING_SIZE);
+			ci.setReturnValue(CrawlMod.Shared.CRAWLING_DIMENSIONS);
 	}
 	
 	@Inject(method="getActiveEyeHeight", at=@At("HEAD"), cancellable=true)
 	public void onGetActiveEyeHeight(EntityPose entityPose_1, EntityDimensions entitySize_1, CallbackInfoReturnable<Float> ci) {
-		if(entityPose_1 == CrawlMod.Shared.CRAWLING || entitySize_1 == CrawlMod.Shared.CRAWLING_SIZE)
+		if(entityPose_1 == CrawlMod.Shared.CRAWLING || entitySize_1 == CrawlMod.Shared.CRAWLING_DIMENSIONS)
 			ci.setReturnValue(0.6F);
 	}
 }

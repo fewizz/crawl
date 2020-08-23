@@ -1,6 +1,5 @@
 plugins {
     id 'fabric-loom' version '0.4-SNAPSHOT'
-    id 'com.github.fudge.forgedflowerloom' version '2.0.0'
 }
 
 repositories {
@@ -13,17 +12,39 @@ repositories {
 
 sourceCompatibility = targetCompatibility = 1.8
 
-archivesBaseName = "crawl"
-version = "0.7.1"
+archivesBaseName = project.archives_base_name
+version = project.mod_version
 
 dependencies {
-	minecraft "com.mojang:minecraft:1.16.2"
-	mappings "net.fabricmc:yarn:1.16.2+build.1"
-	modCompile "net.fabricmc:fabric-loader:0.9.1+build.205"
-	modCompile "net.fabricmc.fabric-api:fabric-api:0.17.2+build.396-1.16"
+	minecraft "com.mojang:minecraft:${project.minecraft_version}"
+	mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
+	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
 	modCompile 'com.github.Chocohead:Fabric-ASM:v2.1'
 	include 'com.github.Chocohead:Fabric-ASM:v2.1'
+}
+
+processResources {
+	inputs.property "version", project.version
+
+	from(sourceSets.main.resources.srcDirs) {
+		include "fabric.mod.json"
+		expand(["version": project.version, "Client" : '$Client'])
+	}
+
+	from(sourceSets.main.resources.srcDirs) {
+		exclude "fabric.mod.json"
+	}
+}
+
+tasks.withType(JavaCompile) {
+	options.encoding = "UTF-8"
+}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+	classifier = "sources"
+	from sourceSets.main.allSource
 }
 
 runClient.args+="-Xmx3G"
