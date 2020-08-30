@@ -1,5 +1,8 @@
 package ru.fewizz.crawl;
 
+import net.fabricmc.loader.api.FabricLoader;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.lwjgl.glfw.GLFW;
 
 import com.chocohead.mm.api.ClassTinkerers;
@@ -25,12 +28,40 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.Properties;
+
 public class CrawlMod implements ModInitializer {
+	public static final Logger LOGGER = LogManager.getLogger();
     public static final Identifier CRAWL_IDENTIFIER = new Identifier("crawl:identifier");
+    public static boolean animationOnly = false;
     
 	@Override
 	public void onInitialize() {
-		registerListener();
+		File config = new File(FabricLoader.getInstance().getConfigDirectory(), "crawl.properties");
+		Properties properties = new Properties();
+
+		if (config.exists()) {
+			try (FileInputStream stream = new FileInputStream(config)) {
+				properties.load(stream);
+			} catch (IOException e) {
+				LOGGER.warn("Could not read property file '" + config.getAbsolutePath() + "'", e);
+			}
+		}
+
+		animationOnly = Boolean.parseBoolean((String)properties.computeIfAbsent("animation_only", str -> "false"));
+
+		if(!animationOnly)
+			registerListener();
+
+		try (FileOutputStream stream = new FileOutputStream(config)) {
+			properties.store(stream, "Applied only on (dedicated/integrated) server side");
+		} catch (IOException e) {
+			LOGGER.warn("Could not store property file '" + config.getAbsolutePath() + "'", e);
+		}
 	}
 	
 	void registerListener() {
@@ -58,7 +89,8 @@ public class CrawlMod implements ModInitializer {
 				GLFW.GLFW_KEY_B,
 				"key.categories.movement"
 			);
-			KeyBindingHelper.registerKeyBinding(keyCrawl);
+			if(!animationOnly)
+				KeyBindingHelper.registerKeyBinding(keyCrawl);
 		}
 		
 		static float someFunc(double rad) {

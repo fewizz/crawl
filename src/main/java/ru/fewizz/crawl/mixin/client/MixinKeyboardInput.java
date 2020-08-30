@@ -20,8 +20,8 @@ import ru.fewizz.crawl.CrawlMod.Shared;
 abstract class MixinKeyboardInput extends Input {
 	@Inject(method="tick", at=@At("HEAD"))
 	void onTickBegin(CallbackInfo ci) {
-		// Why it's here? ah, ok, nevermind..
-		@SuppressWarnings("resource")
+		if(CrawlMod.animationOnly)
+			return;
 		PlayerEntity player = MinecraftClient.getInstance().player;
 		
 		boolean newCrawlState = Client.keyCrawl.isPressed();
@@ -36,6 +36,7 @@ abstract class MixinKeyboardInput extends Input {
 					)
 				)
 			);
+
 			player.getDataTracker().set(Shared.CRAWLING_REQUEST, newCrawlState);
 		}
 		
