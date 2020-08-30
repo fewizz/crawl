@@ -3,6 +3,7 @@
 	"minVersion": "0.8",
 	"required": "true",
 	"mixins": [
+		"MixinEntity",
 		"MixinPlayerEntity",
 		"MixinLivingEntity"
 	],

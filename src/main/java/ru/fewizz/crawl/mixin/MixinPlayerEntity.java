@@ -24,7 +24,7 @@ public abstract class MixinPlayerEntity extends Entity {
 	}
 
 	@Inject(method="initDataTracker", at=@At("HEAD"))
-	public void onInitDataDtracker(CallbackInfo ci) {
+	public void onInitDataTracker(CallbackInfo ci) {
 		getDataTracker().startTracking(CrawlMod.Shared.CRAWLING_REQUEST, false);
 	}
 	
