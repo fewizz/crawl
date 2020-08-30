@@ -12,7 +12,8 @@
 		"client.MixinKeyboardInput",
 		"client.MixinBipedEntityModel",
 		"client.MixinElytraEntityModel",
-		"client.MixinPlayerEntityRenderer"
+		"client.MixinPlayerEntityRenderer",
+		"client.MixinEntityRenderer"
 	]
 
 }

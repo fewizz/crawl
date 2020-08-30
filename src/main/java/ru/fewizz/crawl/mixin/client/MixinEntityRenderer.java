@@ -12,10 +12,10 @@ import ru.fewizz.crawl.CrawlMod.Shared;
 public class MixinEntityRenderer {
 	
 	@Redirect(
-		method="renderLabel(Lnet/minecraft/entity/Entity;Ljava/lang/String;DDDI)V",
+		method="renderLabelIfPresent(Lnet/minecraft/entity/Entity;Ljava/lang/String;DDDI)V",
 		at=@At(
 			value="INVOKE",
-			target="net/minecraft/entity/Entity.isInSneakingPose()Z"
+			target="net/minecraft/entity/Entity.isSneaky()Z"
 		)
 	)
 	boolean onGetIsInSneakingPose(Entity e) {
