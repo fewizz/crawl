@@ -8,6 +8,7 @@
 		"MixinLivingEntity"
 	],
 	"client": [
+		"client.MixinAbstractClientPlayerEntity",
 		"client.MixinClientPlayerEntity",
 		"client.MixinKeyboardInput",
 		"client.MixinBipedEntityModel",

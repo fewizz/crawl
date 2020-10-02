@@ -105,10 +105,14 @@ public class CrawlMod implements ModInitializer {
 		// That's bad for comp. with other mods, temp. solution..
 		public static <E extends LivingEntity> void postTransformModel(BipedEntityModel<E> model, LivingEntity e, float dist) {
 			MinecraftClient mc = MinecraftClient.getInstance();
-			
-			if((mc.player == e && mc.options.getPerspective().isFirstPerson())
-				|| e.getPose() != Shared.CRAWLING) {
-				tryRestorePlayerModel(model);
+
+			boolean wasCrawling = ((WasHeCrawlingPrevTickInfo) e).wasHeCrawlingPrevTick();
+			boolean crawling = e.getPose() == Shared.CRAWLING;
+			((WasHeCrawlingPrevTickInfo) e).setWasHeCrawlingPrevTick(crawling);
+
+			if(!crawling || (mc.player == e && mc.options.getPerspective().isFirstPerson())) {
+				if(wasCrawling)
+					tryRestorePlayerModel(model);
 				return;
 			}
 			

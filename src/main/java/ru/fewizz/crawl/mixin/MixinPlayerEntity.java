@@ -1,5 +1,6 @@
 package ru.fewizz.crawl.mixin;
 
+import net.minecraft.util.math.Box;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -38,9 +39,9 @@ public abstract class MixinPlayerEntity extends Entity {
 		)
 	public void onPreSetPose(PlayerEntity pl, EntityPose pose) {
 		boolean replaceSwimming = pose == EntityPose.SWIMMING && !pl.isSwimming();
-		boolean crawl_request = pl.getDataTracker().get(Shared.CRAWLING_REQUEST) && !pl.isSwimming();
+		boolean crawlRequest = pl.getDataTracker().get(Shared.CRAWLING_REQUEST) && !pl.isSwimming();
 		
-		if((replaceSwimming || crawl_request) && !pl.isFallFlying() && !pl.hasVehicle())
+		if((replaceSwimming || crawlRequest) && !pl.isFallFlying() && !pl.hasVehicle())
 			pose = Shared.CRAWLING;
 		setPose(pose);
 	}
@@ -50,7 +51,7 @@ public abstract class MixinPlayerEntity extends Entity {
 		if(pose == CrawlMod.Shared.CRAWLING)
 			ci.setReturnValue(CrawlMod.Shared.CRAWLING_DIMENSIONS);
 	}
-	
+
 	@Inject(method="getActiveEyeHeight", at=@At("HEAD"), cancellable=true)
 	public void onGetActiveEyeHeight(EntityPose entityPose_1, EntityDimensions entitySize_1, CallbackInfoReturnable<Float> ci) {
 		if(entityPose_1 == CrawlMod.Shared.CRAWLING || entitySize_1 == CrawlMod.Shared.CRAWLING_DIMENSIONS)
