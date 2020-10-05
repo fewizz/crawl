@@ -12,7 +12,7 @@ import ru.fewizz.crawl.CrawlMod.Shared;
 public class MixinEntityRenderer {
 	
 	@Redirect(
-		method="renderLabelIfPresent(Lnet/minecraft/entity/Entity;Ljava/lang/String;DDDI)V",
+		method="renderLabelIfPresent(Lnet/minecraft/entity/Entity;Lnet/minecraft/text/Text;Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;I)V",
 		at=@At(
 			value="INVOKE",
 			target="net/minecraft/entity/Entity.isSneaky()Z"
