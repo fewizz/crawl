@@ -1,6 +1,7 @@
 package ru.fewizz.crawl;
 
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.client.network.AbstractClientPlayerEntity;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.lwjgl.glfw.GLFW;
@@ -104,6 +105,7 @@ public class CrawlMod implements ModInitializer {
 		
 		// That's bad for comp. with other mods, temp. solution..
 		public static <E extends LivingEntity> void postTransformModel(BipedEntityModel<E> model, LivingEntity e, float dist) {
+			if(!(e instanceof AbstractClientPlayerEntity)) return;
 			MinecraftClient mc = MinecraftClient.getInstance();
 
 			boolean wasCrawling = ((WasHeCrawlingPrevTickInfo) e).wasHeCrawlingPrevTick();
