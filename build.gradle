@@ -21,8 +21,8 @@ dependencies {
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
-	modCompile 'com.github.Chocohead:Fabric-ASM:v2.1'
-	include 'com.github.Chocohead:Fabric-ASM:v2.1'
+	modCompile "com.github.Chocohead:Fabric-ASM:${project.fabric_asm_version}"
+	include "com.github.Chocohead:Fabric-ASM:${project.fabric_asm_version}"
 }
 
 processResources {
@@ -40,11 +40,6 @@ processResources {
 
 tasks.withType(JavaCompile) {
 	options.encoding = "UTF-8"
-}
-
-task sourcesJar(type: Jar, dependsOn: classes) {
-	classifier = "sources"
-	from sourceSets.main.allSource
 }
 
 runClient.args+="-Xmx3G"
