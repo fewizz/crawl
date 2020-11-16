@@ -30,9 +30,9 @@ abstract class PlayerEntityRendererMixin extends LivingEntityRenderer<AbstractCl
 		)
 	)
 	float getLeaningPitchRedirect(AbstractClientPlayerEntity p, float delta) {
-		float lp = p.getLeaningPitch(delta);
-
-		return ((WasCrawlingPrevTick)getModel()).isCrawling() || (lp != 0 && !p.isInSwimmingPose()) ? 0 : lp;
+		//float lp = p.getLeaningPitch(delta);
+		return p.getLeaningPitch(delta);
+		//return ((WasCrawlingPrevTick)getModel()).isCrawling() || (lp != 0 && !p.isInSwimmingPose()) ? 0 : lp;
 	}
 
 	@Inject(
