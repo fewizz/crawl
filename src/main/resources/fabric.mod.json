@@ -11,10 +11,10 @@
 	"environment": "*",
 	"entrypoints": { 
 		"main": [
-			"ru.fewizz.crawl.CrawlMod"
+			"ru.fewizz.crawl.Crawl"
 		],
 		"client": [
-			"ru.fewizz.crawl.CrawlMod$Client"
+			"ru.fewizz.crawl.CrawlClient"
 		]
 	},
 	"custom": {

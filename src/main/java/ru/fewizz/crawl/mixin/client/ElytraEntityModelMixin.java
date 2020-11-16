@@ -13,10 +13,10 @@ import net.minecraft.client.render.entity.LivingEntityRenderer;
 import net.minecraft.client.render.entity.model.BipedEntityModel;
 import net.minecraft.client.render.entity.model.ElytraEntityModel;
 import net.minecraft.entity.LivingEntity;
-import ru.fewizz.crawl.CrawlMod;
+import ru.fewizz.crawl.Crawl;
 
 @Mixin(ElytraEntityModel.class)
-public class MixinElytraEntityModel {
+public class ElytraEntityModelMixin {
 	@Shadow
 	@Final
 	private ModelPart field_3364;
@@ -29,6 +29,7 @@ public class MixinElytraEntityModel {
 	private ModelPart origCopy2;
 	
 	@Inject(
+		require = 1,
 		method="<init>",
 		at=@At(
 			value="RETURN"
@@ -40,6 +41,7 @@ public class MixinElytraEntityModel {
 	}
 	
 	@Inject(
+		require = 1,
 		method="setAngles",
 		at=@At(
 			value="HEAD"
@@ -51,7 +53,7 @@ public class MixinElytraEntityModel {
 		LivingEntityRenderer<?, ?> r =
 				(LivingEntityRenderer<?, ?>) client.getEntityRenderDispatcher().getRenderer(e);
 
-		if(e.getPose() != CrawlMod.Shared.CRAWLING
+		if(e.getPose() != Crawl.Shared.CRAWLING
 			|| !(r.getModel() instanceof BipedEntityModel)) {
 			field_3364.copyPositionAndRotation(origCopy1);
 			field_3365.copyPositionAndRotation(origCopy2);

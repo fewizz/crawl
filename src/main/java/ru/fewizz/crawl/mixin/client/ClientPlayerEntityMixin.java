@@ -10,16 +10,16 @@ import com.mojang.authlib.GameProfile;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.world.ClientWorld;
-import ru.fewizz.crawl.CrawlMod.Shared;
+import ru.fewizz.crawl.Crawl.Shared;
 
 @Mixin(ClientPlayerEntity.class)
-abstract class MixinClientPlayerEntity extends AbstractClientPlayerEntity {
+abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity {
 	
-	public MixinClientPlayerEntity(ClientWorld clientWorld_1, GameProfile gameProfile_1) {
-		super(clientWorld_1, gameProfile_1);
+	public ClientPlayerEntityMixin(ClientWorld cw, GameProfile gp) {
+		super(cw, gp);
 	}
 	
-	@Inject(method="tickMovement", at=@At(value="INVOKE", target="net/minecraft/client/network/AbstractClientPlayerEntity.tickMovement()V"))
+	@Inject(require = 1, method="tickMovement", at=@At(value="INVOKE", target="net/minecraft/client/network/AbstractClientPlayerEntity.tickMovement()V"))
 	public void beforeSuperMovementTick(CallbackInfo ci) {
 		if(getPose() == Shared.CRAWLING)
 			setSprinting(false);

@@ -1,6 +1,5 @@
 package ru.fewizz.crawl.mixin;
 
-import net.minecraft.util.math.Box;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -14,47 +13,51 @@ import net.minecraft.entity.EntityDimensions;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.world.World;
-import ru.fewizz.crawl.CrawlMod;
-import ru.fewizz.crawl.CrawlMod.Shared;
+import ru.fewizz.crawl.Crawl;
+import ru.fewizz.crawl.Crawl.Shared;
 
 @Mixin(PlayerEntity.class)
-public abstract class MixinPlayerEntity extends Entity {
+public abstract class PlayerEntityMixin extends Entity {
 
-	public MixinPlayerEntity(EntityType<?> entityType_1, World world_1) {
-		super(entityType_1, world_1);
+	public PlayerEntityMixin(EntityType<?> et, World w) {
+		super(et, w);
 	}
 
-	@Inject(method="initDataTracker", at=@At("HEAD"))
+	@Inject(
+		require = 1,
+		method="initDataTracker",
+		at=@At("HEAD")
+	)
 	public void onInitDataTracker(CallbackInfo ci) {
-		getDataTracker().startTracking(CrawlMod.Shared.CRAWLING_REQUEST, false);
+		getDataTracker().startTracking(Crawl.Shared.CRAWLING_REQUEST, false);
 	}
 	
 	@Redirect(
+		require = 1,
 		method="updateSize",
 		at=@At(
 			value="INVOKE",
 			target = "net/minecraft/entity/player/PlayerEntity.setPose(Lnet/minecraft/entity/EntityPose;)V"
-		),
-		require = 1
 		)
-	public void onPreSetPose(PlayerEntity pl, EntityPose pose) {
-		boolean replaceSwimming = pose == EntityPose.SWIMMING && !pl.isSwimming();
-		boolean crawlRequest = pl.getDataTracker().get(Shared.CRAWLING_REQUEST) && !pl.isSwimming();
+	)
+	public void onPreSetPose(PlayerEntity player, EntityPose pose) {
+		boolean replaceSwimming = pose == EntityPose.SWIMMING && !player.isSwimming();
+		boolean crawlRequest = player.getDataTracker().get(Shared.CRAWLING_REQUEST) && !player.isSwimming();
 		
-		if((replaceSwimming || crawlRequest) && !pl.isFallFlying() && !pl.hasVehicle())
+		if((replaceSwimming || crawlRequest) && !player.isFallFlying() && !player.hasVehicle())
 			pose = Shared.CRAWLING;
 		setPose(pose);
 	}
 	
-	@Inject(method="getDimensions", at=@At("HEAD"), cancellable=true)
+	@Inject(require = 1, method="getDimensions", at=@At("HEAD"), cancellable=true)
 	public void onGetDimensions(EntityPose pose, CallbackInfoReturnable<EntityDimensions> ci) {
-		if(pose == CrawlMod.Shared.CRAWLING)
-			ci.setReturnValue(CrawlMod.Shared.CRAWLING_DIMENSIONS);
+		if(pose == Crawl.Shared.CRAWLING)
+			ci.setReturnValue(Crawl.Shared.CRAWLING_DIMENSIONS);
 	}
 
-	@Inject(method="getActiveEyeHeight", at=@At("HEAD"), cancellable=true)
+	@Inject(require = 1, method="getActiveEyeHeight", at=@At("HEAD"), cancellable=true)
 	public void onGetActiveEyeHeight(EntityPose entityPose_1, EntityDimensions entitySize_1, CallbackInfoReturnable<Float> ci) {
-		if(entityPose_1 == CrawlMod.Shared.CRAWLING || entitySize_1 == CrawlMod.Shared.CRAWLING_DIMENSIONS)
+		if(entityPose_1 == Crawl.Shared.CRAWLING || entitySize_1 == Crawl.Shared.CRAWLING_DIMENSIONS)
 			ci.setReturnValue(0.6F);
 	}
 }

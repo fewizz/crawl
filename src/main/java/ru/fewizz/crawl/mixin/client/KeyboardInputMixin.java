@@ -12,25 +12,25 @@ import net.minecraft.client.input.KeyboardInput;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.packet.c2s.play.CustomPayloadC2SPacket;
-import ru.fewizz.crawl.CrawlMod;
-import ru.fewizz.crawl.CrawlMod.Client;
-import ru.fewizz.crawl.CrawlMod.Shared;
+import ru.fewizz.crawl.Crawl;
+import ru.fewizz.crawl.CrawlClient;
+import ru.fewizz.crawl.Crawl.Shared;
 
 @Mixin(KeyboardInput.class)
-abstract class MixinKeyboardInput extends Input {
-	@Inject(method="tick", at=@At("HEAD"))
+abstract class KeyboardInputMixin extends Input {
+	@Inject(require = 1, method="tick", at=@At("HEAD"))
 	void onTickBegin(CallbackInfo ci) {
-		if(CrawlMod.animationOnly)
+		if(Crawl.animationOnly)
 			return;
 		PlayerEntity player = MinecraftClient.getInstance().player;
 		
-		boolean newCrawlState = Client.keyCrawl.isPressed();
+		boolean newCrawlState = CrawlClient.crawlKey.isPressed();
 		boolean oldCrawlState = player.getPose() == Shared.CRAWLING;
 		
 		if(newCrawlState != oldCrawlState) {
 			MinecraftClient.getInstance().getNetworkHandler().sendPacket(
 				new CustomPayloadC2SPacket(
-					CrawlMod.CRAWL_IDENTIFIER,
+					Crawl.CRAWL_IDENTIFIER,
 					new PacketByteBuf(
 						Unpooled.wrappedBuffer(new byte[] { (byte) (newCrawlState ? 1 : 0)})
 					)
@@ -42,7 +42,7 @@ abstract class MixinKeyboardInput extends Input {
 		
 	}
 	
-	@Inject(method="tick", at=@At("RETURN"))
+	@Inject(require = 1, method="tick", at=@At("RETURN"))
 	void onTickEnd(CallbackInfo ci) {
 		if(MinecraftClient.getInstance().player.getPose() != Shared.CRAWLING)
 			return;

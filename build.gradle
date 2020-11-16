@@ -23,6 +23,8 @@ dependencies {
 
 	modCompile "com.github.Chocohead:Fabric-ASM:${project.fabric_asm_version}"
 	include "com.github.Chocohead:Fabric-ASM:${project.fabric_asm_version}"
+
+	modCompile "com.github.juancarloscp52:BedrockIfy:-SNAPSHOT"
 }
 
 processResources {
@@ -30,7 +32,7 @@ processResources {
 
 	from(sourceSets.main.resources.srcDirs) {
 		include "fabric.mod.json"
-		expand(["version": project.version, "Client" : '$Client'])
+		expand("version": project.version)
 	}
 
 	from(sourceSets.main.resources.srcDirs) {

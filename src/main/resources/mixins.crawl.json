@@ -1,20 +1,20 @@
 {
 	"package": "ru.fewizz.crawl.mixin",
 	"minVersion": "0.8",
-	"required": "true",
+	"required": true,
 	"mixins": [
-		"MixinEntity",
-		"MixinPlayerEntity",
-		"MixinLivingEntity"
+		"EntityMixin",
+		"PlayerEntityMixin",
+		"LivingEntityMixin"
 	],
 	"client": [
-		"client.MixinAbstractClientPlayerEntity",
-		"client.MixinClientPlayerEntity",
-		"client.MixinKeyboardInput",
-		"client.MixinBipedEntityModel",
-		"client.MixinElytraEntityModel",
-		"client.MixinPlayerEntityRenderer",
-		"client.MixinEntityRenderer"
+		"client.AbstractClientPlayerEntityMixin",
+		"client.ClientPlayerEntityMixin",
+		"client.KeyboardInputMixin",
+		"client.BipedEntityModelMixin",
+		"client.ElytraEntityModelMixin",
+		"client.PlayerEntityRendererMixin",
+		"client.EntityRendererMixin"
 	]
 
 }
