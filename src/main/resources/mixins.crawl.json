@@ -8,7 +8,6 @@
 		"LivingEntityMixin"
 	],
 	"client": [
-		"client.AbstractClientPlayerEntityMixin",
 		"client.ClientPlayerEntityMixin",
 		"client.KeyboardInputMixin",
 		"client.BipedEntityModelMixin",

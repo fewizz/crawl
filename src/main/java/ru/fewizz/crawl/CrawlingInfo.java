@@ -1,6 +1,6 @@
 package ru.fewizz.crawl;
 
-public interface WasCrawlingPrevTick {
+public interface CrawlingInfo {
     boolean isCrawling();
     void setCrawling(boolean v);
 }

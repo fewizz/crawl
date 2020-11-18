@@ -1,12 +1,8 @@
 package ru.fewizz.crawl.mixin.client;
 
-import com.sun.org.apache.xpath.internal.operations.Mod;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.model.ModelPart;
-import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.util.Hand;
-import net.minecraft.util.math.MathHelper;
-import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -18,14 +14,15 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import net.minecraft.client.render.entity.model.BipedEntityModel;
 import net.minecraft.client.render.entity.model.EntityModel;
 import net.minecraft.entity.LivingEntity;
-import ru.fewizz.crawl.Crawl.Shared;
-import ru.fewizz.crawl.WasCrawlingPrevTick;
+import ru.fewizz.crawl.CrawlingInfo;
+
+import java.util.function.Consumer;
 
 import static java.lang.Math.*;
 import static net.minecraft.util.math.MathHelper.lerp;
 
 @Mixin(BipedEntityModel.class)
-public abstract class BipedEntityModelMixin<T extends LivingEntity> extends EntityModel<T> implements WasCrawlingPrevTick {
+public abstract class BipedEntityModelMixin<T extends LivingEntity> extends EntityModel<T> implements CrawlingInfo {
 	@Shadow
 	public ModelPart head;
 	@Shadow
@@ -42,6 +39,9 @@ public abstract class BipedEntityModelMixin<T extends LivingEntity> extends Enti
 	public ModelPart leftLeg;
 
 	@Shadow public float leaningPitch;
+
+	@Shadow protected abstract float lerpAngle(float f, float g, float h);
+
 	public boolean crawling = false;
 
 	@Override
@@ -54,14 +54,14 @@ public abstract class BipedEntityModelMixin<T extends LivingEntity> extends Enti
 	}
 
 	@Inject(
-			require = 1,
-			method="setAttributes",
-			at=@At(
-					value="RETURN"
-			)
+		require = 1,
+		method="setAttributes",
+		at=@At(
+			value="RETURN"
+		)
 	)
 	void onSetAttributes(BipedEntityModel<T> model, CallbackInfo ci) {
-		((WasCrawlingPrevTick)model).setCrawling(crawling);
+		((CrawlingInfo)model).setCrawling(crawling);
 	}
 
 	// Prevent head pitch change when in swimming pose but not in water
@@ -71,11 +71,11 @@ public abstract class BipedEntityModelMixin<T extends LivingEntity> extends Enti
 		at=@At(
 			value = "INVOKE",
 			target = "Lnet/minecraft/client/render/entity/model/BipedEntityModel;lerpAngle(FFF)F",
-			ordinal = 2
+			ordinal = 1
 		)
 	)
 	float onLerp(BipedEntityModel bipedEntityModel, float f, float g, float h) {
-		return head.pitch; // don't change pitch
+		return h; // don't change pitch
 	}
 
 	// Prevent model change when in swimming pose but not in water
@@ -111,7 +111,7 @@ public abstract class BipedEntityModelMixin<T extends LivingEntity> extends Enti
 
 		torso.roll = 0;
 		torso.pitch = 0;
-		//torso.setPivot(0, 0, 0);
+		torso.pivotZ = 0;
 
 		leftLeg.pivotX = 1.9F;
 		rightLeg.pivotX = -1.9F;
@@ -120,93 +120,127 @@ public abstract class BipedEntityModelMixin<T extends LivingEntity> extends Enti
 		rightArm.setPivot(-5, 2, 0);
 	}
 
-	@Inject(
-			require = 1,
-			method="setAngles(Lnet/minecraft/entity/LivingEntity;FFFFF)V",
-			at=@At(
-				value="RETURN"
-			)
-	)
-	void afterSetAngles(LivingEntity e, float dist, float _0, float _1, float headYawDegrees, float headPitchDegrees, CallbackInfo ci) {
-		if(crawling)
-			crawl$setCrawlModel(e, dist);
+	private float l(float original, float changed) {
+		return lerp(leaningPitch, original, changed);
 	}
 
-	private float ll(float original, float changed) {
-		return lerp(leaningPitch, original, changed);
+	private float la(float original, float changed) {
+		return lerpAngle(leaningPitch, original, changed);
 	}
 
 	private void llPivot(ModelPart mp, float x, float y, float z) {
 		mp.setPivot(
-			ll(mp.pivotX, x),
-			ll(mp.pivotY, y),
-			ll(mp.pivotZ, z)
+			l(mp.pivotX, x),
+			l(mp.pivotY, y),
+			l(mp.pivotZ, z)
 		);
 	}
 
 	private void llAngles(ModelPart mp, float roll, float yaw, float pitch) {
-		mp.roll = ll(mp.roll, roll);
-		mp.yaw = ll(mp.yaw, yaw);
-		mp.pitch = ll(mp.pitch, pitch);
+		mp.roll = la(mp.roll, roll);
+		mp.yaw = la(mp.yaw, yaw);
+		mp.pitch = la(mp.pitch, pitch);
 	}
 
-	private void crawl$setCrawlModel(LivingEntity e, float dist) {
+	@Inject(
+		require = 1,
+		method="setAngles(Lnet/minecraft/entity/LivingEntity;FFFFF)V",
+		at=@At(
+			value="RETURN"
+		)
+	)
+	void afterSetAngles(LivingEntity e, float dist, float _0, float _1, float headYawDegrees, float headPitchDegrees, CallbackInfo ci) {
+		if(!crawling) return;
+
 		MinecraftClient mc = MinecraftClient.getInstance();
 
-		head.roll = ll(head.roll, -head.yaw);
-		head.yaw = ll(head.yaw, 0);
-		head.pitch = ll(head.pitch, (float) (head.pitch - PI / 2.0));
-
-		head.pivotZ = ll(head.pivotZ, (float) (cos(dist*2) + 1)/2.0F);
-
 		float torsoRollDiv = 6F;
+		float torsoPitchAngle = -(1F/24F * (float)PI);
+		float torsoHeight = 12F;
+		float torsoHeightChange = (float)-sin(torsoPitchAngle)*torsoHeight;
 
-		torso.yaw = ll(torso.yaw, (float) sin(dist) / 5F);
-		torso.roll = ll(torso.roll, (float) -sin(dist) / torsoRollDiv);
+		llAngles(
+			torso,
+			(float) -sin(dist) / torsoRollDiv,
+			(float) sin(dist) / 5F,
+			torsoPitchAngle
+		);
+
+		torso.pivotZ = l(torso.pivotZ, torsoHeightChange);
+
+		llAngles(
+			head,
+			-head.yaw,
+			0,
+			(float) (head.pitch - PI / 2.0)
+		);
+
+		head.pivotZ = l(head.pivotZ, torsoHeightChange + (float) cos(dist*2)/2.0F);
+
+		helmet.copyPositionAndRotation(head);
 
 		llPivot(
 			leftLeg,
-			1.9F + ((float) sin(dist) / torsoRollDiv) * 12,
-			12.0F + (float) sin(dist) * 1.5F,
-			0.0F
+			1.9F + ((float) sin(dist) / torsoRollDiv) * torsoHeight,
+			12.0F + (float) magic0(dist - (3F/4F)*PI) * 2F,
+			magic0(dist - PI/2)
 		);
 		llAngles(
 			leftLeg,
-			-magic1(dist + PI) / 8.F,
+			-magic1(dist + PI) / 6.F,
 			torso.yaw,
 			0
 		);
 
 		llPivot(
 			rightLeg,
-			-1.9F + ((float) sin(dist) / torsoRollDiv) * 12,
-			12.0F + (float) sin(dist + PI) * 1.5F,
-			0.0F
+			-1.9F + ((float) sin(dist) / torsoRollDiv) * torsoHeight,
+			12.0F + (float) magic0(dist + PI/4F) * 2F,
+			magic0(dist + PI/2)
 		);
 		llAngles(
 			rightLeg,
-			magic1(dist) / 8.F,
+			magic1(dist) / 6.F,
 			torso.yaw,
 			0
 		);
 
+		float armFromTorsoOffset = -1;
 		llPivot(
 			leftArm,
 			5,
 			2,
-			0
+			torsoHeightChange + armFromTorsoOffset
 		);
 
 		llPivot(
 			rightArm,
 			-5,
 			2,
-			0
+			torsoHeightChange + armFromTorsoOffset
 		);
 
+		Consumer<Hand> usingArmTransformer = (Hand hand) -> {
+			if(hand == Hand.OFF_HAND)
+				llAngles(
+					leftArm,
+					-leftArm.yaw,
+					0,
+					(float) (leftArm.pitch - PI / 2.0)
+				);
+			else
+				llAngles(
+					rightArm,
+					-rightArm.yaw,
+					0,
+					(float) (rightArm.pitch - PI / 2.0)
+				);
+		};
+
 		if(e.isUsingItem()) {
-			leftArm.pitch = ll(leftArm.pitch, leftArm.pitch - (float)PI / 2.0F);
-			rightArm.pitch = ll(rightArm.pitch, rightArm.pitch - (float)PI / 2.0F);
+			usingArmTransformer.accept(Hand.MAIN_HAND);
+			usingArmTransformer.accept(Hand.OFF_HAND);
+
 			return;
 		}
 
@@ -215,24 +249,20 @@ public abstract class BipedEntityModelMixin<T extends LivingEntity> extends Enti
 				leftArm,
 				(float)(-PI / 2.0) + magic0(dist + PI/2.0),
 				torso.yaw - (float)(PI / 2.0),
-				0
+				-0.5F
 			);
 		}
-		else {
-			leftArm.pitch = ll(leftArm.pitch, leftArm.pitch - (float)PI / 2.0F);
-		}
+		else usingArmTransformer.accept(Hand.OFF_HAND);
 
 		if(handSwingProgress <= 0 || e.preferredHand != Hand.MAIN_HAND) {
 			llAngles(
 				rightArm,
 				(float)(PI / 2.0) + -magic0(dist - PI/2.0),
 				torso.yaw + (float)(PI / 2.0),
-				0
+				-0.5F
 			);
 		}
-		else {
-			rightArm.pitch = ll(rightArm.pitch, rightArm.pitch - (float)PI / 2.0F);
-		}
+		else usingArmTransformer.accept(Hand.MAIN_HAND);
 
 	}
 
@@ -240,6 +270,8 @@ public abstract class BipedEntityModelMixin<T extends LivingEntity> extends Enti
 		return (float) pow(sin(rad) + 1, 2);
 	}
 
+	// cos-like
+	// http://yotx.ru/#!1/3_h/sH@1sH@0YM4X9t/2h/82z/bN@IIfyv7f/@/W/sgXd29w/2STTsxs4p4/F0i/G4dXmxu7@1v/n797@xsbd5AdkCbe/sgjd2ti92d/cP9kk07AbogPG4A9piPIIOdve39gEH
 	private static float magic0(double rad) {
 		rad = rad % (PI * 2.0);
 		if(rad <= PI / 2.0)

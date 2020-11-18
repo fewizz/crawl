@@ -3,16 +3,19 @@ package ru.fewizz.crawl.mixin.client;
 import net.minecraft.client.render.entity.EntityRenderDispatcher;
 import net.minecraft.client.render.entity.LivingEntityRenderer;
 import net.minecraft.client.render.entity.model.PlayerEntityModel;
+import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.client.util.math.Vector3f;
+import net.minecraft.entity.EntityPose;
+import net.minecraft.util.math.MathHelper;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.Redirect;
 
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.render.entity.PlayerEntityRenderer;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import ru.fewizz.crawl.Crawl.Shared;
-import ru.fewizz.crawl.WasCrawlingPrevTick;
+import ru.fewizz.crawl.CrawlingInfo;
 
 @Mixin(PlayerEntityRenderer.class)
 abstract class PlayerEntityRendererMixin extends LivingEntityRenderer<AbstractClientPlayerEntity, PlayerEntityModel<AbstractClientPlayerEntity>> {
@@ -21,18 +24,24 @@ abstract class PlayerEntityRendererMixin extends LivingEntityRenderer<AbstractCl
 		super(dispatcher, model, shadowRadius);
 	}
 
-	@Redirect(
+	@Inject(
 		require = 1,
+		cancellable = true,
 		method = "setupTransforms",
 		at = @At(
-			value = "INVOKE",
-			target = "net/minecraft/client/network/AbstractClientPlayerEntity.getLeaningPitch(F)F"
+			value = "HEAD"
 		)
 	)
-	float getLeaningPitchRedirect(AbstractClientPlayerEntity p, float delta) {
-		//float lp = p.getLeaningPitch(delta);
-		return p.getLeaningPitch(delta);
-		//return ((WasCrawlingPrevTick)getModel()).isCrawling() || (lp != 0 && !p.isInSwimmingPose()) ? 0 : lp;
+	void setupCrawlTransformations(AbstractClientPlayerEntity abstractClientPlayerEntity, MatrixStack matrixStack, float f, float g, float h, CallbackInfo ci) {
+		if( ((CrawlingInfo)getModel()).isCrawling() ) {
+			super.setupTransforms(abstractClientPlayerEntity, matrixStack, f, g, h);
+			float i = abstractClientPlayerEntity.getLeaningPitch(h);
+			float k = MathHelper.lerp(i, 0.0F, -90);
+			matrixStack.translate(0, i/10F, 0);
+			matrixStack.translate(0, 0, i*abstractClientPlayerEntity.getEyeHeight(EntityPose.STANDING));
+			matrixStack.multiply(Vector3f.POSITIVE_X.getDegreesQuaternion(k));
+			ci.cancel();
+		}
 	}
 
 	@Inject(
@@ -44,12 +53,12 @@ abstract class PlayerEntityRendererMixin extends LivingEntityRenderer<AbstractCl
 			target = "net/minecraft/client/render/entity/PlayerEntityRenderer.setModelPose(Lnet/minecraft/client/network/AbstractClientPlayerEntity;)V"
 		)
 	)
-	void onRednerArm(CallbackInfo ci) {
-		((WasCrawlingPrevTick)getModel()).setCrawling(false);
+	void resetCrawlStateBeforeArmRendering(CallbackInfo ci) {
+		((CrawlingInfo)getModel()).setCrawling(false);
 	}
 
 	@Inject(require = 1, method = "setModelPose", at = @At(value = "RETURN"))
-	void onSetModelPose(AbstractClientPlayerEntity abstractClientPlayerEntity, CallbackInfo ci) {
-		((WasCrawlingPrevTick)getModel()).setCrawling(abstractClientPlayerEntity.getPose() == Shared.CRAWLING);
+	void setCrawlState(AbstractClientPlayerEntity abstractClientPlayerEntity, CallbackInfo ci) {
+		((CrawlingInfo)getModel()).setCrawling(abstractClientPlayerEntity.getPose() == Shared.CRAWLING);
 	}
 }
