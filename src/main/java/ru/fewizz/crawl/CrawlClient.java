@@ -17,7 +17,7 @@ public class CrawlClient implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
-        if(ru.fewizz.crawl.Crawl.animationOnly) return;
+        if(ru.fewizz.crawl.Crawl.animationOnly()) return;
 
         crawlKey = new KeyBinding (
                 "key.crawl",
@@ -27,4 +27,13 @@ public class CrawlClient implements ClientModInitializer {
         );
         KeyBindingHelper.registerKeyBinding(crawlKey);
     }
+
+    public enum KeyActivationType {
+        TOGGLE, HOLD;
+    }
+
+    public static KeyActivationType keyActivationType() {
+        return KeyActivationType.valueOf((String) Crawl.PROPERTIES.computeIfAbsent("key_activation_type", str -> KeyActivationType.HOLD.name()));
+    }
+    public static void setKeyActivationType(KeyActivationType value) { Crawl.PROPERTIES.setProperty("key_activation_type", value.name()); }
 }

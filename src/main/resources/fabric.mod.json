@@ -15,6 +15,9 @@
 		],
 		"client": [
 			"ru.fewizz.crawl.CrawlClient"
+		],
+		"modmenu": [
+			"ru.fewizz.crawl.ModMenuIntegration"
 		]
 	},
 	"custom": {

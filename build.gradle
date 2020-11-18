@@ -24,7 +24,11 @@ dependencies {
 	modCompile "com.github.Chocohead:Fabric-ASM:${project.fabric_asm_version}"
 	include "com.github.Chocohead:Fabric-ASM:${project.fabric_asm_version}"
 
-	modCompile "com.github.juancarloscp52:BedrockIfy:-SNAPSHOT"
+	//modCompile 'com.github.juancarloscp52:BedrockIfy:-SNAPSHOT'
+	modApi ("me.shedaniel.cloth:config-2:${project.cloth_config_api_version}")  {
+		exclude(group: "net.fabricmc.fabric-api")
+	}
+	modImplementation "io.github.prospector:modmenu:${project.modmenu_version}"
 }
 
 processResources {

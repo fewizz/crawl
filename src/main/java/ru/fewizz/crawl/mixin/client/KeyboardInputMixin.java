@@ -18,26 +18,33 @@ import ru.fewizz.crawl.Crawl.Shared;
 
 @Mixin(KeyboardInput.class)
 abstract class KeyboardInputMixin extends Input {
+	boolean crawl$state;
+
 	@Inject(require = 1, method="tick", at=@At("HEAD"))
 	void onTickBegin(CallbackInfo ci) {
-		if(Crawl.animationOnly)
+		if(Crawl.animationOnly())
 			return;
 		PlayerEntity player = MinecraftClient.getInstance().player;
-		
-		boolean newCrawlState = CrawlClient.crawlKey.isPressed();
+
+		if(CrawlClient.keyActivationType() == CrawlClient.KeyActivationType.HOLD)
+			crawl$state = CrawlClient.crawlKey.isPressed();
+
+		else if(CrawlClient.crawlKey.wasPressed())
+			crawl$state = !crawl$state;
+
 		boolean oldCrawlState = player.getPose() == Shared.CRAWLING;
 		
-		if(newCrawlState != oldCrawlState) {
+		if(crawl$state != oldCrawlState) {
 			MinecraftClient.getInstance().getNetworkHandler().sendPacket(
 				new CustomPayloadC2SPacket(
 					Crawl.CRAWL_IDENTIFIER,
 					new PacketByteBuf(
-						Unpooled.wrappedBuffer(new byte[] { (byte) (newCrawlState ? 1 : 0)})
+						Unpooled.wrappedBuffer(new byte[] { (byte) (crawl$state ? 1 : 0)})
 					)
 				)
 			);
 
-			player.getDataTracker().set(Shared.CRAWLING_REQUEST, newCrawlState);
+			player.getDataTracker().set(Shared.CRAWLING_REQUEST, crawl$state);
 		}
 		
 	}
