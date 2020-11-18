@@ -74,19 +74,24 @@ public class CrawlClient implements ClientModInitializer {
     }
 
     private static void hideKey() {
+        GameOptions opts = MinecraftClient.getInstance().options;
+
+        if(!ArrayUtils.contains(opts.keysAll, crawlKey)) return; // Already hidden
+
         ((KeyBindingAccessor)crawlKey).setDefaultKey(((KeyBindingAccessor)crawlKey).getBoundKey());
         crawlKey.setBoundKey(InputUtil.UNKNOWN_KEY);
         KeyBinding.updateKeysByCode();
 
-        GameOptions opts = MinecraftClient.getInstance().options;
         ((GameOptionsAccessor)opts).setAllKeyBindings(ArrayUtils.removeElement(opts.keysAll, crawlKey));
     }
 
     private static void restoreKey() {
+        GameOptions opts = MinecraftClient.getInstance().options;
+        if(ArrayUtils.contains(opts.keysAll, crawlKey)) return; // Already restored
+
         crawlKey.setBoundKey(crawlKey.getDefaultKey());
         KeyBinding.updateKeysByCode();
 
-        GameOptions opts = MinecraftClient.getInstance().options;
         ((GameOptionsAccessor)opts).setAllKeyBindings(ArrayUtils.add(opts.keysAll, crawlKey));
     }
 
@@ -97,6 +102,7 @@ public class CrawlClient implements ClientModInitializer {
     public static void setAnimationOnly(boolean value) {
         if(value) hideKey();
         else restoreKey();
+
         PROPERTIES.setProperty("animation_only", Boolean.toString(value));
     }
 

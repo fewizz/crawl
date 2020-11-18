@@ -36,11 +36,11 @@ abstract class PlayerEntityRendererMixin extends LivingEntityRenderer<AbstractCl
 	void setupCrawlTransformations(AbstractClientPlayerEntity abstractClientPlayerEntity, MatrixStack matrixStack, float f, float g, float h, CallbackInfo ci) {
 		if( ((CrawlingInfo)getModel()).isCrawling() ) {
 			super.setupTransforms(abstractClientPlayerEntity, matrixStack, f, g, h);
-			float i = abstractClientPlayerEntity.getLeaningPitch(h);
-			float k = MathHelper.lerp(i, 0.0F, -90);
-			matrixStack.translate(0, i/10F, 0);
-			matrixStack.translate(0, 0, i*abstractClientPlayerEntity.getEyeHeight(EntityPose.STANDING)/2.0);
-			matrixStack.multiply(Vector3f.POSITIVE_X.getDegreesQuaternion(k));
+			float pitch = abstractClientPlayerEntity.getLeaningPitch(h);
+			float lerpedHalfPI = MathHelper.lerp(pitch, 0.0F, -90);
+			matrixStack.translate(0, pitch/10F, 0);
+			matrixStack.translate(0, 0, pitch*abstractClientPlayerEntity.getEyeHeight(EntityPose.STANDING)/2.0);
+			matrixStack.multiply(Vector3f.POSITIVE_X.getDegreesQuaternion(lerpedHalfPI));
 			ci.cancel();
 		}
 	}
