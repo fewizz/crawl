@@ -2,12 +2,14 @@
 	"schemaVersion": 1,
 	"id": "crawl",
 	"name": "Crawl",
+	"description": "Allows you to crawl",
 	"version": "${version}",
 	"authors": [
 		"fewizz",
 		"McSkinnerOG",
 		"Chocohead"
 	],
+	"icon": "assets/crawl/icon.png",
 	"environment": "*",
 	"entrypoints": { 
 		"main": [
@@ -19,6 +21,11 @@
 		"modmenu": [
 			"ru.fewizz.crawl.ModMenuIntegration"
 		]
+	},
+	"contact": {
+		"homepage": "https://www.curseforge.com/minecraft/mc-mods/crawl",
+		"sources": "https://github.com/fewizz/Crawl",
+		"issues": "https://github.com/fewizz/Crawl/issues"
 	},
 	"custom": {
 		"mm:early_risers": [

@@ -96,8 +96,6 @@ public abstract class BipedEntityModelMixin<T extends LivingEntity> extends Enti
 		return livingEntity.isInSwimmingPose() ? leaningPitch : 0;
 	}
 
-	//public ModelPart headCopy = ModelPart.method_29991();
-
 	@Inject(
 		require = 1,
 		method="setAngles(Lnet/minecraft/entity/LivingEntity;FFFFF)V",
@@ -123,7 +121,6 @@ public abstract class BipedEntityModelMixin<T extends LivingEntity> extends Enti
 	private float l(float original, float changed) {
 		return lerp(leaningPitch, original, changed);
 	}
-
 	private float la(float original, float changed) {
 		return lerpAngle(leaningPitch, original, changed);
 	}
@@ -155,29 +152,9 @@ public abstract class BipedEntityModelMixin<T extends LivingEntity> extends Enti
 		MinecraftClient mc = MinecraftClient.getInstance();
 
 		float torsoRollDiv = 6F;
-		float torsoPitchAngle = -(1F/24F * (float)PI);
+		float torsoPitchAngle = - (float)(-cos(leaningPitch * 2*PI) + 1);
+		float torsoYawAngle = (float) sin(dist) / 5F;
 		float torsoHeight = 12F;
-		float torsoHeightChange = (float)-sin(torsoPitchAngle)*torsoHeight;
-
-		llAngles(
-			torso,
-			(float) -sin(dist) / torsoRollDiv,
-			(float) sin(dist) / 5F,
-			torsoPitchAngle
-		);
-
-		torso.pivotZ = l(torso.pivotZ, torsoHeightChange);
-
-		llAngles(
-			head,
-			-head.yaw,
-			0,
-			(float) (head.pitch - PI / 2.0)
-		);
-
-		head.pivotZ = l(head.pivotZ, torsoHeightChange + (float) cos(dist*2)/2.0F);
-
-		helmet.copyPositionAndRotation(head);
 
 		llPivot(
 			leftLeg,
@@ -188,7 +165,7 @@ public abstract class BipedEntityModelMixin<T extends LivingEntity> extends Enti
 		llAngles(
 			leftLeg,
 			-magic1(dist + PI) / 6.F,
-			torso.yaw,
+			torsoYawAngle,
 			0
 		);
 
@@ -201,23 +178,47 @@ public abstract class BipedEntityModelMixin<T extends LivingEntity> extends Enti
 		llAngles(
 			rightLeg,
 			magic1(dist) / 6.F,
-			torso.yaw,
+			torsoYawAngle,
 			0
 		);
 
-		float armFromTorsoOffset = -1;
+		float torsoPivotY = torsoHeight - (float)cos(la(torso.pitch, torsoPitchAngle))*torsoHeight;
+		float torsoPivotZ = (float)-sin(la(torso.pitch, torsoPitchAngle))*torsoHeight;
+
+		llAngles(
+			torso,
+			(float) -sin(dist) / torsoRollDiv,
+			torsoYawAngle,
+			torsoPitchAngle
+		);
+
+		torso.pivotZ = torsoPivotZ;
+		torso.pivotY = torsoPivotY;
+
+		llAngles(
+			head,
+			-head.yaw,
+			0,
+			(float) (head.pitch - PI / 2.0)
+		);
+
+		head.pivotZ = torsoPivotZ + (float) cos(dist*2)/2.0F;
+		head.pivotY = torsoPivotY;
+
+		helmet.copyPositionAndRotation(head);
+
 		llPivot(
 			leftArm,
 			5,
-			2,
-			torsoHeightChange + armFromTorsoOffset
+			torsoPivotY + 2,
+			torsoPivotZ
 		);
 
 		llPivot(
 			rightArm,
 			-5,
-			2,
-			torsoHeightChange + armFromTorsoOffset
+			torsoPivotY + 2,
+			torsoPivotZ
 		);
 
 		Consumer<Hand> usingArmTransformer = (Hand hand) -> {

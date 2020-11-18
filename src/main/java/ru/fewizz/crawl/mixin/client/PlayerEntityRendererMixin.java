@@ -16,6 +16,7 @@ import net.minecraft.client.render.entity.PlayerEntityRenderer;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import ru.fewizz.crawl.Crawl.Shared;
 import ru.fewizz.crawl.CrawlingInfo;
+import ru.fewizz.crawl.PrevPoseInfo;
 
 @Mixin(PlayerEntityRenderer.class)
 abstract class PlayerEntityRendererMixin extends LivingEntityRenderer<AbstractClientPlayerEntity, PlayerEntityModel<AbstractClientPlayerEntity>> {
@@ -38,7 +39,7 @@ abstract class PlayerEntityRendererMixin extends LivingEntityRenderer<AbstractCl
 			float i = abstractClientPlayerEntity.getLeaningPitch(h);
 			float k = MathHelper.lerp(i, 0.0F, -90);
 			matrixStack.translate(0, i/10F, 0);
-			matrixStack.translate(0, 0, i*abstractClientPlayerEntity.getEyeHeight(EntityPose.STANDING));
+			matrixStack.translate(0, 0, i*abstractClientPlayerEntity.getEyeHeight(EntityPose.STANDING)/2.0);
 			matrixStack.multiply(Vector3f.POSITIVE_X.getDegreesQuaternion(k));
 			ci.cancel();
 		}
@@ -59,6 +60,14 @@ abstract class PlayerEntityRendererMixin extends LivingEntityRenderer<AbstractCl
 
 	@Inject(require = 1, method = "setModelPose", at = @At(value = "RETURN"))
 	void setCrawlState(AbstractClientPlayerEntity abstractClientPlayerEntity, CallbackInfo ci) {
-		((CrawlingInfo)getModel()).setCrawling(abstractClientPlayerEntity.getPose() == Shared.CRAWLING);
+		((CrawlingInfo)getModel()).setCrawling(
+			getModel().leaningPitch > 0
+			&&
+			(
+				abstractClientPlayerEntity.getPose() == Shared.CRAWLING
+				||
+				((PrevPoseInfo)abstractClientPlayerEntity).getPrevPose() == Shared.CRAWLING
+			)
+		);
 	}
 }

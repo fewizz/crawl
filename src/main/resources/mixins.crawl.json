@@ -4,18 +4,19 @@
 	"required": true,
 	"mixins": [
 		"EntityMixin",
-		"PlayerEntityMixin",
-		"LivingEntityMixin"
+		"LivingEntityMixin",
+		"PlayerEntityMixin"
 	],
 	"client": [
-		"client.ClientPlayerEntityMixin",
-		"client.KeyboardInputMixin",
 		"client.BipedEntityModelMixin",
+		"client.ClientPlayerEntityMixin",
 		"client.ElytraEntityModelMixin",
-		"client.PlayerEntityRendererMixin",
 		"client.EntityRendererMixin",
+		"client.GameOptionsAccessor",
 		"client.KeyBindingAccessor",
-		"client.GameOptionsAccessor"
+		"client.KeyboardInputMixin",
+		"client.PlayerEntityRendererMixin",
+		"client.AbstractClientPlayerEntityMixin"
 	]
 
 }
