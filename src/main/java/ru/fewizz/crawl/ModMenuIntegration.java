@@ -5,7 +5,7 @@ import io.github.prospector.modmenu.api.ModMenuApi;
 import me.shedaniel.clothconfig2.api.ConfigBuilder;
 import me.shedaniel.clothconfig2.api.ConfigCategory;
 import net.minecraft.text.LiteralText;
-import org.apache.commons.lang3.StringUtils;
+import net.minecraft.text.TranslatableText;
 
 public class ModMenuIntegration implements ModMenuApi {
 
@@ -14,24 +14,24 @@ public class ModMenuIntegration implements ModMenuApi {
         return parent -> {
             ConfigBuilder builder = ConfigBuilder.create()
                 .setParentScreen(parent)
-                .setSavingRunnable(Crawl::saveConfig);
+                .setSavingRunnable(CrawlClient::saveConfig);
 
-            ConfigCategory options = builder.getOrCreateCategory(new LiteralText("Options"));
+            ConfigCategory options = builder.getOrCreateCategory(new LiteralText("Crawl Config"));
 
             options.addEntry(
                 builder.entryBuilder()
-                    .startBooleanToggle(new LiteralText("Animation Only"), Crawl.animationOnly())
+                    .startBooleanToggle(new TranslatableText("crawlConfig.animationOnly"), CrawlClient.isAnimationOnly())
                     .setDefaultValue(false)
-                    .setSaveConsumer(Crawl::setAnimationOnly)
+                    .setSaveConsumer(CrawlClient::setAnimationOnly)
                     .build()
             );
 
             options.addEntry(
                 builder.entryBuilder()
-                    .startEnumSelector(new LiteralText("Key Activation Type"), CrawlClient.KeyActivationType.class, CrawlClient.keyActivationType())
+                    .startEnumSelector(new TranslatableText("crawlConfig.keyActivationType"), CrawlClient.KeyActivationType.class, CrawlClient.getKeyActivationType())
                     .setDefaultValue(CrawlClient.KeyActivationType.HOLD)
                     .setSaveConsumer(CrawlClient::setKeyActivationType)
-                    .setEnumNameProvider(e -> new LiteralText(StringUtils.capitalize(e.name().toLowerCase())))
+                    .setEnumNameProvider(e -> new TranslatableText(((CrawlClient.KeyActivationType)e).translationKey))
                     .build()
             );
 

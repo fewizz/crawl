@@ -1,3 +1,7 @@
 {
-	"key.crawl": "Crawl"
+	"key.crawl": "Crawl",
+	"crawlConfig.animationOnly": "Animation Only",
+	"crawlConfig.keyActivationType": "Key Activation Type",
+	"crawlConfig.keyActivationTypeHold": "Hold",
+	"crawlConfig.keyActivationTypeToggle": "Toggle"
 }

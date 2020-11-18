@@ -13,7 +13,9 @@
 		"client.BipedEntityModelMixin",
 		"client.ElytraEntityModelMixin",
 		"client.PlayerEntityRendererMixin",
-		"client.EntityRendererMixin"
+		"client.EntityRendererMixin",
+		"client.KeyBindingAccessor",
+		"client.GameOptionsAccessor"
 	]
 
 }

@@ -22,11 +22,11 @@ abstract class KeyboardInputMixin extends Input {
 
 	@Inject(require = 1, method="tick", at=@At("HEAD"))
 	void onTickBegin(CallbackInfo ci) {
-		if(Crawl.animationOnly())
+		if(CrawlClient.isAnimationOnly())
 			return;
 		PlayerEntity player = MinecraftClient.getInstance().player;
 
-		if(CrawlClient.keyActivationType() == CrawlClient.KeyActivationType.HOLD)
+		if(CrawlClient.getKeyActivationType() == CrawlClient.KeyActivationType.HOLD)
 			crawl$state = CrawlClient.crawlKey.isPressed();
 
 		else if(CrawlClient.crawlKey.wasPressed())
