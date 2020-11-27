@@ -5,6 +5,7 @@ import net.minecraft.client.model.ModelPart;
 import net.minecraft.util.Hand;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
@@ -118,13 +119,16 @@ public abstract class BipedEntityModelMixin<T extends LivingEntity> extends Enti
 		rightArm.setPivot(-5, 2, 0);
 	}
 
+	@Unique
 	private float l(float original, float changed) {
 		return lerp(leaningPitch, original, changed);
 	}
+	@Unique
 	private float la(float original, float changed) {
 		return lerpAngle(leaningPitch, original, changed);
 	}
 
+	@Unique
 	private void llPivot(ModelPart mp, float x, float y, float z) {
 		mp.setPivot(
 			l(mp.pivotX, x),
@@ -133,6 +137,7 @@ public abstract class BipedEntityModelMixin<T extends LivingEntity> extends Enti
 		);
 	}
 
+	@Unique
 	private void llAngles(ModelPart mp, float roll, float yaw, float pitch) {
 		mp.roll = la(mp.roll, roll);
 		mp.yaw = la(mp.yaw, yaw);
@@ -267,12 +272,14 @@ public abstract class BipedEntityModelMixin<T extends LivingEntity> extends Enti
 
 	}
 
+	@Unique
 	private static float magic1(double rad) {
 		return (float) pow(sin(rad) + 1, 2);
 	}
 
 	// cos-like
 	// http://yotx.ru/#!1/3_h/sH@1sH@0YM4X9t/2h/82z/bN@IIfyv7f/@/W/sgXd29w/2STTsxs4p4/F0i/G4dXmxu7@1v/n797@xsbd5AdkCbe/sgjd2ti92d/cP9kk07AbogPG4A9piPIIOdve39gEH
+	@Unique
 	private static float magic0(double rad) {
 		rad = rad % (PI * 2.0);
 		if(rad <= PI / 2.0)
