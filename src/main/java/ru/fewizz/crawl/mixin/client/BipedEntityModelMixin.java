@@ -157,7 +157,7 @@ public abstract class BipedEntityModelMixin<T extends LivingEntity> extends Enti
 		MinecraftClient mc = MinecraftClient.getInstance();
 
 		float torsoRollDiv = 6F;
-		float torsoPitchAngle = - (float)(-cos(leaningPitch * 2*PI) + 1);
+		float torsoPitchAngle = 0;//- (float)(-cos(leaningPitch * 2*PI) + 1);
 		float torsoYawAngle = (float) sin(dist) / 5F;
 		float torsoHeight = 12F;
 
@@ -207,7 +207,7 @@ public abstract class BipedEntityModelMixin<T extends LivingEntity> extends Enti
 			(float) (head.pitch - PI / 2.0)
 		);
 
-		head.pivotZ = torsoPivotZ + (float) cos(dist*2)/2.0F;
+		head.pivotZ = l(0, torsoPivotZ + (float) cos(dist*2)/2.0F);
 		head.pivotY = torsoPivotY;
 
 		helmet.copyPositionAndRotation(head);
