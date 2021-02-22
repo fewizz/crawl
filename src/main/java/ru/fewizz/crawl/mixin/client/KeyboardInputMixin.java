@@ -42,12 +42,10 @@ abstract class KeyboardInputMixin extends Input {
 		boolean oldCrawlState = player.getPose() == Shared.CRAWLING;
 		
 		if(crawl$state != oldCrawlState) {
-			MinecraftClient.getInstance().getNetworkHandler().sendPacket(
+			mc.getNetworkHandler().sendPacket(
 				new CustomPayloadC2SPacket(
 					Crawl.CRAWL_IDENTIFIER,
-					new PacketByteBuf(
-						Unpooled.wrappedBuffer(new byte[] { (byte) (crawl$state ? 1 : 0)})
-					)
+					new PacketByteBuf(Unpooled.copyBoolean(crawl$state))
 				)
 			);
 

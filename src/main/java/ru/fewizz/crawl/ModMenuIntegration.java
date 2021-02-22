@@ -20,18 +20,18 @@ public class ModMenuIntegration implements ModMenuApi {
 
             options.addEntry(
                 builder.entryBuilder()
-                    .startBooleanToggle(new TranslatableText("crawlConfig.animationOnly"), CrawlClient.isAnimationOnly())
-                    .setDefaultValue(false)
-                    .setSaveConsumer(CrawlClient::setAnimationOnly)
+                    .startEnumSelector(new TranslatableText("crawlConfig.keyActivationType"), CrawlClient.KeyActivationType.class, CrawlClient.getKeyActivationType())
+                    .setDefaultValue(CrawlClient.KeyActivationType.HOLD)
+                    .setSaveConsumer(CrawlClient::setKeyActivationType)
+                    .setEnumNameProvider(e -> new TranslatableText(((CrawlClient.KeyActivationType)e).translationKey))
                     .build()
             );
 
             options.addEntry(
                 builder.entryBuilder()
-                    .startEnumSelector(new TranslatableText("crawlConfig.keyActivationType"), CrawlClient.KeyActivationType.class, CrawlClient.getKeyActivationType())
-                    .setDefaultValue(CrawlClient.KeyActivationType.HOLD)
-                    .setSaveConsumer(CrawlClient::setKeyActivationType)
-                    .setEnumNameProvider(e -> new TranslatableText(((CrawlClient.KeyActivationType)e).translationKey))
+                    .startBooleanToggle(new TranslatableText("crawlConfig.animationOnly"), CrawlClient.isAnimationOnly())
+                    .setDefaultValue(false)
+                    .setSaveConsumer(CrawlClient::setAnimationOnly)
                     .build()
             );
 
