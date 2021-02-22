@@ -18,9 +18,7 @@ import ru.fewizz.crawl.Crawl.Shared;
 
 @Mixin(KeyboardInput.class)
 abstract class KeyboardInputMixin extends Input {
-	private static final int CRAWL_TICKS = 70;
 	boolean crawl$state;
-	int sneakPressTicks = -1;
 
 	private boolean computeCrawlState() {
 		MinecraftClient mc = MinecraftClient.getInstance();

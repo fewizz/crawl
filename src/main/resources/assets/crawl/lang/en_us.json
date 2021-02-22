@@ -4,6 +4,5 @@
 	"crawlConfig.keyActivationType": "Crawl Activation Type",
 	"crawlConfig.keyActivationType.Hold": "Hold Crawl Key",
 	"crawlConfig.keyActivationType.Toggle": "Toggle Crawl Key",
-	"crawlConfig.keyActivationType.SneakAndSprint": "Sneak + Sprint",
-	"crawlConfig.keyActivationType.DoubleSneak": "Double Sneak"
+	"crawlConfig.keyActivationType.SneakAndSprint": "Sneak + Sprint"
 }
