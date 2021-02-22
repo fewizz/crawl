@@ -1,7 +1,7 @@
 package ru.fewizz.crawl;
 
-import io.github.prospector.modmenu.api.ConfigScreenFactory;
-import io.github.prospector.modmenu.api.ModMenuApi;
+import com.terraformersmc.modmenu.api.ConfigScreenFactory;
+import com.terraformersmc.modmenu.api.ModMenuApi;
 import me.shedaniel.clothconfig2.api.ConfigBuilder;
 import me.shedaniel.clothconfig2.api.ConfigCategory;
 import net.minecraft.text.LiteralText;
@@ -29,7 +29,7 @@ public class ModMenuIntegration implements ModMenuApi {
             options.addEntry(
                 builder.entryBuilder()
                     .startEnumSelector(new TranslatableText("crawlConfig.keyActivationType"), CrawlClient.KeyActivationType.class, CrawlClient.getKeyActivationType())
-                    .setDefaultValue(CrawlClient.KeyActivationType.HOLD)
+                    .setDefaultValue(CrawlClient.KeyActivationType.CTRL_SHIFT)
                     .setSaveConsumer(CrawlClient::setKeyActivationType)
                     .setEnumNameProvider(e -> new TranslatableText(((CrawlClient.KeyActivationType)e).translationKey))
                     .build()

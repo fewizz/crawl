@@ -107,7 +107,9 @@ public class CrawlClient implements ClientModInitializer {
     }
 
     public enum KeyActivationType {
-        TOGGLE("crawlConfig.keyActivationTypeToggle"), HOLD("crawlConfig.keyActivationTypeHold");
+        TOGGLE("crawlConfig.keyActivationTypeToggle"),
+        HOLD("crawlConfig.keyActivationTypeHold"),
+        CTRL_SHIFT("crawlConfig.keyActivationTypeCtrlShift");
 
         KeyActivationType(String translationKey) {
             this.translationKey = translationKey;

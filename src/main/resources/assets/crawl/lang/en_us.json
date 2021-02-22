@@ -3,5 +3,6 @@
 	"crawlConfig.animationOnly": "Animation Only",
 	"crawlConfig.keyActivationType": "Key Activation Type",
 	"crawlConfig.keyActivationTypeHold": "Hold",
-	"crawlConfig.keyActivationTypeToggle": "Toggle"
+	"crawlConfig.keyActivationTypeToggle": "Toggle",
+	"crawlConfig.keyActivationTypeCtrlShift": "Sneak + Sprint"
 }
