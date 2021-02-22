@@ -29,7 +29,7 @@ public class ModMenuIntegration implements ModMenuApi {
             options.addEntry(
                 builder.entryBuilder()
                     .startEnumSelector(new TranslatableText("crawlConfig.keyActivationType"), CrawlClient.KeyActivationType.class, CrawlClient.getKeyActivationType())
-                    .setDefaultValue(CrawlClient.KeyActivationType.CTRL_SHIFT)
+                    .setDefaultValue(CrawlClient.KeyActivationType.HOLD)
                     .setSaveConsumer(CrawlClient::setKeyActivationType)
                     .setEnumNameProvider(e -> new TranslatableText(((CrawlClient.KeyActivationType)e).translationKey))
                     .build()

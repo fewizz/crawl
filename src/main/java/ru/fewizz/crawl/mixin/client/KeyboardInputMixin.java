@@ -18,24 +18,28 @@ import ru.fewizz.crawl.Crawl.Shared;
 
 @Mixin(KeyboardInput.class)
 abstract class KeyboardInputMixin extends Input {
+	private static final int CRAWL_TICKS = 70;
 	boolean crawl$state;
+	int sneakPressTicks = -1;
+
+	private boolean computeCrawlState() {
+		MinecraftClient mc = MinecraftClient.getInstance();
+
+		switch (CrawlClient.getKeyActivationType()) {
+			case SNEAK_AND_SPRINT: return mc.options.keySneak.isPressed() && (mc.options.keySprint.isPressed() || crawl$state);
+			case HOLD: return CrawlClient.crawlKey.isPressed();
+			case TOGGLE: return CrawlClient.crawlKey.wasPressed() ? !crawl$state : crawl$state;
+		}
+
+		return false;
+	}
 
 	@Inject(require = 1, method="tick", at=@At("HEAD"))
 	void onTickBegin(CallbackInfo ci) {
 		MinecraftClient mc = MinecraftClient.getInstance();
 		PlayerEntity player = mc.player;
 
-		if(!CrawlClient.isAnimationOnly()) {
-			if(CrawlClient.getKeyActivationType() == CrawlClient.KeyActivationType.CTRL_SHIFT)
-				crawl$state = mc.options.keySneak.isPressed() && (mc.options.keySprint.isPressed() || crawl$state);
-			else if (CrawlClient.getKeyActivationType() == CrawlClient.KeyActivationType.HOLD)
-				crawl$state = CrawlClient.crawlKey.isPressed();
-			else if (CrawlClient.crawlKey.wasPressed())
-				crawl$state = !crawl$state;
-		}
-		else {
-			crawl$state = false;
-		}
+		crawl$state = !CrawlClient.isAnimationOnly() && computeCrawlState();
 
 		boolean oldCrawlState = player.getPose() == Shared.CRAWLING;
 		

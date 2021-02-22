@@ -41,14 +41,18 @@ public class CrawlClient implements ClientModInitializer {
         KeyBindingHelper.registerKeyBinding(crawlKey);
 
         ClientLifecycleEvents.CLIENT_STARTED.register(client -> {
-            if(isAnimationOnly())
-                hideKey();
+            updateKey();
         });
 
         ClientLifecycleEvents.CLIENT_STOPPING.register(client -> {
-            if(isAnimationOnly())
-                restoreKey();
+            restoreKey();
         });
+    }
+
+    private static void updateKey() {
+        boolean hide = isAnimationOnly() || getKeyActivationType() == KeyActivationType.SNEAK_AND_SPRINT;
+        if(hide) hideKey();
+        else restoreKey();
     }
 
     private static Path configPath() {
@@ -87,6 +91,7 @@ public class CrawlClient implements ClientModInitializer {
 
     private static void restoreKey() {
         GameOptions opts = MinecraftClient.getInstance().options;
+
         if(ArrayUtils.contains(opts.keysAll, crawlKey)) return; // Already restored
 
         crawlKey.setBoundKey(crawlKey.getDefaultKey());
@@ -100,16 +105,14 @@ public class CrawlClient implements ClientModInitializer {
     }
 
     public static void setAnimationOnly(boolean value) {
-        if(value) hideKey();
-        else restoreKey();
-
         PROPERTIES.setProperty("animation_only", Boolean.toString(value));
+        updateKey();
     }
 
     public enum KeyActivationType {
-        TOGGLE("crawlConfig.keyActivationTypeToggle"),
-        HOLD("crawlConfig.keyActivationTypeHold"),
-        CTRL_SHIFT("crawlConfig.keyActivationTypeCtrlShift");
+        TOGGLE("crawlConfig.keyActivationType.Toggle"),
+        HOLD("crawlConfig.keyActivationType.Hold"),
+        SNEAK_AND_SPRINT("crawlConfig.keyActivationType.SneakAndSprint");
 
         KeyActivationType(String translationKey) {
             this.translationKey = translationKey;
@@ -119,10 +122,18 @@ public class CrawlClient implements ClientModInitializer {
     }
 
     public static KeyActivationType getKeyActivationType() {
-        return KeyActivationType.valueOf((String) PROPERTIES.computeIfAbsent("key_activation_type", str -> KeyActivationType.HOLD.name()));
+        KeyActivationType defaultAT = KeyActivationType.HOLD;
+        String activationType = (String) PROPERTIES.computeIfAbsent("key_activation_type", str -> defaultAT.name());
+        try {
+            return KeyActivationType.valueOf(activationType);
+        } catch(Exception e) {
+            setKeyActivationType(defaultAT);
+            return defaultAT;
+        }
     }
 
     public static void setKeyActivationType(KeyActivationType value) {
         PROPERTIES.setProperty("key_activation_type", value.name());
+        updateKey();
     }
 }
