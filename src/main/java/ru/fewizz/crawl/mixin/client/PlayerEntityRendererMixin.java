@@ -57,17 +57,4 @@ abstract class PlayerEntityRendererMixin extends LivingEntityRenderer<AbstractCl
 	void resetCrawlStateBeforeArmRendering(CallbackInfo ci) {
 		((CrawlingInfo)getModel()).setCrawling(false);
 	}
-
-	@Inject(require = 1, method = "setModelPose", at = @At(value = "RETURN"))
-	void setCrawlState(AbstractClientPlayerEntity abstractClientPlayerEntity, CallbackInfo ci) {
-		((CrawlingInfo)getModel()).setCrawling(
-			getModel().leaningPitch > 0
-			&&
-			(
-				abstractClientPlayerEntity.getPose() == Shared.CRAWLING
-				||
-				((PrevPoseInfo)abstractClientPlayerEntity).getPrevPose() == Shared.CRAWLING
-			)
-		);
-	}
 }

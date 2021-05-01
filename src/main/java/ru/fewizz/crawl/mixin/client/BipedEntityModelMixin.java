@@ -2,6 +2,7 @@ package ru.fewizz.crawl.mixin.client;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.model.ModelPart;
+import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.util.Hand;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -15,7 +16,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import net.minecraft.client.render.entity.model.BipedEntityModel;
 import net.minecraft.client.render.entity.model.EntityModel;
 import net.minecraft.entity.LivingEntity;
+import ru.fewizz.crawl.Crawl;
 import ru.fewizz.crawl.CrawlingInfo;
+import ru.fewizz.crawl.PrevPoseInfo;
 
 import java.util.function.Consumer;
 
@@ -63,6 +66,19 @@ public abstract class BipedEntityModelMixin<T extends LivingEntity> extends Enti
 	)
 	void onSetAttributes(BipedEntityModel<T> model, CallbackInfo ci) {
 		((CrawlingInfo)model).setCrawling(crawling);
+	}
+
+	@Inject(require = 1, method = "animateModel", at = @At(value = "RETURN"))
+	void setCrawlState(T livingEntity, float f, float g, float h, CallbackInfo ci) {
+		setCrawling(
+			leaningPitch > 0
+			&&
+			(
+				livingEntity.getPose() == Crawl.Shared.CRAWLING
+				||
+				((PrevPoseInfo)livingEntity).getPrevPose() == Crawl.Shared.CRAWLING
+			)
+		);
 	}
 
 	// Prevent head pitch change when in swimming pose but not in water
