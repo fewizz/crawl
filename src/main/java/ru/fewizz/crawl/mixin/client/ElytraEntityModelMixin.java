@@ -62,8 +62,11 @@ public class ElytraEntityModelMixin {
 			field_3365.copyPositionAndRotation(origCopy2);
 			return;
 		}
-		
-		BipedEntityModel<?> m = (BipedEntityModel<?>) r.getModel();
+
+		Object m0 = r.getModel();
+		if(!(m0 instanceof BipedEntityModel<?>)) return;
+
+		BipedEntityModel<?> m = (BipedEntityModel<?>) m0;
 		field_3364.copyPositionAndRotation(m.torso);
 		field_3365.copyPositionAndRotation(m.torso);
 		ci.cancel();

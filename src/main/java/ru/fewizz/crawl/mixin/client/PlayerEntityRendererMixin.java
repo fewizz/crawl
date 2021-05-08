@@ -34,7 +34,9 @@ abstract class PlayerEntityRendererMixin extends LivingEntityRenderer<AbstractCl
 		)
 	)
 	void setupCrawlTransformations(AbstractClientPlayerEntity abstractClientPlayerEntity, MatrixStack matrixStack, float f, float g, float h, CallbackInfo ci) {
-		if( ((CrawlingInfo)getModel()).isCrawling() ) {
+		Object model = getModel();
+
+		if((model instanceof CrawlingInfo) && ((CrawlingInfo)model).isCrawling() ) {
 			super.setupTransforms(abstractClientPlayerEntity, matrixStack, f, g, h);
 			float pitch = abstractClientPlayerEntity.getLeaningPitch(h);
 			float lerpedHalfPI = MathHelper.lerp(pitch, 0.0F, -90);
@@ -55,6 +57,9 @@ abstract class PlayerEntityRendererMixin extends LivingEntityRenderer<AbstractCl
 		)
 	)
 	void resetCrawlStateBeforeArmRendering(CallbackInfo ci) {
-		((CrawlingInfo)getModel()).setCrawling(false);
+		Object model = getModel();
+
+		if(model instanceof CrawlingInfo)
+			((CrawlingInfo)model).setCrawling(false);
 	}
 }

@@ -70,7 +70,9 @@ public abstract class BipedEntityModelMixin<T extends LivingEntity> extends Enti
 
 	@Inject(require = 1, method = "animateModel", at = @At(value = "RETURN"))
 	void setCrawlState(T livingEntity, float f, float g, float h, CallbackInfo ci) {
-		setCrawling(
+		if(!(livingEntity instanceof PrevPoseInfo)) return;
+
+ 		setCrawling(
 			leaningPitch > 0
 			&&
 			(
