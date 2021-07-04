@@ -32,6 +32,9 @@
 # ---
 *.sw[op]
 
+# vscode
+.vscode
+
 # Emacs
 # -----
 *~
