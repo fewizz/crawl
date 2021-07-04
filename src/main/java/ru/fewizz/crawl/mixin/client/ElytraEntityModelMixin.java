@@ -20,16 +20,16 @@ import ru.fewizz.crawl.Crawl;
 public class ElytraEntityModelMixin {
 	@Shadow
 	@Final
-	private ModelPart field_3364;
+	private ModelPart leftWing;
 	
 	@Shadow
 	@Final
-	private ModelPart field_3365;
+	private ModelPart rightWing;
 
 	@Unique
-	private ModelPart origCopy1;
+	private ModelPart leftCopy;
 	@Unique
-	private ModelPart origCopy2;
+	private ModelPart rightCopy;
 	
 	@Inject(
 		require = 1,
@@ -38,9 +38,11 @@ public class ElytraEntityModelMixin {
 			value="RETURN"
 		)
 	)
-	void onContruct(CallbackInfo ci) {
-		origCopy1 = field_3364.method_29991();
-		origCopy2 = field_3365.method_29991();
+	void onConstruct(CallbackInfo ci) {
+		leftCopy = new ModelPart(null, null);
+		leftCopy.copyTransform(leftWing);
+		rightCopy = new ModelPart(null, null);
+		rightCopy.copyTransform(rightWing);
 	}
 	
 	@Inject(
@@ -51,15 +53,14 @@ public class ElytraEntityModelMixin {
 		),
 		cancellable = true
 	)
-	void postSetAngles(LivingEntity e, float f, float g, float h, float i, float j, CallbackInfo ci) {
+	void preSetAngles(LivingEntity e, float f, float g, float h, float i, float j, CallbackInfo ci) {
 		MinecraftClient client = MinecraftClient.getInstance();
 		LivingEntityRenderer<?, ?> r =
 				(LivingEntityRenderer<?, ?>) client.getEntityRenderDispatcher().getRenderer(e);
 
-		if(e.getPose() != Crawl.Shared.CRAWLING
-			|| !(r.getModel() instanceof BipedEntityModel)) {
-			field_3364.copyPositionAndRotation(origCopy1);
-			field_3365.copyPositionAndRotation(origCopy2);
+		if(e.getPose() != Crawl.Shared.CRAWLING || !(r.getModel() instanceof BipedEntityModel)) {
+			leftWing.copyTransform(leftCopy);
+			rightWing.copyTransform(rightCopy);
 			return;
 		}
 
@@ -67,8 +68,8 @@ public class ElytraEntityModelMixin {
 		if(!(m0 instanceof BipedEntityModel<?>)) return;
 
 		BipedEntityModel<?> m = (BipedEntityModel<?>) m0;
-		field_3364.copyPositionAndRotation(m.torso);
-		field_3365.copyPositionAndRotation(m.torso);
+		leftWing.copyTransform(m.body);
+		rightWing.copyTransform(m.body);
 		ci.cancel();
 	}
 }

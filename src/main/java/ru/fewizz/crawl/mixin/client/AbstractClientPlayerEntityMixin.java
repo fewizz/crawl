@@ -7,25 +7,28 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
+
 import ru.fewizz.crawl.PrevPoseInfo;
 
 @Mixin(AbstractClientPlayerEntity.class)
 abstract class AbstractClientPlayerEntityMixin extends PlayerEntity implements PrevPoseInfo {
-    EntityPose crawl$prevPose;
+	@Unique
+	EntityPose prevPose;
 
-    public AbstractClientPlayerEntityMixin(World world, BlockPos pos, float yaw, GameProfile profile) {
-        super(world, pos, yaw, profile);
-    }
+	public AbstractClientPlayerEntityMixin(World world, BlockPos pos, float yaw, GameProfile profile) {
+		super(world, pos, yaw, profile);
+	}
 
-    @Override
-    public void setPose(EntityPose pose) {
-        if(pose != getPose())
-            crawl$prevPose = getPose();
-        super.setPose(pose);
-    }
+	@Override
+	public void setPose(EntityPose pose) {
+		if(pose != getPose())
+			prevPose = getPose();
+		super.setPose(pose);
+	}
 
-    @Override
-    public EntityPose getPrevPose() {
-        return crawl$prevPose;
-    }
+	@Override
+	public EntityPose getPrevPose() {
+		return prevPose;
+	}
 }

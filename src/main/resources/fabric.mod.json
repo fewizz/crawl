@@ -14,12 +14,6 @@
 	"entrypoints": { 
 		"main": [
 			"ru.fewizz.crawl.Crawl"
-		],
-		"client": [
-			"ru.fewizz.crawl.CrawlClient"
-		],
-		"modmenu": [
-			"ru.fewizz.crawl.ModMenuIntegration"
 		]
 	},
 	"contact": {
@@ -37,8 +31,8 @@
 		"fabric-key-binding-api-v1": "*",
 		"fabric-networking-api-v1": "*",
 		"fabric-lifecycle-events-v1": "*",
-		"mm": "2.x",
-		"minecraft": "1.16.x"
+		"mm": ">=2.3",
+		"minecraft": "1.17"
 	},
 	"mixins": [
 		"mixins.crawl.json"

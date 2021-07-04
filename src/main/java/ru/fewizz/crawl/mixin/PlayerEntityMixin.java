@@ -34,18 +34,25 @@ public abstract class PlayerEntityMixin extends Entity {
 	
 	@Redirect(
 		require = 1,
-		method="updateSize",
+		method="updatePose",
 		at=@At(
 			value="INVOKE",
 			target = "net/minecraft/entity/player/PlayerEntity.setPose(Lnet/minecraft/entity/EntityPose;)V"
 		)
 	)
 	public void onPreSetPose(PlayerEntity player, EntityPose pose) {
-		boolean replaceSwimming = pose == EntityPose.SWIMMING && !player.isSwimming();
-		boolean crawlRequest = player.getDataTracker().get(Shared.CRAWLING_REQUEST) && !player.isSwimming();
+
+		if(!player.isFallFlying() && !this.isSpectator() && !this.hasVehicle()) {
+			boolean swimming = player.isSwimming();
+			boolean inSwimmingPose = pose == EntityPose.SWIMMING;
+
+			boolean replaceSwimming = inSwimmingPose && !swimming;
+			boolean crawlRequest = player.getDataTracker().get(Shared.CRAWLING_REQUEST);
+
+			if(replaceSwimming || crawlRequest)
+				pose = Shared.CRAWLING;
+		}
 		
-		if((replaceSwimming || crawlRequest) && !player.isFallFlying() && !player.hasVehicle())
-			pose = Shared.CRAWLING;
 		setPose(pose);
 	}
 	
@@ -56,8 +63,8 @@ public abstract class PlayerEntityMixin extends Entity {
 	}
 
 	@Inject(require = 1, method="getActiveEyeHeight", at=@At("HEAD"), cancellable=true)
-	public void onGetActiveEyeHeight(EntityPose entityPose_1, EntityDimensions entitySize_1, CallbackInfoReturnable<Float> ci) {
-		if(entityPose_1 == Crawl.Shared.CRAWLING || entitySize_1 == Crawl.Shared.CRAWLING_DIMENSIONS)
+	public void onGetActiveEyeHeight(EntityPose pose, EntityDimensions size, CallbackInfoReturnable<Float> ci) {
+		if(pose == Crawl.Shared.CRAWLING || size == Crawl.Shared.CRAWLING_DIMENSIONS)
 			ci.setReturnValue(0.6F);
 	}
 }

@@ -2,7 +2,6 @@ package ru.fewizz.crawl.mixin.client;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.model.ModelPart;
-import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.util.Hand;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -10,7 +9,6 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
-import org.spongepowered.asm.mixin.injection.Slice;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import net.minecraft.client.render.entity.model.BipedEntityModel;
@@ -30,9 +28,9 @@ public abstract class BipedEntityModelMixin<T extends LivingEntity> extends Enti
 	@Shadow
 	public ModelPart head;
 	@Shadow
-	public ModelPart helmet;
+	public ModelPart hat;
 	@Shadow
-	public ModelPart torso;
+	public ModelPart body;
 	@Shadow
 	public ModelPart rightArm;
 	@Shadow
@@ -101,17 +99,11 @@ public abstract class BipedEntityModelMixin<T extends LivingEntity> extends Enti
 	@Redirect(
 		require = 1,
 		method="setAngles(Lnet/minecraft/entity/LivingEntity;FFFFF)V",
-		slice = @Slice(
-			from = @At(
-				value = "INVOKE",
-				target = "Lnet/minecraft/client/render/entity/model/CrossbowPosing;method_29350(Lnet/minecraft/client/model/ModelPart;Lnet/minecraft/client/model/ModelPart;F)V"
-			)
-		),
 		at=@At(
 			value="FIELD", target = "Lnet/minecraft/client/render/entity/model/BipedEntityModel;leaningPitch:F"
 		)
 	)
-	float skipSwimmingRenderingIfNotOnWater(BipedEntityModel<?> owner, T livingEntity, float f, float g, float h, float i, float j) {
+	float skipSwimmingRenderingIfNotInWater(BipedEntityModel<?> owner, T livingEntity, float f, float g, float h, float i, float j) {
 		return livingEntity.isInSwimmingPose() ? leaningPitch : 0;
 	}
 
@@ -126,9 +118,9 @@ public abstract class BipedEntityModelMixin<T extends LivingEntity> extends Enti
 		head.setPivot(0, 0, 0);
 		head.roll = 0;
 
-		torso.roll = 0;
-		torso.pitch = 0;
-		torso.pivotZ = 0;
+		body.roll = 0;
+		body.pitch = 0;
+		body.pivotZ = 0;
 
 		leftLeg.pivotX = 1.9F;
 		rightLeg.pivotX = -1.9F;
@@ -205,18 +197,18 @@ public abstract class BipedEntityModelMixin<T extends LivingEntity> extends Enti
 			0
 		);
 
-		float torsoPivotY = torsoHeight - (float)cos(la(torso.pitch, torsoPitchAngle))*torsoHeight;
-		float torsoPivotZ = (float)-sin(la(torso.pitch, torsoPitchAngle))*torsoHeight;
+		float torsoPivotY = torsoHeight - (float)cos(la(body.pitch, torsoPitchAngle))*torsoHeight;
+		float torsoPivotZ = (float)-sin(la(body.pitch, torsoPitchAngle))*torsoHeight;
 
 		llAngles(
-			torso,
+			body,
 			(float) -sin(dist) / torsoRollDiv,
 			torsoYawAngle,
 			torsoPitchAngle
 		);
 
-		torso.pivotZ = torsoPivotZ;
-		torso.pivotY = torsoPivotY;
+		body.pivotZ = torsoPivotZ;
+		body.pivotY = torsoPivotY;
 
 		llAngles(
 			head,
@@ -228,7 +220,7 @@ public abstract class BipedEntityModelMixin<T extends LivingEntity> extends Enti
 		head.pivotZ = l(0, torsoPivotZ + (float) cos(dist*2)/2.0F);
 		head.pivotY = torsoPivotY;
 
-		helmet.copyPositionAndRotation(head);
+		hat.copyTransform(head);
 
 		llPivot(
 			leftArm,
@@ -272,7 +264,7 @@ public abstract class BipedEntityModelMixin<T extends LivingEntity> extends Enti
 			llAngles(
 				leftArm,
 				(float)(-PI / 2.0) + magic0(dist + PI/2.0),
-				torso.yaw - (float)(PI / 2.0),
+				body.yaw - (float)(PI / 2.0),
 				-0.5F
 			);
 		}
@@ -282,7 +274,7 @@ public abstract class BipedEntityModelMixin<T extends LivingEntity> extends Enti
 			llAngles(
 				rightArm,
 				(float)(PI / 2.0) + -magic0(dist - PI/2.0),
-				torso.yaw + (float)(PI / 2.0),
+				body.yaw + (float)(PI / 2.0),
 				-0.5F
 			);
 		}

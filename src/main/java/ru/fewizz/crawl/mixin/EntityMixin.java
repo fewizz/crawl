@@ -10,14 +10,14 @@ import ru.fewizz.crawl.Crawl;
 @Mixin(Entity.class)
 public class EntityMixin {
 
-    @Inject(
-        require = 1,
-        method = "getJumpVelocityMultiplier",
-        at = @At("RETURN"),
-        cancellable = true
-    )
-    void onGetJumpVelocityMultiplierReturn(CallbackInfoReturnable<Float> cir) {
-        if(( (Entity) ( (Object)this )).getPose() == Crawl.Shared.CRAWLING)
-            cir.setReturnValue(cir.getReturnValueF()/2f);
-    }
+	@Inject(
+		require = 1,
+		method = "getJumpVelocityMultiplier",
+		at = @At("RETURN"),
+		cancellable = true
+	)
+	void onGetJumpVelocityMultiplierReturn(CallbackInfoReturnable<Float> cir) {
+		if(( (Entity) ( (Object)this )).getPose() == Crawl.Shared.CRAWLING)
+			cir.setReturnValue(cir.getReturnValueF()/2f);
+	}
 }

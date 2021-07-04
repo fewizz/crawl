@@ -12,8 +12,6 @@
 		"client.ClientPlayerEntityMixin",
 		"client.ElytraEntityModelMixin",
 		"client.EntityRendererMixin",
-		"client.GameOptionsAccessor",
-		"client.KeyBindingAccessor",
 		"client.KeyboardInputMixin",
 		"client.PlayerEntityRendererMixin",
 		"client.AbstractClientPlayerEntityMixin"
