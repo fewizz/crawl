@@ -27,12 +27,13 @@
 		]
 	},
 	"depends": {
-		"fabricloader": ">=0.7.4",
+		"fabricloader": ">=0.11.3",
 		"fabric-key-binding-api-v1": "*",
 		"fabric-networking-api-v1": "*",
 		"fabric-lifecycle-events-v1": "*",
 		"mm": ">=2.3",
-		"minecraft": "1.17"
+		"minecraft": "1.17.x",
+		"java": ">=16"
 	},
 	"mixins": [
 		"mixins.crawl.json"
