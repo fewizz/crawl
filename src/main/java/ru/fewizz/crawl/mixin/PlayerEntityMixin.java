@@ -41,15 +41,13 @@ public abstract class PlayerEntityMixin extends Entity {
 		)
 	)
 	public void onPreSetPose(PlayerEntity player, EntityPose pose) {
-
 		if(!player.isFallFlying() && !this.isSpectator() && !this.hasVehicle()) {
 			boolean swimming = player.isSwimming();
 			boolean inSwimmingPose = pose == EntityPose.SWIMMING;
-
-			boolean replaceSwimming = inSwimmingPose && !swimming;
+			//boolean replaceSwimming = inSwimmingPose && !swimming;
 			boolean crawlRequest = player.getDataTracker().get(Shared.CRAWLING_REQUEST);
 
-			if(replaceSwimming || crawlRequest)
+			if((inSwimmingPose || crawlRequest) && !swimming)
 				pose = Shared.CRAWLING;
 		}
 		

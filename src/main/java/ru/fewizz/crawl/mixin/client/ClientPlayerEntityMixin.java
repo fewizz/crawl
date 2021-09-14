@@ -20,21 +20,18 @@ import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.packet.c2s.play.CustomPayloadC2SPacket;
 import ru.fewizz.crawl.Crawl;
 import ru.fewizz.crawl.Crawl.Shared;
+import ru.fewizz.crawl.CrawlClient;
 
 @Mixin(ClientPlayerEntity.class)
 abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity {
 	public ClientPlayerEntityMixin(ClientWorld cw, GameProfile gp) {
 		super(cw, gp);
 	}
-
-	int ticksSinceLastSneaking = 0;
 	
 	@Inject(require = 1, method="tickMovement", at=@At(value="INVOKE", target="net/minecraft/client/network/AbstractClientPlayerEntity.tickMovement()V"))
 	public void beforeSuperMovementTick(CallbackInfo ci) {
 		boolean inCrawlingPose = getPose() == Crawl.Shared.CRAWLING;
-		boolean crawlingAllowed = ticksSinceLastSneaking > 0 && ticksSinceLastSneaking < 7;
-		boolean sneaking = MinecraftClient.getInstance().options.keySneak.isPressed();
-		boolean wantsToCrawl = sneaking && (crawlingAllowed || inCrawlingPose);
+		boolean wantsToCrawl = CrawlClient.key.isPressed();
 
 		if(wantsToCrawl != inCrawlingPose) {
 			MinecraftClient mc = MinecraftClient.getInstance();
@@ -47,13 +44,6 @@ abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity {
 			);
 
 			getDataTracker().set(Shared.CRAWLING_REQUEST, wantsToCrawl);
-		}
-
-		if(!sneaking) {
-			ticksSinceLastSneaking++;
-		}
-		else {
-			ticksSinceLastSneaking = 0;
 		}
 
 		if(getPose() == Shared.CRAWLING)

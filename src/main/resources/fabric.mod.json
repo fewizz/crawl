@@ -14,8 +14,12 @@
 	"entrypoints": { 
 		"main": [
 			"ru.fewizz.crawl.Crawl"
+		],
+		"client": [
+			"ru.fewizz.crawl.CrawlClient"
 		]
 	},
+	"accessWidener": "crawl.accesswidener",
 	"contact": {
 		"homepage": "https://www.curseforge.com/minecraft/mc-mods/crawl",
 		"sources": "https://github.com/fewizz/Crawl",
