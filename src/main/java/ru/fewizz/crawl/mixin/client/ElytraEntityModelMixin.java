@@ -16,6 +16,8 @@ import net.minecraft.client.render.entity.model.ElytraEntityModel;
 import net.minecraft.entity.LivingEntity;
 import ru.fewizz.crawl.Crawl;
 
+import java.util.Collections;
+
 @Mixin(ElytraEntityModel.class)
 public class ElytraEntityModelMixin {
 	@Shadow
@@ -39,9 +41,9 @@ public class ElytraEntityModelMixin {
 		)
 	)
 	void onConstruct(CallbackInfo ci) {
-		leftCopy = new ModelPart(null, null);
+		leftCopy = new ModelPart(Collections.emptyList(), Collections.emptyMap());
 		leftCopy.copyTransform(leftWing);
-		rightCopy = new ModelPart(null, null);
+		rightCopy = new ModelPart(Collections.emptyList(), Collections.emptyMap());
 		rightCopy.copyTransform(rightWing);
 	}
 	
@@ -56,7 +58,7 @@ public class ElytraEntityModelMixin {
 	void preSetAngles(LivingEntity e, float f, float g, float h, float i, float j, CallbackInfo ci) {
 		MinecraftClient client = MinecraftClient.getInstance();
 		LivingEntityRenderer<?, ?> r =
-				(LivingEntityRenderer<?, ?>) client.getEntityRenderDispatcher().getRenderer(e);
+			(LivingEntityRenderer<?, ?>) client.getEntityRenderDispatcher().getRenderer(e);
 
 		if(e.getPose() != Crawl.Shared.CRAWLING || !(r.getModel() instanceof BipedEntityModel)) {
 			leftWing.copyTransform(leftCopy);
