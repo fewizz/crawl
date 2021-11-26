@@ -30,6 +30,7 @@ public class ElytraEntityModelMixin {
 
 	@Unique
 	private ModelPart leftCopy;
+	
 	@Unique
 	private ModelPart rightCopy;
 	

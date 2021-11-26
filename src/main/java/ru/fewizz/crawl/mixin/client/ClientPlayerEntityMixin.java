@@ -11,9 +11,7 @@ import com.mojang.authlib.GameProfile;
 
 import io.netty.buffer.Unpooled;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.input.Input;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
-import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.network.PacketByteBuf;
@@ -24,11 +22,15 @@ import ru.fewizz.crawl.CrawlClient;
 
 @Mixin(ClientPlayerEntity.class)
 abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity {
-	public ClientPlayerEntityMixin(ClientWorld cw, GameProfile gp) {
-		super(cw, gp);
+	public ClientPlayerEntityMixin(ClientWorld world, GameProfile profile) {
+		super(world, profile);
 	}
 	
-	@Inject(require = 1, method="tickMovement", at=@At(value="INVOKE", target="net/minecraft/client/network/AbstractClientPlayerEntity.tickMovement()V"))
+	@Inject(
+		require = 1,
+		method="tickMovement",
+		at=@At(value="INVOKE", target="net/minecraft/client/network/AbstractClientPlayerEntity.tickMovement()V")
+	)
 	public void beforeSuperMovementTick(CallbackInfo ci) {
 		boolean inCrawlingPose = getPose() == Crawl.Shared.CRAWLING;
 		boolean wantsToCrawl = CrawlClient.key.isPressed();
@@ -43,7 +45,7 @@ abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity {
 				)
 			);
 
-			getDataTracker().set(Shared.CRAWLING_REQUEST, wantsToCrawl);
+			getDataTracker().set(Shared.CRAWL_REQUEST, wantsToCrawl);
 		}
 
 		if(getPose() == Shared.CRAWLING)

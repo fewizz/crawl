@@ -12,19 +12,19 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Identifier;
 
 public class Crawl implements ModInitializer {
-    public static final Identifier CRAWL_IDENTIFIER = new Identifier("crawl:identifier");
+	public static final Identifier CRAWL_IDENTIFIER = new Identifier("crawl:identifier");
 
 	@Override
 	public void onInitialize() {
 		ServerPlayNetworking.registerGlobalReceiver(CRAWL_IDENTIFIER, (server, player, handler, buf, responseSender) -> {
 			boolean val = buf.readBoolean();
-			server.execute(() -> player.getDataTracker().set(Shared.CRAWLING_REQUEST, val));
+			server.execute(() -> player.getDataTracker().set(Shared.CRAWL_REQUEST, val));
 		});
 	}
 	
 	public static class Shared {
 		public static final EntityPose CRAWLING = ClassTinkerers.getEnum(EntityPose.class, EntityPoseHack.CRAWLING);
 		public static final EntityDimensions CRAWLING_DIMENSIONS = new EntityDimensions(0.6F, 0.6F, false);
-		public static final TrackedData<Boolean> CRAWLING_REQUEST = DataTracker.registerData(PlayerEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
+		public static final TrackedData<Boolean> CRAWL_REQUEST = DataTracker.registerData(PlayerEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
 	}
 }

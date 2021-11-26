@@ -19,8 +19,8 @@ import ru.fewizz.crawl.Crawl.Shared;
 @Mixin(PlayerEntity.class)
 public abstract class PlayerEntityMixin extends Entity {
 
-	public PlayerEntityMixin(EntityType<?> et, World w) {
-		super(et, w);
+	public PlayerEntityMixin(EntityType<?> type, World world) {
+		super(type, world);
 	}
 
 	@Inject(
@@ -29,7 +29,7 @@ public abstract class PlayerEntityMixin extends Entity {
 		at=@At("HEAD")
 	)
 	public void onInitDataTracker(CallbackInfo ci) {
-		getDataTracker().startTracking(Crawl.Shared.CRAWLING_REQUEST, false);
+		getDataTracker().startTracking(Crawl.Shared.CRAWL_REQUEST, false);
 	}
 	
 	@Redirect(
@@ -45,7 +45,7 @@ public abstract class PlayerEntityMixin extends Entity {
 			boolean swimming = player.isSwimming();
 			boolean inSwimmingPose = pose == EntityPose.SWIMMING;
 			//boolean replaceSwimming = inSwimmingPose && !swimming;
-			boolean crawlRequest = player.getDataTracker().get(Shared.CRAWLING_REQUEST);
+			boolean crawlRequest = player.getDataTracker().get(Shared.CRAWL_REQUEST);
 
 			if((inSwimmingPose || crawlRequest) && !swimming)
 				pose = Shared.CRAWLING;

@@ -22,8 +22,8 @@
 	"accessWidener": "crawl.accesswidener",
 	"contact": {
 		"homepage": "https://www.curseforge.com/minecraft/mc-mods/crawl",
-		"sources": "https://github.com/fewizz/Crawl",
-		"issues": "https://github.com/fewizz/Crawl/issues"
+		"sources": "https://github.com/fewizz/crawl",
+		"issues": "https://github.com/fewizz/crawl/issues"
 	},
 	"custom": {
 		"mm:early_risers": [
@@ -31,12 +31,12 @@
 		]
 	},
 	"depends": {
-		"fabricloader": ">=0.11.3",
+		"fabricloader": ">=0.12.0",
 		"fabric-key-binding-api-v1": "*",
 		"fabric-networking-api-v1": "*",
 		"fabric-lifecycle-events-v1": "*",
 		"mm": ">=2.3",
-		"minecraft": "1.17.x",
+		"minecraft": "1.18.x",
 		"java": ">=16"
 	},
 	"mixins": [
