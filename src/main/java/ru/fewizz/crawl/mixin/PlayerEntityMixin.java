@@ -1,6 +1,9 @@
 package ru.fewizz.crawl.mixin;
 
+import net.minecraft.entity.player.PlayerAbilities;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
@@ -18,6 +21,8 @@ import ru.fewizz.crawl.Crawl.Shared;
 
 @Mixin(PlayerEntity.class)
 public abstract class PlayerEntityMixin extends Entity {
+
+	@Shadow @Final private PlayerAbilities abilities;
 
 	public PlayerEntityMixin(EntityType<?> type, World world) {
 		super(type, world);
@@ -41,7 +46,7 @@ public abstract class PlayerEntityMixin extends Entity {
 		)
 	)
 	public void onPreSetPose(PlayerEntity player, EntityPose pose) {
-		if(!player.isFallFlying() && !this.isSpectator() && !this.hasVehicle()) {
+		if(!player.isFallFlying() && !this.isSpectator() && !this.hasVehicle() && !this.abilities.flying) {
 			boolean swimming = player.isSwimming();
 			boolean inSwimmingPose = pose == EntityPose.SWIMMING;
 			//boolean replaceSwimming = inSwimmingPose && !swimming;
