@@ -71,8 +71,8 @@ public abstract class BipedEntityModelMixin<T extends LivingEntity> extends Enti
 		if(!(livingEntity instanceof PrevPoseInfo)) return;
 
  		setCrawling(
-			leaningPitch > 0
-			&&
+			leaningPitch > 0 &&
+			!livingEntity.isSwimming() &&
 			(
 				livingEntity.getPose() == Crawl.Shared.CRAWLING
 				||
