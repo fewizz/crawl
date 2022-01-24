@@ -47,18 +47,20 @@ public abstract class PlayerEntityMixin extends Entity {
 	)
 	public void onPreSetPose(PlayerEntity player, EntityPose pose) {
 		if(!player.isFallFlying() && !this.isSpectator() && !this.hasVehicle() && !this.abilities.flying) {
-			boolean swimming = player.isSwimming();
-			boolean touchingWater = player.isTouchingWater();
-			boolean inSwimmingPose = pose == EntityPose.SWIMMING;
-			boolean inCrawlingPose = pose == Shared.CRAWLING;
-			boolean crawlRequest = player.getDataTracker().get(Shared.CRAWL_REQUEST);
-
-			if((crawlRequest || inSwimmingPose) && !swimming && !touchingWater) {
+			if(player.getDataTracker().get(Shared.CRAWL_REQUEST)) {
 				pose = Shared.CRAWLING;
 			}
-			else if((crawlRequest || inCrawlingPose || inSwimmingPose) && (swimming || touchingWater)) {
-				pose = EntityPose.SWIMMING;
-				setSwimming(true);
+			else if(pose == EntityPose.SWIMMING || pose == Shared.CRAWLING) {
+				boolean swimming = player.isSwimming();
+				boolean touchingWater = player.isTouchingWater();
+
+				if (!swimming && !touchingWater) {
+					pose = Shared.CRAWLING;
+				}
+				else {
+					pose = EntityPose.SWIMMING;
+					player.setSwimming(true);
+				}
 			}
 		}
 		
