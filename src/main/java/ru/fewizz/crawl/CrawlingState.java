@@ -1,6 +1,6 @@
 package ru.fewizz.crawl;
 
-public interface CrawlingInfo {
+public interface CrawlingState {
 	boolean isCrawling();
 	void setCrawling(boolean v);
 }

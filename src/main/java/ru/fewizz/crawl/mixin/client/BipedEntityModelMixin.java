@@ -1,6 +1,5 @@
 package ru.fewizz.crawl.mixin.client;
 
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.model.ModelPart;
 import net.minecraft.util.Hand;
 import org.spongepowered.asm.mixin.Mixin;
@@ -15,7 +14,7 @@ import net.minecraft.client.render.entity.model.BipedEntityModel;
 import net.minecraft.client.render.entity.model.EntityModel;
 import net.minecraft.entity.LivingEntity;
 import ru.fewizz.crawl.Crawl;
-import ru.fewizz.crawl.CrawlingInfo;
+import ru.fewizz.crawl.CrawlingState;
 import ru.fewizz.crawl.PrevPoseInfo;
 
 import java.util.function.Consumer;
@@ -24,7 +23,7 @@ import static java.lang.Math.*;
 import static net.minecraft.util.math.MathHelper.lerp;
 
 @Mixin(BipedEntityModel.class)
-public abstract class BipedEntityModelMixin<T extends LivingEntity> extends EntityModel<T> implements CrawlingInfo {
+public abstract class BipedEntityModelMixin<T extends LivingEntity> extends EntityModel<T> implements CrawlingState {
 	@Shadow
 	public ModelPart head;
 	@Shadow
@@ -63,7 +62,7 @@ public abstract class BipedEntityModelMixin<T extends LivingEntity> extends Enti
 		)
 	)
 	void onSetAttributes(BipedEntityModel<T> model, CallbackInfo ci) {
-		((CrawlingInfo)model).setCrawling(crawling);
+		((CrawlingState)model).setCrawling(crawling);
 	}
 
 	@Inject(require = 1, method = "animateModel", at = @At(value = "RETURN"))
@@ -163,9 +162,7 @@ public abstract class BipedEntityModelMixin<T extends LivingEntity> extends Enti
 	)
 	void afterSetAngles(LivingEntity e, float dist, float _0, float _1, float headYawDegrees, float headPitchDegrees, CallbackInfo ci) {
 		if(!crawling) return;
-
-		MinecraftClient mc = MinecraftClient.getInstance();
-
+		
 		float torsoRollDiv = 6F;
 		float torsoPitchAngle = 0;
 		float torsoYawAngle = (float) sin(dist) / 5F;
@@ -298,4 +295,5 @@ public abstract class BipedEntityModelMixin<T extends LivingEntity> extends Enti
 			-cos((rad - PI / 2.0) * (2.0 / 3.0))
 		);
 	}
+
 }

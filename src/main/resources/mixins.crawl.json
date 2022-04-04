@@ -15,7 +15,8 @@
 		"client.KeyboardInputMixin",
 		"client.PlayerEntityRendererMixin",
 		"client.AbstractClientPlayerEntityMixin",
-		"client.ControlsOptionsScreenMixin"
+		"client.ControlsOptionsScreenMixin",
+		"client.GameOptionsMixin"
 	]
 
 }

@@ -1,6 +1,5 @@
 package ru.fewizz.crawl.mixin.client;
 
-import net.minecraft.client.render.entity.EntityRenderDispatcher;
 import net.minecraft.client.render.entity.EntityRendererFactory;
 import net.minecraft.client.render.entity.LivingEntityRenderer;
 import net.minecraft.client.render.entity.model.PlayerEntityModel;
@@ -15,7 +14,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.render.entity.PlayerEntityRenderer;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import ru.fewizz.crawl.CrawlingInfo;
+import ru.fewizz.crawl.CrawlingState;
 
 @Mixin(PlayerEntityRenderer.class)
 abstract class PlayerEntityRendererMixin extends LivingEntityRenderer<AbstractClientPlayerEntity, PlayerEntityModel<AbstractClientPlayerEntity>> {
@@ -35,7 +34,7 @@ abstract class PlayerEntityRendererMixin extends LivingEntityRenderer<AbstractCl
 	void setupCrawlTransformations(AbstractClientPlayerEntity abstractClientPlayerEntity, MatrixStack matrixStack, float f, float g, float h, CallbackInfo ci) {
 		Object model = getModel();
 
-		if((model instanceof CrawlingInfo) && ((CrawlingInfo)model).isCrawling() ) {
+		if((model instanceof CrawlingState) && ((CrawlingState)model).isCrawling() ) {
 			super.setupTransforms(abstractClientPlayerEntity, matrixStack, f, g, h);
 			float pitch = abstractClientPlayerEntity.getLeaningPitch(h);
 			float lerpedHalfPI = MathHelper.lerp(pitch, 0.0F, -90);
@@ -58,7 +57,7 @@ abstract class PlayerEntityRendererMixin extends LivingEntityRenderer<AbstractCl
 	void resetCrawlStateBeforeArmRendering(CallbackInfo ci) {
 		Object model = getModel();
 
-		if(model instanceof CrawlingInfo)
-			((CrawlingInfo)model).setCrawling(false);
+		if(model instanceof CrawlingState)
+			((CrawlingState)model).setCrawling(false);
 	}
 }

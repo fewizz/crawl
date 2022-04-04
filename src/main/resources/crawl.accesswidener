@@ -2,3 +2,4 @@ accessWidener	v1	named
 accessible field net/minecraft/client/option/KeyBinding boundKey Lnet/minecraft/client/util/InputUtil$Key;
 accessible field net/minecraft/client/option/Option TOGGLE_TEXT Lnet/minecraft/text/Text;
 accessible field net/minecraft/client/option/Option HOLD_TEXT Lnet/minecraft/text/Text;
+accessible class net/minecraft/client/option/GameOptions$Visitor

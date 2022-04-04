@@ -20,4 +20,5 @@ public class EntityMixin {
 		if(( (Entity) ( (Object)this )).getPose() == Crawl.Shared.CRAWLING)
 			cir.setReturnValue(cir.getReturnValueF()/2f);
 	}
+
 }

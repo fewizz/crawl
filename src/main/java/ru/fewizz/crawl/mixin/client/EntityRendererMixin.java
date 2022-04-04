@@ -22,4 +22,5 @@ public class EntityRendererMixin {
 	boolean onGetIsInSneakingPose(Entity e) {
 		return e.isInSneakingPose() || e.getPose() == Shared.CRAWLING;
 	}
+
 }

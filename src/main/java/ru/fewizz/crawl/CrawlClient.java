@@ -26,4 +26,5 @@ public class CrawlClient implements ClientModInitializer {
 		key = new StickyKeyBinding("key.crawl", GLFW.GLFW_KEY_UNKNOWN, KeyBinding.MOVEMENT_CATEGORY, () -> crawlToggled);
 		KeyBindingHelper.registerKeyBinding(key);
 	}
+
 }
