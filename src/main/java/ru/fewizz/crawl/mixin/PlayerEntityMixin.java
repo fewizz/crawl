@@ -16,6 +16,7 @@ import net.minecraft.entity.EntityDimensions;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.world.World;
+import net.minecraft.world.RaycastContext.ShapeType;
 import ru.fewizz.crawl.Crawl;
 import ru.fewizz.crawl.Crawl.Shared;
 
@@ -30,8 +31,8 @@ public abstract class PlayerEntityMixin extends Entity {
 
 	@Inject(
 		require = 1,
-		method="initDataTracker",
-		at=@At("HEAD")
+		method = "initDataTracker",
+		at = @At("HEAD")
 	)
 	public void onInitDataTracker(CallbackInfo ci) {
 		getDataTracker().startTracking(Crawl.Shared.CRAWL_REQUEST, false);
@@ -39,43 +40,45 @@ public abstract class PlayerEntityMixin extends Entity {
 	
 	@Redirect(
 		require = 1,
-		method="updatePose",
-		at=@At(
-			value="INVOKE",
+		method = "updatePose",
+		at = @At(
+			value = "INVOKE",
 			target = "net/minecraft/entity/player/PlayerEntity.setPose(Lnet/minecraft/entity/EntityPose;)V"
 		)
 	)
 	public void onPreSetPose(PlayerEntity player, EntityPose pose) {
-		if(!player.isFallFlying() && !this.isSpectator() && !this.hasVehicle() && !this.abilities.flying) {
-			if(player.getDataTracker().get(Shared.CRAWL_REQUEST)) {
-				pose = Shared.CRAWLING;
-			}
-			else if(pose == EntityPose.SWIMMING || pose == Shared.CRAWLING) {
-				boolean swimming = player.isSwimming();
-				boolean touchingWater = player.isTouchingWater();
+		if (!player.isFallFlying() && !this.isSpectator() && !this.hasVehicle() && !this.abilities.flying) {
+			boolean requested = player.getDataTracker().get(Shared.CRAWL_REQUEST);
 
-				if (!swimming && !touchingWater) {
+			boolean swimming = player.isSwimming() || player.isTouchingWater();
+
+			System.out.println(requested);
+
+			if (requested) {
+				if (!swimming) {
 					pose = Shared.CRAWLING;
 				}
 				else {
 					pose = EntityPose.SWIMMING;
-					player.setSwimming(true);
 				}
 			}
+			else if (pose == EntityPose.SWIMMING && !swimming) {
+				pose = Shared.CRAWLING;
+			}
 		}
-		
+
 		setPose(pose);
 	}
-	
-	@Inject(require = 1, method="getDimensions", at=@At("HEAD"), cancellable=true)
+
+	@Inject(require = 1, method = "getDimensions", at = @At("HEAD"), cancellable = true)
 	public void onGetDimensions(EntityPose pose, CallbackInfoReturnable<EntityDimensions> ci) {
-		if(pose == Crawl.Shared.CRAWLING)
+		if (pose == Crawl.Shared.CRAWLING)
 			ci.setReturnValue(Crawl.Shared.CRAWLING_DIMENSIONS);
 	}
 
-	@Inject(require = 1, method="getActiveEyeHeight", at=@At("HEAD"), cancellable=true)
+	@Inject(require = 1, method = "getActiveEyeHeight", at = @At("HEAD"), cancellable = true)
 	public void onGetActiveEyeHeight(EntityPose pose, EntityDimensions size, CallbackInfoReturnable<Float> ci) {
-		if(pose == Crawl.Shared.CRAWLING || size == Crawl.Shared.CRAWLING_DIMENSIONS)
+		if (pose == Crawl.Shared.CRAWLING || size == Crawl.Shared.CRAWLING_DIMENSIONS)
 			ci.setReturnValue(0.6F);
 	}
 }

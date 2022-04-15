@@ -30,10 +30,9 @@ abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity {
 		at=@At(value="INVOKE", target="net/minecraft/client/network/AbstractClientPlayerEntity.tickMovement()V")
 	)
 	public void beforeSuperMovementTick(CallbackInfo ci) {
-		boolean inCrawlingPose = getPose() == Crawl.Shared.CRAWLING;
 		boolean wantsToCrawl = CrawlClient.key.isPressed();
 
-		if(wantsToCrawl != inCrawlingPose) {
+		if(wantsToCrawl != getDataTracker().get(Shared.CRAWL_REQUEST)) {
 			MinecraftClient mc = MinecraftClient.getInstance();
 			
 			mc.getNetworkHandler().sendPacket(

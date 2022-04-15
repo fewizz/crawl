@@ -12,6 +12,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import net.minecraft.client.render.entity.model.BipedEntityModel;
 import net.minecraft.client.render.entity.model.EntityModel;
+import net.minecraft.entity.EntityPose;
 import net.minecraft.entity.LivingEntity;
 import ru.fewizz.crawl.Crawl;
 import ru.fewizz.crawl.CrawlingState;
@@ -71,11 +72,13 @@ public abstract class BipedEntityModelMixin<T extends LivingEntity> extends Enti
 
  		setCrawling(
 			leaningPitch > 0 &&
-			!livingEntity.isSwimming() &&
 			(
-				livingEntity.getPose() == Crawl.Shared.CRAWLING
-				||
-				((PrevPoseInfo)livingEntity).getPrevPose() == Crawl.Shared.CRAWLING
+				livingEntity.getPose() != EntityPose.SWIMMING &&
+				(
+					livingEntity.getPose() == Crawl.Shared.CRAWLING
+					||
+					((PrevPoseInfo)livingEntity).getPrevPose() == Crawl.Shared.CRAWLING
+				)
 			)
 		);
 	}
