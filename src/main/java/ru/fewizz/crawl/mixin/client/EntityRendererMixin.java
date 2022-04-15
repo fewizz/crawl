@@ -13,10 +13,10 @@ public class EntityRendererMixin {
 	
 	@Redirect(
 		require = 1,
-		method="renderLabelIfPresent(Lnet/minecraft/entity/Entity;Lnet/minecraft/text/Text;Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;I)V",
-		at=@At(
-			value="INVOKE",
-			target="Lnet/minecraft/entity/Entity;isSneaky()Z"
+		method = "renderLabelIfPresent(Lnet/minecraft/entity/Entity;Lnet/minecraft/text/Text;Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;I)V",
+		at = @At(
+			value = "INVOKE",
+			target = "Lnet/minecraft/entity/Entity;isSneaky()Z"
 		)
 	)
 	boolean onGetIsInSneakingPose(Entity e) {

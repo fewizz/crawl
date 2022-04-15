@@ -13,6 +13,7 @@ import ru.fewizz.crawl.PrevPoseInfo;
 
 @Mixin(AbstractClientPlayerEntity.class)
 abstract class AbstractClientPlayerEntityMixin extends PlayerEntity implements PrevPoseInfo {
+
 	@Unique
 	EntityPose prevPose;
 
@@ -31,4 +32,5 @@ abstract class AbstractClientPlayerEntityMixin extends PlayerEntity implements P
 	public EntityPose getPrevPose() {
 		return prevPose;
 	}
+
 }

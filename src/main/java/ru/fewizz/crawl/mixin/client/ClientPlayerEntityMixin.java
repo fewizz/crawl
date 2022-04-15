@@ -26,8 +26,11 @@ abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity {
 	
 	@Inject(
 		require = 1,
-		method="tickMovement",
-		at=@At(value="INVOKE", target="net/minecraft/client/network/AbstractClientPlayerEntity.tickMovement()V")
+		method = "tickMovement",
+		at = @At(
+			value = "INVOKE",
+			target = "net/minecraft/client/network/AbstractClientPlayerEntity.tickMovement()V"
+		)
 	)
 	public void beforeSuperMovementTick(CallbackInfo ci) {
 		boolean wantsToCrawl = CrawlClient.key.isPressed();

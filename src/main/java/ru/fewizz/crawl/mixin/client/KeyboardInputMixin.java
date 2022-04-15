@@ -13,7 +13,7 @@ import ru.fewizz.crawl.Crawl.Shared;
 @Mixin(KeyboardInput.class)
 abstract class KeyboardInputMixin extends Input {
 	
-	@Inject(require = 1, method="tick", at=@At("RETURN"))
+	@Inject(require = 1, method = "tick", at = @At("RETURN"))
 	void onTickEnd(CallbackInfo ci) {
 		if(MinecraftClient.getInstance().player.getPose() != Shared.CRAWLING)
 			return;

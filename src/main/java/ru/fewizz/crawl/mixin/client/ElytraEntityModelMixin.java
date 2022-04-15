@@ -36,10 +36,8 @@ public class ElytraEntityModelMixin {
 	
 	@Inject(
 		require = 1,
-		method="<init>",
-		at=@At(
-			value="RETURN"
-		)
+		method = "<init>",
+		at = @At(value = "RETURN")
 	)
 	void onConstruct(CallbackInfo ci) {
 		leftCopy = new ModelPart(Collections.emptyList(), Collections.emptyMap());
@@ -50,10 +48,8 @@ public class ElytraEntityModelMixin {
 	
 	@Inject(
 		require = 1,
-		method="setAngles",
-		at=@At(
-			value="HEAD"
-		),
+		method = "setAngles",
+		at = @At(value = "HEAD"),
 		cancellable = true
 	)
 	void preSetAngles(LivingEntity e, float f, float g, float h, float i, float j, CallbackInfo ci) {

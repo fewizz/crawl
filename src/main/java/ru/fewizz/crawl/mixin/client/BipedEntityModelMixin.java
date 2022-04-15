@@ -25,6 +25,7 @@ import static net.minecraft.util.math.MathHelper.lerp;
 
 @Mixin(BipedEntityModel.class)
 public abstract class BipedEntityModelMixin<T extends LivingEntity> extends EntityModel<T> implements CrawlingState {
+
 	@Shadow
 	public ModelPart head;
 	@Shadow
@@ -57,10 +58,8 @@ public abstract class BipedEntityModelMixin<T extends LivingEntity> extends Enti
 
 	@Inject(
 		require = 1,
-		method="setAttributes",
-		at=@At(
-			value="RETURN"
-		)
+		method = "setAttributes",
+		at = @At(value = "RETURN")
 	)
 	void onSetAttributes(BipedEntityModel<T> model, CallbackInfo ci) {
 		((CrawlingState)model).setCrawling(crawling);
@@ -87,7 +86,7 @@ public abstract class BipedEntityModelMixin<T extends LivingEntity> extends Enti
 	@Redirect(
 		require = 1,
 		method = "setAngles",
-		at=@At(
+		at = @At(
 			value = "INVOKE",
 			target = "Lnet/minecraft/client/render/entity/model/BipedEntityModel;lerpAngle(FFF)F",
 			ordinal = 1
@@ -111,9 +110,9 @@ public abstract class BipedEntityModelMixin<T extends LivingEntity> extends Enti
 
 	@Inject(
 		require = 1,
-		method="setAngles(Lnet/minecraft/entity/LivingEntity;FFFFF)V",
-		at=@At(
-			value="HEAD"
+		method = "setAngles(Lnet/minecraft/entity/LivingEntity;FFFFF)V",
+		at = @At(
+			value = "HEAD"
 		)
 	)
 	void beforeSetAngles(LivingEntity e, float dist, float _0, float _1, float headYawDegrees, float headPitchDegrees, CallbackInfo ci) {
@@ -158,9 +157,9 @@ public abstract class BipedEntityModelMixin<T extends LivingEntity> extends Enti
 
 	@Inject(
 		require = 1,
-		method="setAngles(Lnet/minecraft/entity/LivingEntity;FFFFF)V",
-		at=@At(
-			value="RETURN"
+		method = "setAngles(Lnet/minecraft/entity/LivingEntity;FFFFF)V",
+		at = @At(
+			value = "RETURN"
 		)
 	)
 	void afterSetAngles(LivingEntity e, float dist, float _0, float _1, float headYawDegrees, float headPitchDegrees, CallbackInfo ci) {
