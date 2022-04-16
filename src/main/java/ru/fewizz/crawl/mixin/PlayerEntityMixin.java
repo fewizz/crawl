@@ -52,8 +52,6 @@ public abstract class PlayerEntityMixin extends Entity {
 
 			boolean swimming = player.isSwimming() || player.isTouchingWater();
 
-			System.out.println(requested);
-
 			if (requested) {
 				if (!swimming) {
 					pose = Shared.CRAWLING;
