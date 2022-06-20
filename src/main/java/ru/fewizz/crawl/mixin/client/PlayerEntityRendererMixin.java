@@ -11,10 +11,14 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.render.entity.PlayerEntityRenderer;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import ru.fewizz.crawl.Crawl;
 import ru.fewizz.crawl.CrawlingState;
+import ru.fewizz.crawl.PrevPoseInfo;
 
 @Mixin(PlayerEntityRenderer.class)
 abstract class PlayerEntityRendererMixin extends LivingEntityRenderer<AbstractClientPlayerEntity, PlayerEntityModel<AbstractClientPlayerEntity>> {
@@ -44,20 +48,24 @@ abstract class PlayerEntityRendererMixin extends LivingEntityRenderer<AbstractCl
 			ci.cancel();
 		}
 	}
-
+	
 	@Inject(
 		require = 1,
-		method = "renderArm",
-		at = @At(
-			value = "INVOKE",
-			shift = At.Shift.AFTER,
-			target = "net/minecraft/client/render/entity/PlayerEntityRenderer.setModelPose(Lnet/minecraft/client/network/AbstractClientPlayerEntity;)V"
-		)
+		method = "setModelPose",
+		at = @At(value = "TAIL")
 	)
-	void resetCrawlStateBeforeArmRendering(CallbackInfo ci) {
-		Object model = getModel();
-
-		if(model instanceof CrawlingState)
-			((CrawlingState)model).setCrawling(false);
+	void onSetAttributes(AbstractClientPlayerEntity player, CallbackInfo ci) {
+		if (!player.isSpectator()) {
+			var model = getModel();
+			((CrawlingState)model).setCrawling(
+				player.getLeaningPitch(MinecraftClient.getInstance().getTickDelta()) > 0 &&
+	 			player.getPose() != EntityPose.SWIMMING &&
+	 			(
+	 				player.getPose() == Crawl.Shared.CRAWLING ||
+	 				((PrevPoseInfo)player).getPrevPose() == Crawl.Shared.CRAWLING ||
+	 				((PrevPoseInfo)player).getPrevTickPose() == Crawl.Shared.CRAWLING
+	 			)
+	 		);
+		}
 	}
 }

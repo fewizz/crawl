@@ -12,11 +12,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import net.minecraft.client.render.entity.model.BipedEntityModel;
 import net.minecraft.client.render.entity.model.EntityModel;
-import net.minecraft.entity.EntityPose;
 import net.minecraft.entity.LivingEntity;
-import ru.fewizz.crawl.Crawl;
 import ru.fewizz.crawl.CrawlingState;
-import ru.fewizz.crawl.PrevPoseInfo;
 
 import java.util.function.Consumer;
 
@@ -59,27 +56,10 @@ public abstract class BipedEntityModelMixin<T extends LivingEntity> extends Enti
 	@Inject(
 		require = 1,
 		method = "setAttributes",
-		at = @At(value = "RETURN")
+		at = @At(value = "TAIL")
 	)
 	void onSetAttributes(BipedEntityModel<T> model, CallbackInfo ci) {
-		((CrawlingState)model).setCrawling(crawling);
-	}
-
-	@Inject(require = 1, method = "animateModel", at = @At(value = "RETURN"))
-	void setCrawlState(T livingEntity, float f, float g, float h, CallbackInfo ci) {
-		if(!(livingEntity instanceof PrevPoseInfo)) return;
-
- 		setCrawling(
-			leaningPitch > 0 &&
-			(
-				livingEntity.getPose() != EntityPose.SWIMMING &&
-				(
-					livingEntity.getPose() == Crawl.Shared.CRAWLING
-					||
-					((PrevPoseInfo)livingEntity).getPrevPose() == Crawl.Shared.CRAWLING
-				)
-			)
-		);
+		((CrawlingState)model).setCrawling(isCrawling());
 	}
 
 	// Prevent head pitch change when in swimming pose but not in water
@@ -92,7 +72,7 @@ public abstract class BipedEntityModelMixin<T extends LivingEntity> extends Enti
 			ordinal = 1
 		)
 	)
-	float onLerp(BipedEntityModel bipedEntityModel, float f, float g, float h) {
+	float onLerp(BipedEntityModel<?> bipedEntityModel, float f, float g, float h) {
 		return h; // don't change pitch
 	}
 

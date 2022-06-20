@@ -17,8 +17,9 @@ public class EntityMixin {
 		cancellable = true
 	)
 	void onGetJumpVelocityMultiplierReturn(CallbackInfoReturnable<Float> cir) {
-		if(( (Entity) ( (Object)this )).getPose() == Crawl.Shared.CRAWLING)
-			cir.setReturnValue(cir.getReturnValueF()/2f);
+		if(((Entity) ((Object)this)).getPose() == Crawl.Shared.CRAWLING) {
+			cir.setReturnValue(cir.getReturnValueF() / 2f);
+		}
 	}
 
 }

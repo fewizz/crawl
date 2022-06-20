@@ -4,30 +4,37 @@ import net.minecraft.entity.player.PlayerAbilities;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityPose;
 import net.minecraft.entity.EntityDimensions;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.world.World;
-import net.minecraft.world.RaycastContext.ShapeType;
 import ru.fewizz.crawl.Crawl;
+import ru.fewizz.crawl.PrevPoseInfo;
 import ru.fewizz.crawl.Crawl.Shared;
 
 @Mixin(PlayerEntity.class)
-public abstract class PlayerEntityMixin extends Entity {
+public abstract class PlayerEntityMixin extends LivingEntity implements PrevPoseInfo {
+
+	protected PlayerEntityMixin(EntityType<? extends LivingEntity> entityType, World world) {
+		super(entityType, world);
+	}
 
 	@Shadow @Final private PlayerAbilities abilities;
-
-	public PlayerEntityMixin(EntityType<?> type, World world) {
-		super(type, world);
-	}
+	
+	@Unique
+	EntityPose prevPose;
+	
+	@Unique
+	EntityPose prevTickPose;
 
 	@Inject(
 		require = 1,
@@ -38,19 +45,20 @@ public abstract class PlayerEntityMixin extends Entity {
 		getDataTracker().startTracking(Crawl.Shared.CRAWL_REQUEST, false);
 	}
 	
-	@Redirect(
+	@ModifyArg(
 		require = 1,
 		method = "updatePose",
+		index = 0,
 		at = @At(
 			value = "INVOKE",
 			target = "net/minecraft/entity/player/PlayerEntity.setPose(Lnet/minecraft/entity/EntityPose;)V"
 		)
 	)
-	public void onPreSetPose(PlayerEntity player, EntityPose pose) {
-		if (!player.isFallFlying() && !this.isSpectator() && !this.hasVehicle() && !this.abilities.flying) {
-			boolean requested = player.getDataTracker().get(Shared.CRAWL_REQUEST);
+	public EntityPose onPreSetPose(EntityPose pose) {
+		if (!isFallFlying() && !this.isSpectator() && !this.hasVehicle() && !this.abilities.flying) {
+			boolean requested = getDataTracker().get(Shared.CRAWL_REQUEST);
 
-			boolean swimming = player.isSwimming() || player.isTouchingWater();
+			boolean swimming = isSwimming() || isTouchingWater();
 
 			if (requested) {
 				if (!swimming) {
@@ -65,7 +73,7 @@ public abstract class PlayerEntityMixin extends Entity {
 			}
 		}
 
-		setPose(pose);
+		return pose;
 	}
 
 	@Inject(require = 1, method = "getDimensions", at = @At("HEAD"), cancellable = true)
@@ -78,5 +86,27 @@ public abstract class PlayerEntityMixin extends Entity {
 	public void onGetActiveEyeHeight(EntityPose pose, EntityDimensions size, CallbackInfoReturnable<Float> ci) {
 		if (pose == Crawl.Shared.CRAWLING || size == Crawl.Shared.CRAWLING_DIMENSIONS)
 			ci.setReturnValue(0.6F);
+	}
+	
+	@Inject(
+		require = 1,
+		method = "tick",
+		at = @At(value = "TAIL")
+	)
+	public void onTickEnd(CallbackInfo ci) {
+		if(getPose() != prevTickPose) {
+			prevPose = prevTickPose;
+		}
+		prevTickPose = getPose();
+	}
+
+	@Override
+	public EntityPose getPrevPose() {
+		return prevPose;
+	}
+	
+	@Override
+	public EntityPose getPrevTickPose() {
+		return prevTickPose;
 	}
 }

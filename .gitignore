@@ -1,6 +1,7 @@
 /run
 /logs
 *.launch
+.factorypath
 # Gradle
 # ------
 .gradle

@@ -13,6 +13,7 @@ import ru.fewizz.crawl.Crawl.Shared;
 
 @Mixin(LivingEntity.class)
 abstract class LivingEntityMixin extends Entity {
+
 	@Shadow
 	private float leaningPitch;
 	@Shadow
