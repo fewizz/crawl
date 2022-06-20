@@ -36,7 +36,7 @@
 		"fabric-networking-api-v1": "*",
 		"fabric-lifecycle-events-v1": "*",
 		"mm": ">=2.3",
-		"minecraft": "1.18.x",
+		"minecraft": "1.19.x",
 		"java": ">=16"
 	},
 	"mixins": [
