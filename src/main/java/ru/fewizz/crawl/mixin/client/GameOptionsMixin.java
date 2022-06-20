@@ -16,7 +16,7 @@ public class GameOptionsMixin {
 		at = @At("HEAD")
 	)
 	void preAccept(GameOptions.Visitor visitor, CallbackInfo ci) {
-		CrawlClient.crawlToggled = visitor.visitBoolean("toggleCrawl", CrawlClient.crawlToggled);
+		visitor.accept("toggleCrawl", CrawlClient.crawlToggled);
 	}
 
 }

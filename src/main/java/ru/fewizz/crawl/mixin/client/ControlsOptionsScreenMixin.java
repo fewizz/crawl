@@ -25,7 +25,7 @@ class ControlsOptionsScreenMixin extends GameOptionsScreen {
 	)
 	void postInit(CallbackInfo ci) {
 		this.addDrawableChild(
-			CrawlClient.CRAWL_TOGGLED.createButton(
+			CrawlClient.crawlToggled.createButton(
 				this.gameOptions,
 				this.width / 2 - 155 + 160,
 				this.height / 6 - 12 + 24*2,

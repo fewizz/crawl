@@ -6,6 +6,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.mojang.authlib.GameProfile;
+import net.minecraft.network.encryption.PlayerPublicKey;
 
 import io.netty.buffer.Unpooled;
 import net.minecraft.client.MinecraftClient;
@@ -20,8 +21,8 @@ import ru.fewizz.crawl.CrawlClient;
 
 @Mixin(ClientPlayerEntity.class)
 abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity {
-	public ClientPlayerEntityMixin(ClientWorld world, GameProfile profile) {
-		super(world, profile);
+	public ClientPlayerEntityMixin(ClientWorld world, GameProfile profile, PlayerPublicKey publicKey) {
+		super(world, profile, publicKey);
 	}
 	
 	@Inject(
