@@ -17,6 +17,9 @@
 		],
 		"client": [
 			"ru.fewizz.crawl.CrawlClient"
+		],
+		"mm:early_risers": [
+			"ru.fewizz.crawl.EntityPoseHack"
 		]
 	},
 	"accessWidener": "crawl.accesswidener",
@@ -24,11 +27,6 @@
 		"homepage": "https://www.curseforge.com/minecraft/mc-mods/crawl",
 		"sources": "https://github.com/fewizz/crawl",
 		"issues": "https://github.com/fewizz/crawl/issues"
-	},
-	"custom": {
-		"mm:early_risers": [
-			"ru.fewizz.crawl.EntityPoseHack"
-		]
 	},
 	"depends": {
 		"fabricloader": ">=0.12.0",

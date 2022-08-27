@@ -34,11 +34,11 @@ abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity {
 		)
 	)
 	public void beforeSuperMovementTick(CallbackInfo ci) {
+		MinecraftClient mc = MinecraftClient.getInstance();
+
 		boolean wantsToCrawl = CrawlClient.key.isPressed();
 
 		if(wantsToCrawl != getDataTracker().get(Shared.CRAWL_REQUEST)) {
-			MinecraftClient mc = MinecraftClient.getInstance();
-			
 			mc.getNetworkHandler().sendPacket(
 				new CustomPayloadC2SPacket(
 					Crawl.CRAWL_IDENTIFIER,
@@ -47,9 +47,6 @@ abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity {
 			);
 
 			getDataTracker().set(Shared.CRAWL_REQUEST, wantsToCrawl);
-		}
-
-		if(getPose() == Shared.CRAWLING) {
 			setSprinting(false);
 		}
 	}
