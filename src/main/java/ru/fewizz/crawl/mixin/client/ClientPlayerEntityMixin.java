@@ -47,6 +47,9 @@ abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity {
 			);
 
 			getDataTracker().set(Shared.CRAWL_REQUEST, wantsToCrawl);
+		}
+
+		if(getPose() == Shared.CRAWLING) {
 			setSprinting(false);
 		}
 	}
