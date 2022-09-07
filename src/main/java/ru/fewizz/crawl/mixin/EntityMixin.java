@@ -24,7 +24,7 @@ public class EntityMixin {
 	}
 
 	@Inject(method = "isCrawling", at = @At("RETURN"), cancellable = true)
-	public void shouldSlowDown(CallbackInfoReturnable<Boolean> ci) {
+	public void isCrawling(CallbackInfoReturnable<Boolean> ci) {
 		ci.setReturnValue(ci.getReturnValueZ() || MinecraftClient.getInstance().player.getPose() == Crawl.Shared.CRAWLING);
 	}
 
