@@ -1,8 +1,11 @@
 package ru.fewizz.crawl.mixin.client;
 
+import net.minecraft.client.input.Input;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.mojang.authlib.GameProfile;
@@ -15,16 +18,32 @@ import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.packet.c2s.play.CustomPayloadC2SPacket;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import ru.fewizz.crawl.Crawl;
 import ru.fewizz.crawl.Crawl.Shared;
 import ru.fewizz.crawl.CrawlClient;
 
 @Mixin(ClientPlayerEntity.class)
 abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity {
+	@Shadow public Input input;
+
+	@Shadow protected int ticksLeftToDoubleTapSprint;
+
 	public ClientPlayerEntityMixin(ClientWorld world, GameProfile profile, PlayerPublicKey publicKey) {
 		super(world, profile, publicKey);
 	}
-	
+
+	@Inject(
+		method = "tickMovement",
+		at = @At("HEAD")
+	)
+	public void beforeTickMovement(CallbackInfo ci) {
+		if(MinecraftClient.getInstance().player.getPose() == Shared.CRAWLING) {
+			this.input.sneaking = false;
+			this.ticksLeftToDoubleTapSprint = 0;
+		}
+	}
+
 	@Inject(
 		require = 1,
 		method = "tickMovement",
@@ -52,5 +71,10 @@ abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity {
 		if(getPose() == Shared.CRAWLING) {
 			setSprinting(false);
 		}
+	}
+
+	@Inject(method = "shouldSlowDown", at = @At("RETURN"), cancellable = true)
+	public void shouldSlowDown(CallbackInfoReturnable<Boolean> ci) {
+		ci.setReturnValue(ci.getReturnValueZ() || MinecraftClient.getInstance().player.getPose() == Shared.CRAWLING);
 	}
 }

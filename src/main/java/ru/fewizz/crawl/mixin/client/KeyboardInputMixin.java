@@ -16,11 +16,11 @@ abstract class KeyboardInputMixin extends Input {
 	@SuppressWarnings("resource")
 	@Inject(require = 1, method = "tick", at = @At("RETURN"))
 	void onTickEnd(CallbackInfo ci) {
-		if(MinecraftClient.getInstance().player.getPose() != Shared.CRAWLING)
+		//if(MinecraftClient.getInstance().player.getPose() != Shared.CRAWLING)
 			return;
 		
-		movementForward *= 0.25;
-		movementSideways *= 0.25;
-		sneaking = false;
+		//movementForward *= 0.25;
+		//movementSideways *= 0.25;
+		//sneaking = false;
 	}
 }
