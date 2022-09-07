@@ -5,7 +5,6 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.mojang.authlib.GameProfile;
@@ -18,7 +17,6 @@ import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.packet.c2s.play.CustomPayloadC2SPacket;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import ru.fewizz.crawl.Crawl;
 import ru.fewizz.crawl.Crawl.Shared;
 import ru.fewizz.crawl.CrawlClient;
@@ -73,8 +71,4 @@ abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity {
 		}
 	}
 
-	@Inject(method = "shouldSlowDown", at = @At("RETURN"), cancellable = true)
-	public void shouldSlowDown(CallbackInfoReturnable<Boolean> ci) {
-		ci.setReturnValue(ci.getReturnValueZ() || MinecraftClient.getInstance().player.getPose() == Shared.CRAWLING);
-	}
 }

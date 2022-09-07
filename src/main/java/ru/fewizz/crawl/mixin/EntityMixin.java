@@ -1,5 +1,6 @@
 package ru.fewizz.crawl.mixin;
 
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.Entity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -20,6 +21,11 @@ public class EntityMixin {
 		if(((Entity) ((Object)this)).getPose() == Crawl.Shared.CRAWLING) {
 			cir.setReturnValue(cir.getReturnValueF() / 2f);
 		}
+	}
+
+	@Inject(method = "isCrawling", at = @At("RETURN"), cancellable = true)
+	public void shouldSlowDown(CallbackInfoReturnable<Boolean> ci) {
+		ci.setReturnValue(ci.getReturnValueZ() || MinecraftClient.getInstance().player.getPose() == Crawl.Shared.CRAWLING);
 	}
 
 }
