@@ -55,7 +55,7 @@ public abstract class BipedEntityModelMixin<T extends LivingEntity> extends Enti
 
 	@Inject(
 		require = 1,
-		method = "setAttributes",
+		method = "copyBipedStateTo",
 		at = @At(value = "TAIL")
 	)
 	void onSetAttributes(BipedEntityModel<T> model, CallbackInfo ci) {
