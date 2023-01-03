@@ -29,13 +29,11 @@
 		"issues": "https://github.com/fewizz/crawl/issues"
 	},
 	"depends": {
-		"fabricloader": ">=0.12.0",
-		"fabric-key-binding-api-v1": "*",
-		"fabric-networking-api-v1": "*",
-		"fabric-lifecycle-events-v1": "*",
+		"fabricloader": ">=0.14.12",
+		"fabric": "*",
 		"mm": ">=2.3",
-		"minecraft": "1.19.x",
-		"java": ">=16"
+		"minecraft": ">=1.19.3",
+		"java": ">=17"
 	},
 	"mixins": [
 		"mixins.crawl.json"

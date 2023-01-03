@@ -23,9 +23,7 @@ dependencies {
 	mappings "net.fabricmc:yarn:${project.minecraft_version}+build.${project.yarn_mappings}:v2"
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
-	modImplementation "net.fabricmc.fabric-api:fabric-key-binding-api-v1:${key_binding_version}"
-	modImplementation "net.fabricmc.fabric-api:fabric-networking-api-v1:${networking_version}"
-	modImplementation "net.fabricmc.fabric-api:fabric-lifecycle-events-v1:${lifecycle_events_version}"
+	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}+${project.minecraft_version}"
 
 	include "com.github.Chocohead:Fabric-ASM:${project.fabric_asm_version}"
 	modImplementation "com.github.Chocohead:Fabric-ASM:${project.fabric_asm_version}"
