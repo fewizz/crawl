@@ -2,14 +2,16 @@ package ru.fewizz.crawl.mixin;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityPose;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import ru.fewizz.crawl.Crawl;
 
 @Mixin(Entity.class)
-public class EntityMixin {
+public abstract class EntityMixin {
 
 	@Inject(
 		require = 1,
@@ -23,9 +25,12 @@ public class EntityMixin {
 		}
 	}
 
+	@Shadow
+	abstract public EntityPose getPose();
+
 	@Inject(method = "isCrawling", at = @At("RETURN"), cancellable = true)
 	public void isCrawling(CallbackInfoReturnable<Boolean> ci) {
-		ci.setReturnValue(ci.getReturnValueZ() || MinecraftClient.getInstance().player.getPose() == Crawl.Shared.CRAWLING);
+		ci.setReturnValue(ci.getReturnValueZ() || getPose() == Crawl.Shared.CRAWLING);
 	}
 
 }
