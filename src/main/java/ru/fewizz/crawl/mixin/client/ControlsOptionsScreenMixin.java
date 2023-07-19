@@ -21,12 +21,12 @@ class ControlsOptionsScreenMixin extends GameOptionsScreen {
 		super(parent, gameOptions, title);
 	}
 
-	@ModifyArgs(method = "init", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/option/SimpleOption;createButton(Lnet/minecraft/client/option/GameOptions;III)Lnet/minecraft/client/gui/widget/ClickableWidget;", ordinal = 0))
+	@ModifyArgs(method = "init", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/option/SimpleOption;createWidget(Lnet/minecraft/client/option/GameOptions;III)Lnet/minecraft/client/gui/widget/ClickableWidget;", ordinal = 0))
 	void shrinkSneak(Args args){
 		args.set(3, 100);
 	}
 
-	@ModifyArgs(method = "init", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/option/SimpleOption;createButton(Lnet/minecraft/client/option/GameOptions;III)Lnet/minecraft/client/gui/widget/ClickableWidget;", ordinal = 1))
+	@ModifyArgs(method = "init", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/option/SimpleOption;createWidget(Lnet/minecraft/client/option/GameOptions;III)Lnet/minecraft/client/gui/widget/ClickableWidget;", ordinal = 1))
 	void shrinkSprint(Args args){
 		args.set(1, (int)args.get(1) - 55);
 		args.set(3, 100);
@@ -38,7 +38,7 @@ class ControlsOptionsScreenMixin extends GameOptionsScreen {
 	)
 	void postInit(CallbackInfo ci) {
 		this.addDrawableChild(
-			CrawlClient.crawlToggled.createButton(
+			CrawlClient.crawlToggled.createWidget(
 				this.gameOptions,
 				this.width / 2 - 155 + (105)*2,
 				this.height / 6 - 12 + 24,
