@@ -1,6 +1,5 @@
 package ru.fewizz.crawl.mixin;
 
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityPose;
 import org.spongepowered.asm.mixin.Mixin;
