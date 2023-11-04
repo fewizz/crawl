@@ -1,8 +1,10 @@
 package ru.fewizz.crawl.mixin;
 
+import com.google.common.collect.ImmutableMap;
 import net.minecraft.entity.player.PlayerAbilities;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Mutable;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -21,6 +23,8 @@ import ru.fewizz.crawl.Crawl;
 import ru.fewizz.crawl.PrevPoseInfo;
 import ru.fewizz.crawl.Crawl.Shared;
 
+import java.util.Map;
+
 @Mixin(PlayerEntity.class)
 public abstract class PlayerEntityMixin extends LivingEntity implements PrevPoseInfo {
 
@@ -29,7 +33,9 @@ public abstract class PlayerEntityMixin extends LivingEntity implements PrevPose
 	}
 
 	@Shadow @Final private PlayerAbilities abilities;
-	
+
+	@Shadow @Final @Mutable
+	private static Map<EntityPose, EntityDimensions> POSE_DIMENSIONS;
 	@Unique
 	EntityPose prevPose;
 	
@@ -76,10 +82,9 @@ public abstract class PlayerEntityMixin extends LivingEntity implements PrevPose
 		return pose;
 	}
 
-	@Inject(require = 1, method = "getDimensions", at = @At("HEAD"), cancellable = true)
-	public void onGetDimensions(EntityPose pose, CallbackInfoReturnable<EntityDimensions> ci) {
-		if (pose == Crawl.Shared.CRAWLING)
-			ci.setReturnValue(Crawl.Shared.CRAWLING_DIMENSIONS);
+	@Inject(require = 1, method = "<clinit>", at = @At("TAIL"))
+	private static void onPoseMapCreation(CallbackInfo ci) {
+		POSE_DIMENSIONS = ImmutableMap.<EntityPose, EntityDimensions>builder().putAll(POSE_DIMENSIONS).put(Crawl.Shared.CRAWLING, Crawl.Shared.CRAWLING_DIMENSIONS).build();
 	}
 
 	@Inject(require = 1, method = "getActiveEyeHeight", at = @At("HEAD"), cancellable = true)
