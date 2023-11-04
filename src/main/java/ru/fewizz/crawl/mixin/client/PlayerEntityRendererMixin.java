@@ -5,6 +5,7 @@ import net.minecraft.client.render.entity.LivingEntityRenderer;
 import net.minecraft.client.render.entity.model.PlayerEntityModel;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.EntityPose;
+import net.minecraft.entity.EntityType;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RotationAxis;
 import org.spongepowered.asm.mixin.Mixin;
@@ -43,7 +44,7 @@ abstract class PlayerEntityRendererMixin extends LivingEntityRenderer<AbstractCl
 			float pitch = abstractClientPlayerEntity.getLeaningPitch(h);
 			float lerpedHalfPI = MathHelper.lerp(pitch, 0.0F, -90);
 			matrixStack.translate(0, pitch/10F, 0);
-			matrixStack.translate(0, 0, pitch*abstractClientPlayerEntity.getEyeHeight(EntityPose.STANDING)/2.0);
+			matrixStack.translate(0, 0, pitch*EntityType.PLAYER.getHeight()/2.0);
 			matrixStack.multiply(RotationAxis.POSITIVE_X.rotationDegrees(lerpedHalfPI));
 			ci.cancel();
 		}
