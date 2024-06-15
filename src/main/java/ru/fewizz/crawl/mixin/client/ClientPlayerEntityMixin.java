@@ -15,14 +15,12 @@ import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.network.PacketByteBuf;
-import net.minecraft.network.packet.c2s.common.CustomPayloadC2SPacket;
 
 import ru.fewizz.crawl.Crawl;
 import ru.fewizz.crawl.Crawl.Shared;
 import ru.fewizz.crawl.CrawlClient;
 
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.fabricmc.fabric.impl.networking.payload.PacketByteBufPayload;
 
 @Mixin(ClientPlayerEntity.class)
 abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity {
@@ -54,8 +52,6 @@ abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity {
 		)
 	)
 	public void beforeSuperMovementTick(CallbackInfo ci) {
-		MinecraftClient mc = MinecraftClient.getInstance();
-
 		boolean wantsToCrawl = CrawlClient.key.isPressed();
 
 		if(wantsToCrawl != getDataTracker().get(Shared.CRAWL_REQUEST)) {
