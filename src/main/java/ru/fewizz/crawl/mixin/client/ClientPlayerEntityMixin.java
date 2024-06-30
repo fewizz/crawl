@@ -9,12 +9,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.mojang.authlib.GameProfile;
 
-import io.netty.buffer.Unpooled;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.world.ClientWorld;
-import net.minecraft.network.PacketByteBuf;
 
 import ru.fewizz.crawl.Crawl;
 import ru.fewizz.crawl.Crawl.Shared;
@@ -55,11 +53,7 @@ abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity {
 		boolean wantsToCrawl = CrawlClient.key.isPressed();
 
 		if(wantsToCrawl != getDataTracker().get(Shared.CRAWL_REQUEST)) {
-			ClientPlayNetworking.send(
-				Crawl.CRAWL_IDENTIFIER,
-				new PacketByteBuf(Unpooled.copyBoolean(wantsToCrawl))
-			);
-
+			ClientPlayNetworking.send(new Crawl.Payload(wantsToCrawl));
 			getDataTracker().set(Shared.CRAWL_REQUEST, wantsToCrawl);
 		}
 

@@ -1,11 +1,5 @@
 plugins {
-	id 'fabric-loom' version '1.4-SNAPSHOT'
-}
-
-repositories {
-	maven { url "https://maven.shedaniel.me/" }
-	maven { url "https://jitpack.io/" }
-	maven { url "https://maven.terraformersmc.com/" }
+	id 'fabric-loom' version '1.7-SNAPSHOT'
 }
 
 loom {
@@ -16,11 +10,7 @@ dependencies {
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
 	mappings "net.fabricmc:yarn:${project.minecraft_version}+build.${project.yarn_mappings}:v2"
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
-
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}+${project.minecraft_version}"
-
-	include "com.github.Chocohead:Fabric-ASM:${project.fabric_asm_version}"
-	modImplementation "com.github.Chocohead:Fabric-ASM:${project.fabric_asm_version}"
 }
 
 version = project.mod_version
@@ -38,12 +28,12 @@ processResources {
 }
 
 tasks.withType(JavaCompile).configureEach {
-	it.options.release = 17
+	it.options.release = 21
 }
 
 java {
-	sourceCompatibility = JavaVersion.VERSION_17
-	targetCompatibility = JavaVersion.VERSION_17
+	sourceCompatibility = JavaVersion.VERSION_21
+	targetCompatibility = JavaVersion.VERSION_21
 }
 
 runClient.args+="-Xmx3G"

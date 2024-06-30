@@ -1,6 +1,8 @@
 package ru.fewizz.crawl.mixin;
 
 import com.google.common.collect.ImmutableMap;
+
+import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.player.PlayerAbilities;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -45,10 +47,10 @@ public abstract class PlayerEntityMixin extends LivingEntity implements PrevPose
 	@Inject(
 		require = 1,
 		method = "initDataTracker",
-		at = @At("HEAD")
+		at = @At("TAIL")
 	)
-	public void onInitDataTracker(CallbackInfo ci) {
-		getDataTracker().startTracking(Crawl.Shared.CRAWL_REQUEST, false);
+	public void onInitDataTracker(DataTracker.Builder builder, CallbackInfo ci) {
+		builder.add(Crawl.Shared.CRAWL_REQUEST, false);
 	}
 	
 	@ModifyArg(
@@ -85,12 +87,6 @@ public abstract class PlayerEntityMixin extends LivingEntity implements PrevPose
 	@Inject(require = 1, method = "<clinit>", at = @At("TAIL"))
 	private static void onPoseMapCreation(CallbackInfo ci) {
 		POSE_DIMENSIONS = ImmutableMap.<EntityPose, EntityDimensions>builder().putAll(POSE_DIMENSIONS).put(Crawl.Shared.CRAWLING, Crawl.Shared.CRAWLING_DIMENSIONS).build();
-	}
-
-	@Inject(require = 1, method = "getActiveEyeHeight", at = @At("HEAD"), cancellable = true)
-	public void onGetActiveEyeHeight(EntityPose pose, EntityDimensions size, CallbackInfoReturnable<Float> ci) {
-		if (pose == Crawl.Shared.CRAWLING || size == Crawl.Shared.CRAWLING_DIMENSIONS)
-			ci.setReturnValue(0.6F);
 	}
 	
 	@Inject(

@@ -36,11 +36,11 @@ abstract class PlayerEntityRendererMixin extends LivingEntityRenderer<AbstractCl
 			value = "HEAD"
 		)
 	)
-	void setupCrawlTransformations(AbstractClientPlayerEntity abstractClientPlayerEntity, MatrixStack matrixStack, float f, float g, float h, CallbackInfo ci) {
+	void setupCrawlTransformations(AbstractClientPlayerEntity abstractClientPlayerEntity, MatrixStack matrixStack, float f, float g, float h, float i, CallbackInfo ci) {
 		Object model = getModel();
 
 		if((model instanceof CrawlingState) && ((CrawlingState)model).isCrawling() ) {
-			super.setupTransforms(abstractClientPlayerEntity, matrixStack, f, g, h);
+			super.setupTransforms(abstractClientPlayerEntity, matrixStack, f, g, h, i);
 			float pitch = abstractClientPlayerEntity.getLeaningPitch(h);
 			float lerpedHalfPI = MathHelper.lerp(pitch, 0.0F, -90);
 			matrixStack.translate(0, pitch/10F, 0);
@@ -59,7 +59,7 @@ abstract class PlayerEntityRendererMixin extends LivingEntityRenderer<AbstractCl
 		if (!player.isSpectator()) {
 			var model = getModel();
 			((CrawlingState)model).setCrawling(
-				player.getLeaningPitch(MinecraftClient.getInstance().getTickDelta()) > 0 &&
+				player.getLeaningPitch(MinecraftClient.getInstance().getRenderTickCounter().getTickDelta(true)) > 0 &&
 	 			player.getPose() != EntityPose.SWIMMING &&
 	 			(
 	 				player.getPose() == Crawl.Shared.CRAWLING ||
