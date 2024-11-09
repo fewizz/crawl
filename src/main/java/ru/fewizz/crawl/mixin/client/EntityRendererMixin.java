@@ -11,7 +11,7 @@ import ru.fewizz.crawl.Crawl.Shared;
 @Mixin(EntityRenderer.class)
 public class EntityRendererMixin {
 	
-	@Redirect(
+	/*@Redirect(
 		require = 1,
 		method = "renderLabelIfPresent("+
 			"Lnet/minecraft/entity/Entity;" +
@@ -28,6 +28,6 @@ public class EntityRendererMixin {
 	)
 	boolean onGetIsInSneakingPose(Entity e) {
 		return e.isInSneakingPose() || e.getPose() == Shared.CRAWLING;
-	}
+	}*/
 
 }

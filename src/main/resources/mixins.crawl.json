@@ -2,6 +2,9 @@
 	"package": "ru.fewizz.crawl.mixin",
 	"minVersion": "0.8",
 	"required": true,
+	"injectors": {
+		"defaultRequire": 1
+	},
 	"plugin": "ru.fewizz.crawl.mixin.Plugin",
 	"mixins": [
 		"EntityMixin",
@@ -11,6 +14,7 @@
 	],
 	"client": [
 		"client.BipedEntityModelMixin",
+		"client.BipedEntityRenderStateMixin",
 		"client.ClientPlayerEntityMixin",
 		"client.ElytraEntityModelMixin",
 		"client.EntityRendererMixin",

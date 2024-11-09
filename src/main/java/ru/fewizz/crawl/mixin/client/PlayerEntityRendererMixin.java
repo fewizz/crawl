@@ -1,47 +1,37 @@
 package ru.fewizz.crawl.mixin.client;
 
-import net.minecraft.client.render.entity.EntityRendererFactory;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
+
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.render.entity.LivingEntityRenderer;
+import net.minecraft.client.render.entity.PlayerEntityRenderer;
 import net.minecraft.client.render.entity.model.PlayerEntityModel;
+import net.minecraft.client.render.entity.state.PlayerEntityRenderState;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.EntityPose;
 import net.minecraft.entity.EntityType;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RotationAxis;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.AbstractClientPlayerEntity;
-import net.minecraft.client.render.entity.PlayerEntityRenderer;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
 import ru.fewizz.crawl.Crawl;
-import ru.fewizz.crawl.CrawlingState;
-import ru.fewizz.crawl.PrevPoseInfo;
+import ru.fewizz.crawl.mixininterface.CrawlingState;
+import ru.fewizz.crawl.mixininterface.PrevPoseState;
 
 @Mixin(PlayerEntityRenderer.class)
-abstract class PlayerEntityRendererMixin extends LivingEntityRenderer<AbstractClientPlayerEntity, PlayerEntityModel<AbstractClientPlayerEntity>> {
+abstract class PlayerEntityRendererMixin extends LivingEntityRenderer<AbstractClientPlayerEntity, PlayerEntityRenderState, PlayerEntityModel> {
 
-	public PlayerEntityRendererMixin(EntityRendererFactory.Context ctx, PlayerEntityModel<AbstractClientPlayerEntity> model, float shadowRadius) {
-		super(ctx, model, shadowRadius);
-	}
+	PlayerEntityRendererMixin() { super(null, null, 0.0F); }
 
-	@Inject(
-		require = 1,
-		cancellable = true,
-		method = "setupTransforms",
-		at = @At(
-			value = "HEAD"
-		)
-	)
-	void setupCrawlTransformations(AbstractClientPlayerEntity abstractClientPlayerEntity, MatrixStack matrixStack, float f, float g, float h, float i, CallbackInfo ci) {
-		Object model = getModel();
-
-		if((model instanceof CrawlingState) && ((CrawlingState)model).isCrawling() ) {
-			super.setupTransforms(abstractClientPlayerEntity, matrixStack, f, g, h, i);
-			float pitch = abstractClientPlayerEntity.getLeaningPitch(h);
+	@Inject(method = "setupTransforms", at = @At("HEAD"), cancellable = true)
+	void setupCrawlTransformations(PlayerEntityRenderState state, MatrixStack matrixStack, float f, float g, CallbackInfo ci) {
+		if (((CrawlingState) state).isCrawling()) {
+			super.setupTransforms(state, matrixStack, f, g);
+			float pitch = state.leaningPitch;
 			float lerpedHalfPI = MathHelper.lerp(pitch, 0.0F, -90);
 			matrixStack.translate(0, pitch/10F, 0);
 			matrixStack.translate(0, 0, pitch*EntityType.PLAYER.getHeight()/2.0);
@@ -49,24 +39,18 @@ abstract class PlayerEntityRendererMixin extends LivingEntityRenderer<AbstractCl
 			ci.cancel();
 		}
 	}
-	
-	@Inject(
-		require = 1,
-		method = "setModelPose",
-		at = @At(value = "TAIL")
-	)
-	void onSetAttributes(AbstractClientPlayerEntity player, CallbackInfo ci) {
-		if (!player.isSpectator()) {
-			var model = getModel();
-			((CrawlingState)model).setCrawling(
-				player.getLeaningPitch(MinecraftClient.getInstance().getRenderTickCounter().getTickDelta(true)) > 0 &&
-	 			player.getPose() != EntityPose.SWIMMING &&
-	 			(
-	 				player.getPose() == Crawl.Shared.CRAWLING ||
-	 				((PrevPoseInfo)player).getPrevPose() == Crawl.Shared.CRAWLING ||
-	 				((PrevPoseInfo)player).getPrevTickPose() == Crawl.Shared.CRAWLING
-	 			)
-	 		);
-		}
+
+	@Inject(method = "updateRenderState", at = @At("TAIL"))
+	void onUpdateRenderState(AbstractClientPlayerEntity e, PlayerEntityRenderState state, float tickDelta, CallbackInfo ci) {
+		boolean crawling =
+			e.getLeaningPitch(tickDelta) > 0 &&
+			e.getPose() != EntityPose.SWIMMING && (
+				e.getPose() == Crawl.Shared.CRAWLING ||
+				((PrevPoseState) e).getPrevPose() == Crawl.Shared.CRAWLING ||
+				((PrevPoseState) e).getPrevTickPose() == Crawl.Shared.CRAWLING
+			);
+
+		((CrawlingState) state).setCrawling(crawling);
 	}
+
 }

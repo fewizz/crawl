@@ -20,7 +20,7 @@ import java.util.Collections;
 
 @Mixin(ElytraEntityModel.class)
 public class ElytraEntityModelMixin {
-	@Shadow
+	/*@Shadow
 	@Final
 	private ModelPart leftWing;
 	
@@ -70,5 +70,5 @@ public class ElytraEntityModelMixin {
 		leftWing.copyTransform(m.body);
 		rightWing.copyTransform(m.body);
 		ci.cancel();
-	}
+	}*/
 }

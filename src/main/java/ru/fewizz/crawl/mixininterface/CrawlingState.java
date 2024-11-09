@@ -1,4 +1,4 @@
-package ru.fewizz.crawl;
+package ru.fewizz.crawl.mixininterface;
 
 public interface CrawlingState {
 	boolean isCrawling();

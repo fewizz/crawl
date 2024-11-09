@@ -1,9 +1,7 @@
 package ru.fewizz.crawl.mixin;
 
-import com.google.common.collect.ImmutableMap;
+import java.util.Map;
 
-import net.minecraft.entity.data.DataTracker;
-import net.minecraft.entity.player.PlayerAbilities;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Mutable;
@@ -11,91 +9,78 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import net.minecraft.entity.EntityPose;
+import com.google.common.collect.ImmutableMap;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+
 import net.minecraft.entity.EntityDimensions;
-import net.minecraft.entity.EntityType;
+import net.minecraft.entity.EntityPose;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.data.DataTracker;
+import net.minecraft.entity.player.PlayerAbilities;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.world.World;
 import ru.fewizz.crawl.Crawl;
-import ru.fewizz.crawl.PrevPoseInfo;
 import ru.fewizz.crawl.Crawl.Shared;
-
-import java.util.Map;
+import ru.fewizz.crawl.mixininterface.PrevPoseState;
 
 @Mixin(PlayerEntity.class)
-public abstract class PlayerEntityMixin extends LivingEntity implements PrevPoseInfo {
+public abstract class PlayerEntityMixin extends LivingEntity implements PrevPoseState {
 
-	protected PlayerEntityMixin(EntityType<? extends LivingEntity> entityType, World world) {
-		super(entityType, world);
-	}
+	PlayerEntityMixin() { super(null, null); }
 
-	@Shadow @Final private PlayerAbilities abilities;
+	@Shadow @Final
+	private PlayerAbilities abilities;
 
 	@Shadow @Final @Mutable
 	private static Map<EntityPose, EntityDimensions> POSE_DIMENSIONS;
+
 	@Unique
 	EntityPose prevPose;
 	
 	@Unique
 	EntityPose prevTickPose;
 
-	@Inject(
-		require = 1,
-		method = "initDataTracker",
-		at = @At("TAIL")
-	)
+	@Inject(method = "initDataTracker", at = @At("TAIL"))
 	public void onInitDataTracker(DataTracker.Builder builder, CallbackInfo ci) {
 		builder.add(Crawl.Shared.CRAWL_REQUEST, false);
 	}
 	
-	@ModifyArg(
-		require = 1,
+	@WrapOperation(
 		method = "updatePose",
-		index = 0,
 		at = @At(
 			value = "INVOKE",
 			target = "net/minecraft/entity/player/PlayerEntity.setPose(Lnet/minecraft/entity/EntityPose;)V"
 		)
 	)
-	public EntityPose onPreSetPose(EntityPose pose) {
-		if (!isFallFlying() && !this.isSpectator() && !this.hasVehicle() && !this.abilities.flying) {
+	public void onPreSetPose(PlayerEntity instance, EntityPose pose, Operation<Void> original) {
+		if (!this.isSpectator() && !this.hasVehicle() && !this.abilities.flying) {
 			boolean requested = getDataTracker().get(Shared.CRAWL_REQUEST);
-
 			boolean swimming = isSwimming() || isTouchingWater();
 
 			if (requested) {
-				if (!swimming) {
-					pose = Shared.CRAWLING;
-				}
-				else {
-					pose = EntityPose.SWIMMING;
-				}
+				pose = swimming ? EntityPose.SWIMMING : Shared.CRAWLING;
 			}
 			else if (pose == EntityPose.SWIMMING && !swimming) {
 				pose = Shared.CRAWLING;
 			}
 		}
 
-		return pose;
+		original.call(instance, pose);
 	}
 
-	@Inject(require = 1, method = "<clinit>", at = @At("TAIL"))
+	@Inject(method = "<clinit>", at = @At("TAIL"))
 	private static void onPoseMapCreation(CallbackInfo ci) {
-		POSE_DIMENSIONS = ImmutableMap.<EntityPose, EntityDimensions>builder().putAll(POSE_DIMENSIONS).put(Crawl.Shared.CRAWLING, Crawl.Shared.CRAWLING_DIMENSIONS).build();
+		POSE_DIMENSIONS = ImmutableMap.<EntityPose, EntityDimensions>builder()
+			.putAll(POSE_DIMENSIONS)
+			.put(Crawl.Shared.CRAWLING, Crawl.Shared.CRAWLING_DIMENSIONS)
+			.build();
 	}
 	
-	@Inject(
-		require = 1,
-		method = "tick",
-		at = @At(value = "TAIL")
-	)
+	@Inject(method = "tick", at = @At(value = "TAIL"))
 	public void onTickEnd(CallbackInfo ci) {
-		if(getPose() != prevTickPose) {
+		if (getPose() != prevTickPose) {
 			prevPose = prevTickPose;
 		}
 		prevTickPose = getPose();

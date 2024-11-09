@@ -1,35 +1,27 @@
 package ru.fewizz.crawl.mixin.client;
 
-import java.util.ArrayList;
-import java.util.Arrays;
+import org.spongepowered.asm.mixin.Mixin;
 
 import com.google.common.collect.Lists;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
+import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 
-import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.option.ControlsOptionsScreen;
 import net.minecraft.client.gui.screen.option.GameOptionsScreen;
 import net.minecraft.client.option.GameOptions;
 import net.minecraft.client.option.SimpleOption;
-import net.minecraft.text.Text;
-
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import ru.fewizz.crawl.CrawlClient;
 
 @Mixin(ControlsOptionsScreen.class)
 abstract class ControlsOptionsScreenMixin extends GameOptionsScreen {
 
-	public ControlsOptionsScreenMixin(Screen parent, GameOptions gameOptions, Text title) {
-		super(parent, gameOptions, title);
-	}
+	ControlsOptionsScreenMixin() { super(null, null, null); }
 
-	@Inject(method = "getOptions", at = @At("RETURN"), cancellable = true)
-	private static void getOptionsWithCrawl(GameOptions gameOptions, CallbackInfoReturnable<Object> cir) {
-		var options = Lists.newArrayList((SimpleOption<?>[]) cir.getReturnValue());
+	@WrapMethod(method = "getOptions")
+	private static SimpleOption<?>[] getOptionsWithCrawl(GameOptions gameOptions, Operation<SimpleOption<?>[]> original) {
+		var options = Lists.newArrayList(original.call(gameOptions));
 		options.add(options.indexOf(gameOptions.getSneakToggled()) + 1, CrawlClient.crawlToggled);
-		cir.setReturnValue(options.toArray(new SimpleOption[]{}));
+		return options.toArray(new SimpleOption<?>[]{});
 	}
 
 }

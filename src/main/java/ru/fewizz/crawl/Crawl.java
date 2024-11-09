@@ -19,7 +19,7 @@ import net.minecraft.util.Identifier;
 public class Crawl implements ModInitializer {
 
 	public record Payload(boolean crawl) implements CustomPayload {
-		public static final CustomPayload.Id<Payload> ID = new CustomPayload.Id<>(CRAWL_IDENTIFIER);
+		public static final CustomPayload.Id<Payload> ID = new CustomPayload.Id<>(CRAWL_ID);
 		public static final PacketCodec<ByteBuf, Payload> CODEC = PacketCodecs.BOOL.xmap(Payload::new, Payload::crawl);
 
 		@Override
@@ -28,7 +28,7 @@ public class Crawl implements ModInitializer {
 		}
 	};
 
-	public static final Identifier CRAWL_IDENTIFIER = Identifier.of("crawl:identifier");
+	public static final Identifier CRAWL_ID = Identifier.of("crawl:identifier");
 
 	@Override
 	public void onInitialize() {
