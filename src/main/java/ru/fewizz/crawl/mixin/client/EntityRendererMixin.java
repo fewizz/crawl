@@ -2,32 +2,31 @@ package ru.fewizz.crawl.mixin.client;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Redirect;
+
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 
 import net.minecraft.client.render.entity.EntityRenderer;
-import net.minecraft.entity.Entity;
-import ru.fewizz.crawl.Crawl.Shared;
+import net.minecraft.client.render.entity.state.EntityRenderState;
+import ru.fewizz.crawl.mixininterface.CrawlingState;
 
 @Mixin(EntityRenderer.class)
 public class EntityRendererMixin {
 	
-	/*@Redirect(
-		require = 1,
+	@ModifyExpressionValue(
 		method = "renderLabelIfPresent("+
-			"Lnet/minecraft/entity/Entity;" +
+			"Lnet/minecraft/client/render/entity/state/EntityRenderState;" +
 			"Lnet/minecraft/text/Text;"+
 			"Lnet/minecraft/client/util/math/MatrixStack;"+
 			"Lnet/minecraft/client/render/VertexConsumerProvider;"+
 			"I"+
-			"F"+
 		")V",
 		at = @At(
-			value = "INVOKE",
-			target = "Lnet/minecraft/entity/Entity;isSneaky()Z"
+			value = "FIELD",
+			target = "Lnet/minecraft/client/render/entity/state/EntityRenderState;sneaking:Z"
 		)
 	)
-	boolean onGetIsInSneakingPose(Entity e) {
-		return e.isInSneakingPose() || e.getPose() == Shared.CRAWLING;
-	}*/
+	boolean onGetIsInSneakingPose(boolean sneaking, EntityRenderState state) {
+		return sneaking || (state instanceof CrawlingState cs && cs.isCrawling());
+	}
 
 }

@@ -6,8 +6,6 @@ import static java.lang.Math.pow;
 import static java.lang.Math.sin;
 import static net.minecraft.util.math.MathHelper.lerp;
 
-import java.util.function.Consumer;
-
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -16,15 +14,11 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
-import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
-import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 
 import net.minecraft.client.model.ModelPart;
 import net.minecraft.client.render.entity.model.BipedEntityModel;
 import net.minecraft.client.render.entity.model.EntityModel;
 import net.minecraft.client.render.entity.state.BipedEntityRenderState;
-import net.minecraft.client.render.entity.state.EntityRenderState;
-import net.minecraft.util.Arm;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.MathHelper;
 import ru.fewizz.crawl.mixininterface.CrawlingState;
@@ -111,8 +105,8 @@ public abstract class BipedEntityModelMixin<T extends BipedEntityRenderState> ex
 
 		float limbFreq = state.limbFrequency;
 		float lp = state.leaningPitch;
-		float torsoRollDiv = 6F;
-		float torsoPitchAngle = 0;
+		float torsoRollDiv = 6.0F;
+		float torsoPitchAngle = 0.0F;
 		float torsoYawAngle = (float) sin(limbFreq) / 5.0F;
 		float torsoHeight = 12.0F;
 

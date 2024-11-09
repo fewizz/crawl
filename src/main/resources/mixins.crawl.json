@@ -16,7 +16,6 @@
 		"client.BipedEntityModelMixin",
 		"client.BipedEntityRenderStateMixin",
 		"client.ClientPlayerEntityMixin",
-		"client.ElytraEntityModelMixin",
 		"client.EntityRendererMixin",
 		"client.PlayerEntityRendererMixin",
 		"client.ControlsOptionsScreenMixin",

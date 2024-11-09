@@ -5,9 +5,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
-
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.render.entity.LivingEntityRenderer;
 import net.minecraft.client.render.entity.PlayerEntityRenderer;
@@ -51,6 +48,9 @@ abstract class PlayerEntityRendererMixin extends LivingEntityRenderer<AbstractCl
 			);
 
 		((CrawlingState) state).setCrawling(crawling);
+
+		state.sneaking &= !crawling;
+		state.isInSneakingPose &= !crawling;
 	}
 
 }
