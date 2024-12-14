@@ -20,7 +20,7 @@ public class Crawl implements ModInitializer {
 
 	public record Payload(boolean crawl) implements CustomPayload {
 		public static final CustomPayload.Id<Payload> ID = new CustomPayload.Id<>(CRAWL_ID);
-		public static final PacketCodec<ByteBuf, Payload> CODEC = PacketCodecs.BOOL.xmap(Payload::new, Payload::crawl);
+		public static final PacketCodec<ByteBuf, Payload> CODEC = PacketCodecs.BOOLEAN.xmap(Payload::new, Payload::crawl);
 
 		@Override
 		public Id<? extends CustomPayload> getId() {
@@ -38,7 +38,7 @@ public class Crawl implements ModInitializer {
 			context.player().server.execute(() -> context.player().getDataTracker().set(Shared.CRAWL_REQUEST, payload.crawl));
 		});
 	}
-	
+
 	public static class Shared {
 		public static final EntityPose CRAWLING = EntityPose.valueOf("CRAWLING");
 		public static final EntityDimensions CRAWLING_DIMENSIONS = EntityDimensions.changing(0.6F, 0.6F).withEyeHeight(0.6F);
