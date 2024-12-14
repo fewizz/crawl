@@ -5,43 +5,44 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import net.minecraft.client.network.AbstractClientPlayerEntity;
-import net.minecraft.client.render.entity.LivingEntityRenderer;
-import net.minecraft.client.render.entity.PlayerEntityRenderer;
-import net.minecraft.client.render.entity.model.PlayerEntityModel;
-import net.minecraft.client.render.entity.state.PlayerEntityRenderState;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.entity.EntityPose;
-import net.minecraft.entity.EntityType;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.RotationAxis;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Axis;
+
+import net.minecraft.client.model.PlayerModel;
+import net.minecraft.client.player.AbstractClientPlayer;
+import net.minecraft.client.renderer.entity.LivingEntityRenderer;
+import net.minecraft.client.renderer.entity.player.PlayerRenderer;
+import net.minecraft.client.renderer.entity.state.PlayerRenderState;
+import net.minecraft.util.Mth;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.Pose;
 import ru.fewizz.crawl.Crawl;
 import ru.fewizz.crawl.mixininterface.CrawlingState;
 import ru.fewizz.crawl.mixininterface.PrevPoseState;
 
-@Mixin(PlayerEntityRenderer.class)
-abstract class PlayerEntityRendererMixin extends LivingEntityRenderer<AbstractClientPlayerEntity, PlayerEntityRenderState, PlayerEntityModel> {
+@Mixin(PlayerRenderer.class)
+abstract class PlayerEntityRendererMixin extends LivingEntityRenderer<AbstractClientPlayer, PlayerRenderState, PlayerModel> {
 
 	PlayerEntityRendererMixin() { super(null, null, 0.0F); }
 
-	@Inject(method = "setupTransforms", at = @At("HEAD"), cancellable = true)
-	void setupCrawlTransformations(PlayerEntityRenderState state, MatrixStack matrixStack, float f, float g, CallbackInfo ci) {
+	@Inject(method = "setupRotations", at = @At("HEAD"), cancellable = true)
+	void setupCrawlTransformations(PlayerRenderState state, PoseStack matrixStack, float f, float g, CallbackInfo ci) {
 		if (((CrawlingState) state).isCrawling()) {
-			super.setupTransforms(state, matrixStack, f, g);
-			float pitch = state.leaningPitch;
-			float lerpedHalfPI = MathHelper.lerp(pitch, 0.0F, -90);
+			super.setupRotations(state, matrixStack, f, g);
+			float pitch = state.swimAmount;
+			float lerpedHalfPI = Mth.lerp(pitch, 0.0F, -90);
 			matrixStack.translate(0, pitch/10F, 0);
 			matrixStack.translate(0, 0, pitch*EntityType.PLAYER.getHeight()/2.0);
-			matrixStack.multiply(RotationAxis.POSITIVE_X.rotationDegrees(lerpedHalfPI));
+			matrixStack.mulPose(Axis.XP.rotationDegrees(lerpedHalfPI));
 			ci.cancel();
 		}
 	}
 
-	@Inject(method = "updateRenderState", at = @At("TAIL"))
-	void onUpdateRenderState(AbstractClientPlayerEntity e, PlayerEntityRenderState state, float tickDelta, CallbackInfo ci) {
+	@Inject(method = "extractRenderState", at = @At("TAIL"))
+	void onUpdateRenderState(AbstractClientPlayer e, PlayerRenderState state, float tickDelta, CallbackInfo ci) {
 		boolean crawling =
-			e.getLeaningPitch(tickDelta) > 0 &&
-			e.getPose() != EntityPose.SWIMMING && (
+			e.getSwimAmount(tickDelta) > 0 &&
+			e.getPose() != Pose.SWIMMING && (
 				e.getPose() == Crawl.Shared.CRAWLING ||
 				((PrevPoseState) e).getPrevPose() == Crawl.Shared.CRAWLING ||
 				((PrevPoseState) e).getPrevTickPose() == Crawl.Shared.CRAWLING
@@ -49,8 +50,8 @@ abstract class PlayerEntityRendererMixin extends LivingEntityRenderer<AbstractCl
 
 		((CrawlingState) state).setCrawling(crawling);
 
-		state.sneaking &= !crawling;
-		state.isInSneakingPose &= !crawling;
+		state.isCrouching &= !crawling;
+		state.isDiscrete &= !crawling;
 	}
 
 }

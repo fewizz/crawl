@@ -39,9 +39,12 @@ public class Plugin implements IMixinConfigPlugin {
 			String desc = "L"+internalName+";";
 
 			MethodNode arrayInitMethod = targetClass.methods.stream()
-				.filter(m -> !m.name.equals("values") && m.desc.equals("()["+desc)).findFirst().get();
+				.filter(m -> !m.name.equals("values") && m.desc.equals("()["+desc))
+				.findFirst().get();
+
 			MethodNode classInitMethod = targetClass.methods.stream()
-				.filter(m -> m.name.equals("<clinit>")).findFirst().get();
+				.filter(m -> m.name.equals("<clinit>"))
+				.findFirst().get();
 
 			TypeInsnNode aNewArrayInsn = (TypeInsnNode) StreamSupport.stream(arrayInitMethod.instructions.spliterator(), false)
 				.filter(insn->insn.getOpcode() == ANEWARRAY)

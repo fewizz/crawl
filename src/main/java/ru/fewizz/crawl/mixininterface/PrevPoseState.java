@@ -1,8 +1,8 @@
 package ru.fewizz.crawl.mixininterface;
 
-import net.minecraft.entity.EntityPose;
+import net.minecraft.world.entity.Pose;
 
 public interface PrevPoseState {
-	EntityPose getPrevPose();
-	EntityPose getPrevTickPose();
+	Pose getPrevPose();
+	Pose getPrevTickPose();
 }

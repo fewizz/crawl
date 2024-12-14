@@ -1,5 +1,5 @@
 accessWidener	v1	named
-accessible field net/minecraft/client/option/KeyBinding boundKey Lnet/minecraft/client/util/InputUtil$Key;
-accessible field net/minecraft/client/option/GameOptions TOGGLE_KEY_TEXT Lnet/minecraft/text/Text;
-accessible field net/minecraft/client/option/GameOptions HOLD_KEY_TEXT Lnet/minecraft/text/Text;
-accessible class net/minecraft/client/option/GameOptions$Visitor
+
+accessible field net/minecraft/client/Options MOVEMENT_TOGGLE Lnet/minecraft/network/chat/Component;
+accessible field net/minecraft/client/Options MOVEMENT_HOLD Lnet/minecraft/network/chat/Component;
+accessible class net/minecraft/client/Options$OptionAccess

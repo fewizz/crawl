@@ -15,7 +15,7 @@
 	"client": [
 		"client.BipedEntityModelMixin",
 		"client.BipedEntityRenderStateMixin",
-		"client.ClientPlayerEntityMixin",
+		"client.LocalPlayerMixin",
 		"client.EntityRendererMixin",
 		"client.PlayerEntityRendererMixin",
 		"client.ControlsOptionsScreenMixin",

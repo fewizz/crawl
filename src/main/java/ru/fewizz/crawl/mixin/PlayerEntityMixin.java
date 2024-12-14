@@ -15,54 +15,54 @@ import com.google.common.collect.ImmutableMap;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 
-import net.minecraft.entity.EntityDimensions;
-import net.minecraft.entity.EntityPose;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.data.DataTracker;
-import net.minecraft.entity.player.PlayerAbilities;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.world.entity.EntityDimensions;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Pose;
+import net.minecraft.world.entity.player.Abilities;
+import net.minecraft.world.entity.player.Player;
 import ru.fewizz.crawl.Crawl;
 import ru.fewizz.crawl.Crawl.Shared;
 import ru.fewizz.crawl.mixininterface.PrevPoseState;
 
-@Mixin(PlayerEntity.class)
+@Mixin(Player.class)
 public abstract class PlayerEntityMixin extends LivingEntity implements PrevPoseState {
 
 	PlayerEntityMixin() { super(null, null); }
 
 	@Shadow @Final
-	private PlayerAbilities abilities;
+	private Abilities abilities;
 
 	@Shadow @Final @Mutable
-	private static Map<EntityPose, EntityDimensions> POSE_DIMENSIONS;
+	private static Map<Pose, EntityDimensions> POSES;
 
 	@Unique
-	EntityPose prevPose;
+	Pose prevPose;
 	
 	@Unique
-	EntityPose prevTickPose;
+	Pose prevTickPose;
 
-	@Inject(method = "initDataTracker", at = @At("TAIL"))
-	public void onInitDataTracker(DataTracker.Builder builder, CallbackInfo ci) {
-		builder.add(Crawl.Shared.CRAWL_REQUEST, false);
+	@Inject(method = "defineSynchedData", at = @At("TAIL"))
+	public void onDefineSynchedData(SynchedEntityData.Builder builder, CallbackInfo ci) {
+		builder.define(Crawl.Shared.CRAWL_REQUEST, false);
 	}
 	
 	@WrapOperation(
-		method = "updatePose",
+		method = "updatePlayerPose",
 		at = @At(
 			value = "INVOKE",
-			target = "net/minecraft/entity/player/PlayerEntity.setPose(Lnet/minecraft/entity/EntityPose;)V"
+			target = "net/minecraft/world/entity/player/Player.setPose(Lnet/minecraft/world/entity/Pose;)V"
 		)
 	)
-	public void onPreSetPose(PlayerEntity instance, EntityPose pose, Operation<Void> original) {
-		if (!this.isSpectator() && !this.hasVehicle() && !this.abilities.flying) {
-			boolean requested = getDataTracker().get(Shared.CRAWL_REQUEST);
-			boolean swimming = isSwimming() || isTouchingWater();
+	public void onPreUpdatePlayerPose(Player instance, Pose pose, Operation<Void> original) {
+		if (!this.isSpectator() && !this.isPassenger() && !this.abilities.flying) {
+			boolean requested = getEntityData().get(Shared.CRAWL_REQUEST);
+			boolean swimming = isSwimming() || isInWater();
 
 			if (requested) {
-				pose = swimming ? EntityPose.SWIMMING : Shared.CRAWLING;
+				pose = swimming ? Pose.SWIMMING : Shared.CRAWLING;
 			}
-			else if (pose == EntityPose.SWIMMING && !swimming) {
+			else if (pose == Pose.SWIMMING && !swimming) {
 				pose = Shared.CRAWLING;
 			}
 		}
@@ -72,8 +72,8 @@ public abstract class PlayerEntityMixin extends LivingEntity implements PrevPose
 
 	@Inject(method = "<clinit>", at = @At("TAIL"))
 	private static void onPoseMapCreation(CallbackInfo ci) {
-		POSE_DIMENSIONS = ImmutableMap.<EntityPose, EntityDimensions>builder()
-			.putAll(POSE_DIMENSIONS)
+		POSES = ImmutableMap.<Pose, EntityDimensions>builder()
+			.putAll(POSES)
 			.put(Crawl.Shared.CRAWLING, Crawl.Shared.CRAWLING_DIMENSIONS)
 			.build();
 	}
@@ -87,12 +87,12 @@ public abstract class PlayerEntityMixin extends LivingEntity implements PrevPose
 	}
 
 	@Override
-	public EntityPose getPrevPose() {
+	public Pose getPrevPose() {
 		return prevPose;
 	}
 	
 	@Override
-	public EntityPose getPrevTickPose() {
+	public Pose getPrevTickPose() {
 		return prevTickPose;
 	}
 }

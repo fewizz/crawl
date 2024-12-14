@@ -5,23 +5,22 @@ import org.spongepowered.asm.mixin.injection.At;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
+import net.minecraft.world.entity.LivingEntity;
 import ru.fewizz.crawl.Crawl.Shared;
 
 @Mixin(LivingEntity.class)
-abstract class LivingEntityMixin extends Entity {
+abstract class LivingEntityMixin extends net.minecraft.world.entity.Entity {
 
 	LivingEntityMixin() { super(null, null); }
 
 	@ModifyExpressionValue(
-		method = "updateLeaningPitch",
+		method = "updateSwimAmount",
 		at = @At(
 			value = "INVOKE",
-			target = "net/minecraft/entity/LivingEntity.isInSwimmingPose()Z"
+			target = "net/minecraft/world/entity/LivingEntity.isVisuallySwimming()Z"
 		)
 	)
-	boolean isInSwimmingOrCrawlingPose(boolean isInSwimmingPose) {
+	boolean updateSwimAmount(boolean isInSwimmingPose) {
 		return isInSwimmingPose || this.getPose() == Shared.CRAWLING;
 	}
 

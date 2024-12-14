@@ -3,10 +3,10 @@ package ru.fewizz.crawl.mixin.client;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 
-import net.minecraft.client.render.entity.state.BipedEntityRenderState;
+import net.minecraft.client.renderer.entity.state.HumanoidRenderState;
 import ru.fewizz.crawl.mixininterface.CrawlingState;
 
-@Mixin(BipedEntityRenderState.class)
+@Mixin(HumanoidRenderState.class)
 public class BipedEntityRenderStateMixin implements CrawlingState {
 
 	@Unique

@@ -2,19 +2,21 @@ package ru.fewizz.crawl.mixin;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
 
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityPose;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.Pose;
 import ru.fewizz.crawl.Crawl;
 
 @Mixin(Entity.class)
 public abstract class EntityMixin {
 
-	@WrapMethod(method = "getJumpVelocityMultiplier")
-	float onGetJumpVelocityMultiplierReturn(Operation<Float> original) {
+	@WrapMethod(method = "getBlockJumpFactor")
+	float getBlockJumpFactor(Operation<Float> original) {
 		float result = original.call();
 		if (getPose() == Crawl.Shared.CRAWLING) {
 			result /= 2.0F;
@@ -23,11 +25,11 @@ public abstract class EntityMixin {
 	}
 
 	@Shadow
-	abstract public EntityPose getPose();
+	abstract public Pose getPose();
 
-	@WrapMethod(method = "isCrawling")
-	public boolean isCrawling(Operation<Boolean> original) {
-		return original.call() || getPose() == Crawl.Shared.CRAWLING;
+	@ModifyReturnValue(method = "isVisuallyCrawling", at = @At("RETURN"))
+	private boolean isVisuallyCrawling(boolean original) {
+		return original || getPose() == Crawl.Shared.CRAWLING;
 	}
 
 }

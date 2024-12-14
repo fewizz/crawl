@@ -7,46 +7,46 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.input.Input;
-import net.minecraft.client.network.AbstractClientPlayerEntity;
-import net.minecraft.client.network.ClientPlayerEntity;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.AbstractClientPlayer;
+import net.minecraft.client.player.ClientInput;
+import net.minecraft.client.player.LocalPlayer;
 import ru.fewizz.crawl.Crawl;
 import ru.fewizz.crawl.Crawl.Shared;
 import ru.fewizz.crawl.CrawlClient;
 
-@Mixin(ClientPlayerEntity.class)
-abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity {
+@Mixin(LocalPlayer.class)
+abstract class LocalPlayerMixin extends AbstractClientPlayer {
 
 	@Shadow
-	public Input input;
+	public ClientInput input;
 
 	@Shadow
-	protected int ticksLeftToDoubleTapSprint;
+	protected int sprintTriggerTime;
 
-	ClientPlayerEntityMixin() { super(null, null); }
+	LocalPlayerMixin() { super(null, null); }
 
-	@Inject(method = "tickMovement", at = @At("HEAD"))
-	public void beforeTickMovement(CallbackInfo ci) {
-		MinecraftClient mc = MinecraftClient.getInstance();
+	@Inject(method = "aiStep", at = @At("HEAD"))
+	public void aiStep(CallbackInfo ci) {
+		Minecraft mc = Minecraft.getInstance();
 		if (mc.player.getPose() == Shared.CRAWLING) {
-			this.ticksLeftToDoubleTapSprint = 0;
+			this.sprintTriggerTime = 0;
 		}
 	}
 
 	@Inject(
-		method = "tickMovement",
+		method = "aiStep",
 		at = @At(
 			value = "INVOKE",
-			target = "net/minecraft/client/network/AbstractClientPlayerEntity.tickMovement()V"
+			target = "net/minecraft/client/player/AbstractClientPlayer.aiStep()V"
 		)
 	)
-	public void beforeSuperMovementTick(CallbackInfo ci) {
-		boolean wantsToCrawl = CrawlClient.key.isPressed();
+	public void beforeSuperAiStep(CallbackInfo ci) {
+		boolean wantsToCrawl = CrawlClient.key.isDown();
 
-		if (wantsToCrawl != getDataTracker().get(Shared.CRAWL_REQUEST)) {
+		if (wantsToCrawl != getEntityData().get(Shared.CRAWL_REQUEST)) {
 			ClientPlayNetworking.send(new Crawl.Payload(wantsToCrawl));
-			getDataTracker().set(Shared.CRAWL_REQUEST, wantsToCrawl);
+			getEntityData().set(Shared.CRAWL_REQUEST, wantsToCrawl);
 		}
 
 		if (getPose() == Shared.CRAWLING) {

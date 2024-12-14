@@ -4,7 +4,6 @@ import static java.lang.Math.PI;
 import static java.lang.Math.cos;
 import static java.lang.Math.pow;
 import static java.lang.Math.sin;
-import static net.minecraft.util.math.MathHelper.lerp;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -15,16 +14,16 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 
-import net.minecraft.client.model.ModelPart;
-import net.minecraft.client.render.entity.model.BipedEntityModel;
-import net.minecraft.client.render.entity.model.EntityModel;
-import net.minecraft.client.render.entity.state.BipedEntityRenderState;
-import net.minecraft.util.Hand;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.client.model.EntityModel;
+import net.minecraft.client.model.HumanoidModel;
+import net.minecraft.client.model.geom.ModelPart;
+import net.minecraft.client.renderer.entity.state.HumanoidRenderState;
+import net.minecraft.util.Mth;
+import net.minecraft.world.InteractionHand;
 import ru.fewizz.crawl.mixininterface.CrawlingState;
 
-@Mixin(BipedEntityModel.class)
-public abstract class BipedEntityModelMixin<T extends BipedEntityRenderState> extends EntityModel<T> {
+@Mixin(HumanoidModel.class)
+public abstract class BipedEntityModelMixin<T extends HumanoidRenderState> extends EntityModel<T> {
 
 	@Shadow
 	public ModelPart head;
@@ -45,66 +44,66 @@ public abstract class BipedEntityModelMixin<T extends BipedEntityRenderState> ex
 
 	// Prevent model change when in swimming pose but not in water
 	@ModifyExpressionValue(
-		method="setAngles(Lnet/minecraft/client/render/entity/state/BipedEntityRenderState;)V",
+		method="setupAnim",
 		at = @At(
 			value = "FIELD",
-			target = "Lnet/minecraft/client/render/entity/state/BipedEntityRenderState;leaningPitch:F"
+			target = "Lnet/minecraft/client/renderer/entity/state/HumanoidRenderState;swimAmount:F"
 		)
 	)
-	float skipSwimmingRenderingIfNotInWater(float leaningPitch, BipedEntityRenderState state) {
-		return state.isSwimming ? leaningPitch : 0.0F;
+	float skipSwimmingRenderingIfNotInWater(float leaningPitch, HumanoidRenderState state) {
+		return state.isVisuallySwimming ? leaningPitch : 0.0F;
 	}
 
 	@Inject(
-		method = "setAngles(Lnet/minecraft/client/render/entity/state/BipedEntityRenderState;)V",
+		method = "setupAnim",
 		at = @At("HEAD")
 	)
-	void beforeSetAngles(BipedEntityRenderState state, CallbackInfo ci) {
-		head.setPivot(0.0F, 0.0F, 0.0F);
-		head.roll = 0.0F;
+	void beforeSetAngles(HumanoidRenderState state, CallbackInfo ci) {
+		head.setPos(0.0F, 0.0F, 0.0F);
+		head.zRot = 0.0F;
 
-		body.roll = 0.0F;
-		body.pitch = 0.0F;
-		body.pivotZ = 0.0F;
+		body.zRot = 0.0F;
+		body.xRot = 0.0F;
+		body.z = 0.0F;
 
-		leftLeg.pivotX = 1.9F;
-		rightLeg.pivotX = -1.9F;
+		leftLeg.x = 1.9F;
+		rightLeg.x = -1.9F;
 
-		leftArm.setPivot(5.0F, 2.0F, 0.0F);
-		rightArm.setPivot(-5.0F, 2.0F, 0.0F);
+		leftArm.setPos(5.0F, 2.0F, 0.0F);
+		rightArm.setPos(-5.0F, 2.0F, 0.0F);
 	}
 
 	@Unique
 	private float l(float leaningPitch, float original, float changed) {
-		return lerp(leaningPitch, original, changed);
+		return Mth.lerp(leaningPitch, original, changed);
 	}
 
 	@Unique
 	private float la(float leaningPitch, float original, float changed) {
-		return MathHelper.lerpAngleRadians(leaningPitch, original, changed);
+		return Mth.rotLerpRad(leaningPitch, original, changed);
 	}
 
 	@Unique
 	private void llPivot(float lp, ModelPart mp, float x, float y, float z) {
-		mp.setPivot(l(lp, mp.pivotX, x), l(lp, mp.pivotY, y), l(lp, mp.pivotZ, z));
+		mp.setPos(l(lp, mp.x, x), l(lp, mp.y, y), l(lp, mp.z, z));
 	}
 
 	@Unique
 	private void llAngles(float lp, ModelPart mp, float roll, float yaw, float pitch) {
-		mp.roll = la(lp, mp.roll, roll);
-		mp.yaw = la(lp, mp.yaw, yaw);
-		mp.pitch = la(lp, mp.pitch, pitch);
+		mp.zRot = la(lp, mp.zRot, roll);
+		mp.yRot = la(lp, mp.yRot, yaw);
+		mp.xRot = la(lp, mp.xRot, pitch);
 	}
 
 	@Inject(
-		method = "setAngles(Lnet/minecraft/client/render/entity/state/BipedEntityRenderState;)V",
+		method = "setupAnim",
 		at = @At("TAIL")
 	)
-	void afterSetAngles(BipedEntityRenderState state, CallbackInfo ci) {
+	void afterSetAngles(HumanoidRenderState state, CallbackInfo ci) {
 		if (!((CrawlingState) state).isCrawling()) return;
 
-		float limbFreq = state.limbFrequency;
-		float lp = state.leaningPitch;
+		float limbFreq = state.walkAnimationPos;
+		float lp = state.swimAmount;
 		float torsoRollDiv = 6.0F;
 		float torsoPitchAngle = 0.0F;
 		float torsoYawAngle = (float) sin(limbFreq) / 5.0F;
@@ -128,50 +127,50 @@ public abstract class BipedEntityModelMixin<T extends BipedEntityRenderState> ex
 			magicF1(limbFreq) / 6.0F, torsoYawAngle, 0.0F
 		);
 
-		float torsoPivotY = torsoHeight - (float) cos(la(lp, body.pitch, torsoPitchAngle))*torsoHeight;
-		float torsoPivotZ = (float) -sin(la(lp, body.pitch, torsoPitchAngle))*torsoHeight;
+		float torsoPivotY = torsoHeight - (float) cos(la(lp, body.xRot, torsoPitchAngle))*torsoHeight;
+		float torsoPivotZ = (float) -sin(la(lp, body.xRot, torsoPitchAngle))*torsoHeight;
 
 		llAngles(
 			lp, body,
 			(float) -sin(limbFreq) / torsoRollDiv, torsoYawAngle, torsoPitchAngle
 		);
 
-		body.pivotZ = torsoPivotZ;
-		body.pivotY = torsoPivotY;
+		body.z = torsoPivotZ;
+		body.y = torsoPivotY;
 
-		llAngles(lp, head, -head.yaw, 0.0F, (float) (head.pitch - PI/2.0));
+		llAngles(lp, head, -head.yRot, 0.0F, (float) (head.xRot - PI/2.0));
 
-		head.pivotZ = l(lp, 0.0F, torsoPivotZ + (float) cos(limbFreq*2)/2.0F);
-		head.pivotY = torsoPivotY;
+		head.z = l(lp, 0.0F, torsoPivotZ + (float) cos(limbFreq*2)/2.0F);
+		head.y = torsoPivotY;
 
-		hat.copyTransform(head);
+		hat.copyFrom(head);
 
 		llPivot(lp, leftArm, 5.0F, torsoPivotY + 2.0F, torsoPivotZ);
 		llPivot(lp, rightArm, -5.0F, torsoPivotY + 2.0F, torsoPivotZ);
 
-		if ((state.isUsingItem || state.handSwingProgress > 0) && state.activeHand == Hand.OFF_HAND) {
+		if ((state.isUsingItem || state.ticksUsingItem > 0) && state.useItemHand == InteractionHand.OFF_HAND) {
 			llAngles(
 				lp, leftArm,
-				-leftArm.yaw, 0.0F, (float) (leftArm.pitch - PI/2.0)
+				-leftArm.yRot, 0.0F, (float) (leftArm.xRot - PI/2.0)
 			);
 		}
 		else {
 			llAngles(
 				lp, leftArm,
-				(float)(-PI/2.0) + magicF0(limbFreq + PI/2.0), body.yaw - (float)(PI/2.0), -0.5F
+				(float)(-PI/2.0) + magicF0(limbFreq + PI/2.0), body.yRot - (float)(PI/2.0), -0.5F
 			);
 		}
 
-		if ((state.isUsingItem || state.handSwingProgress > 0) && state.activeHand == Hand.MAIN_HAND) {
+		if ((state.isUsingItem || state.ticksUsingItem > 0) && state.useItemHand == InteractionHand.MAIN_HAND) {
 			llAngles(
 				lp, rightArm,
-				-rightArm.yaw, 0.0F, (float) (rightArm.pitch - PI/2.0)
+				-rightArm.yRot, 0.0F, (float) (rightArm.xRot - PI/2.0)
 			);
 		}
 		else {
 			llAngles(
 				lp, rightArm,
-				(float)(PI/2.0) + -magicF0(limbFreq - PI/2.0), body.yaw + (float)(PI/2.0), -0.5F
+				(float)(PI/2.0) + -magicF0(limbFreq - PI/2.0), body.yRot + (float)(PI/2.0), -0.5F
 			);
 		}
 

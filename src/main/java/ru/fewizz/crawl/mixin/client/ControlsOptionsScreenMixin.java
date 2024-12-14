@@ -1,27 +1,28 @@
 package ru.fewizz.crawl.mixin.client;
 
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
 
 import com.google.common.collect.Lists;
-import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
-import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
+import com.llamalad7.mixinextras.sugar.Local;
 
-import net.minecraft.client.gui.screen.option.ControlsOptionsScreen;
-import net.minecraft.client.gui.screen.option.GameOptionsScreen;
-import net.minecraft.client.option.GameOptions;
-import net.minecraft.client.option.SimpleOption;
+import net.minecraft.client.OptionInstance;
+import net.minecraft.client.Options;
+import net.minecraft.client.gui.screens.options.OptionsSubScreen;
+import net.minecraft.client.gui.screens.options.controls.ControlsScreen;
 import ru.fewizz.crawl.CrawlClient;
 
-@Mixin(ControlsOptionsScreen.class)
-abstract class ControlsOptionsScreenMixin extends GameOptionsScreen {
+@Mixin(ControlsScreen.class)
+abstract class ControlsOptionsScreenMixin extends OptionsSubScreen {
 
 	ControlsOptionsScreenMixin() { super(null, null, null); }
 
-	@WrapMethod(method = "getOptions")
-	private static SimpleOption<?>[] getOptionsWithCrawl(GameOptions gameOptions, Operation<SimpleOption<?>[]> original) {
-		var options = Lists.newArrayList(original.call(gameOptions));
-		options.add(options.indexOf(gameOptions.getSneakToggled()) + 1, CrawlClient.crawlToggled);
-		return options.toArray(new SimpleOption<?>[]{});
+	@ModifyReturnValue(method = "options", at = @At("RETURN"))
+	private static OptionInstance<?>[] getOptionsWithCrawl(OptionInstance<?>[] original, @Local Options gameOptions) {
+		var options = Lists.newArrayList(original);
+		options.add(options.indexOf(gameOptions.toggleCrouch()) + 1, CrawlClient.crawlToggled);
+		return options.toArray(new OptionInstance<?>[]{});
 	}
 
 }
