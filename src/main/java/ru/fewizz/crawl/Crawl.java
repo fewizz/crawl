@@ -40,7 +40,7 @@ public class Crawl implements ModInitializer {
 
 	public static class Shared {
 		public static final Pose CRAWLING = Pose.valueOf("CRAWLING");
-		public static final EntityDimensions CRAWLING_DIMENSIONS = EntityDimensions.scalable(0.6F, 0.6F).withEyeHeight(0.6F);
+		public static final EntityDimensions CRAWLING_DIMENSIONS = EntityDimensions.scalable(0.6F, 0.6F).withEyeHeight(0.5F);
 		public static final EntityDataAccessor<Boolean> CRAWL_REQUEST = SynchedEntityData.defineId(Player.class, EntityDataSerializers.BOOLEAN);
 	}
 
