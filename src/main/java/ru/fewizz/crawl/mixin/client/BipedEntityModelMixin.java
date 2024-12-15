@@ -1,9 +1,8 @@
 package ru.fewizz.crawl.mixin.client;
 
-import static java.lang.Math.PI;
-import static java.lang.Math.cos;
-import static java.lang.Math.pow;
-import static java.lang.Math.sin;
+import static net.minecraft.util.Mth.PI;
+import static net.minecraft.util.Mth.sin;
+import static net.minecraft.util.Mth.cos;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -84,12 +83,12 @@ public abstract class BipedEntityModelMixin<T extends HumanoidRenderState> exten
 	}
 
 	@Unique
-	private void llPivot(float lp, ModelPart mp, float x, float y, float z) {
+	private void lPos(float lp, ModelPart mp, float x, float y, float z) {
 		mp.setPos(l(lp, mp.x, x), l(lp, mp.y, y), l(lp, mp.z, z));
 	}
 
 	@Unique
-	private void llAngles(float lp, ModelPart mp, float roll, float yaw, float pitch) {
+	private void lRot(float lp, ModelPart mp, float roll, float yaw, float pitch) {
 		mp.zRot = la(lp, mp.zRot, roll);
 		mp.yRot = la(lp, mp.yRot, yaw);
 		mp.xRot = la(lp, mp.xRot, pitch);
@@ -102,95 +101,89 @@ public abstract class BipedEntityModelMixin<T extends HumanoidRenderState> exten
 	void afterSetAngles(HumanoidRenderState state, CallbackInfo ci) {
 		if (!((CrawlingState) state).isCrawling()) return;
 
-		float limbFreq = state.walkAnimationPos;
-		float lp = state.swimAmount;
-		float torsoRollDiv = 6.0F;
-		float torsoPitchAngle = 0.0F;
-		float torsoYawAngle = (float) sin(limbFreq) / 5.0F;
-		float torsoHeight = 12.0F;
+		float walkDist = state.walkAnimationPos;
+		float sa = state.swimAmount;
+		float bodyYRotFreq = 6.0F;
+		float bodyXRot = 0.0F;
+		float bodyYRot = sin(walkDist) / 5.0F;
+		float bodyHeight = 12.0F;
 
-		llPivot(
-			lp, leftLeg,
-			1.9F + ((float) sin(limbFreq) / torsoRollDiv) * torsoHeight, 12.0F + (float) magicF0(limbFreq - (3.0F/4.0F)*PI) * 2.0F, magicF0(limbFreq - PI/2.0)
+		lPos(
+			sa, leftLeg,
+			1.9F + sin(walkDist) / bodyYRotFreq * bodyHeight,
+			12.0F + magicF0(walkDist - 3.0F/4.0F*PI) * 2.0F,
+			magicF0(walkDist - PI/2.0F)
 		);
-		llAngles(
-			lp, leftLeg,
-			-magicF1(limbFreq + PI) / 6.0F, torsoYawAngle, 0.0F
+		lRot(sa, leftLeg, -magicF1(walkDist + PI) / 6.0F, bodyYRot, 0.0F);
+
+		lPos(
+			sa, rightLeg,
+			-1.9F + sin(walkDist) / bodyYRotFreq * bodyHeight,
+			12.0F + magicF0(walkDist + PI/4.0F) * 2.0F,
+			magicF0(walkDist + PI/2.0F)
 		);
+		lRot(sa, rightLeg, magicF1(walkDist) / 6.0F, bodyYRot, 0.0F);
 
-		llPivot(
-			lp, rightLeg,
-			-1.9F + ((float) sin(limbFreq) / torsoRollDiv) * torsoHeight, 12.0F + (float) magicF0(limbFreq + PI/4.0F) * 2.0F, magicF0(limbFreq + PI/2.0)
-		);
-		llAngles(
-			lp, rightLeg,
-			magicF1(limbFreq) / 6.0F, torsoYawAngle, 0.0F
-		);
+		float torsoPosY = (1.0F - cos(la(sa, body.xRot, bodyXRot)))*bodyHeight;
+		float torsoPosZ = -sin(la(sa, body.xRot, bodyXRot))*bodyHeight;
 
-		float torsoPivotY = torsoHeight - (float) cos(la(lp, body.xRot, torsoPitchAngle))*torsoHeight;
-		float torsoPivotZ = (float) -sin(la(lp, body.xRot, torsoPitchAngle))*torsoHeight;
+		lRot(sa, body, -sin(walkDist) / bodyYRotFreq, bodyYRot, bodyXRot);
 
-		llAngles(
-			lp, body,
-			(float) -sin(limbFreq) / torsoRollDiv, torsoYawAngle, torsoPitchAngle
-		);
+		body.z = torsoPosZ;
+		body.y = torsoPosY;
 
-		body.z = torsoPivotZ;
-		body.y = torsoPivotY;
+		lRot(sa, head, -head.yRot, 0.0F, head.xRot - PI/2.0F);
 
-		llAngles(lp, head, -head.yRot, 0.0F, (float) (head.xRot - PI/2.0));
-
-		head.z = l(lp, 0.0F, torsoPivotZ + (float) cos(limbFreq*2)/2.0F);
-		head.y = torsoPivotY;
+		head.z = l(sa, 0.0F, torsoPosZ + cos(walkDist*2.0F)/2.0F);
+		head.y = torsoPosY;
 
 		hat.copyFrom(head);
 
-		llPivot(lp, leftArm, 5.0F, torsoPivotY + 2.0F, torsoPivotZ);
-		llPivot(lp, rightArm, -5.0F, torsoPivotY + 2.0F, torsoPivotZ);
+		lPos(sa, leftArm, 5.0F, torsoPosY + 2.0F, torsoPosZ);
+		lPos(sa, rightArm, -5.0F, torsoPosY + 2.0F, torsoPosZ);
 
 		if ((state.isUsingItem || state.ticksUsingItem > 0) && state.useItemHand == InteractionHand.OFF_HAND) {
-			llAngles(
-				lp, leftArm,
-				-leftArm.yRot, 0.0F, (float) (leftArm.xRot - PI/2.0)
+			lRot(
+				sa, leftArm,
+				-leftArm.yRot, 0.0F, leftArm.xRot - PI/2.0F
 			);
 		}
 		else {
-			llAngles(
-				lp, leftArm,
-				(float)(-PI/2.0) + magicF0(limbFreq + PI/2.0), body.yRot - (float)(PI/2.0), -0.5F
+			lRot(
+				sa, leftArm,
+				-PI/2.0F + magicF0(walkDist + PI/2.0F), body.yRot - PI/2.0F, -0.5F
 			);
 		}
 
 		if ((state.isUsingItem || state.ticksUsingItem > 0) && state.useItemHand == InteractionHand.MAIN_HAND) {
-			llAngles(
-				lp, rightArm,
-				-rightArm.yRot, 0.0F, (float) (rightArm.xRot - PI/2.0)
+			lRot(
+				sa, rightArm,
+				-rightArm.yRot, 0.0F, rightArm.xRot - PI/2.0F
 			);
 		}
 		else {
-			llAngles(
-				lp, rightArm,
-				(float)(PI/2.0) + -magicF0(limbFreq - PI/2.0), body.yRot + (float)(PI/2.0), -0.5F
+			lRot(
+				sa, rightArm,
+				PI/2.0F + -magicF0(walkDist - PI/2.0F), body.yRot + PI/2.0F, -0.5F
 			);
 		}
 
 	}
 
 	@Unique
-	private static float magicF0(double rad) {
-		rad = rad % (PI * 2.0);
-		if (rad <= PI / 2.0) {
-			return (float) cos(rad*2.0);
+	private static float magicF0(float rad) {
+		rad = rad % (PI * 2.0F);
+		if (rad <= PI / 2.0F) {
+			return cos(rad*2.0F);
 		}
 
-		return (float) (
-			-cos((rad - PI / 2.0) * (2.0 / 3.0))
-		);
+		return -cos((rad - PI / 2.0F) * (2.0F / 3.0F));
 	}
 
 	@Unique
-	private static float magicF1(double rad) {
-		return (float) pow(sin(rad) + 1.0F, 2.0F);
+	private static float magicF1(float rad) {
+		float r = sin(rad) + 1.0F;
+		return r*r;
 	}
 
 }
