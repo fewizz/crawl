@@ -32,4 +32,9 @@ public abstract class EntityMixin {
 		return original || getPose() == Crawl.Shared.CRAWLING;
 	}
 
+	@ModifyReturnValue(method = "isSteppingCarefully", at = @At("RETURN"))
+	private boolean isSteppingCarefully(boolean original) {
+		return original || getPose() == Crawl.Shared.CRAWLING;
+	}
+
 }
