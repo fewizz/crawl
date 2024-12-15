@@ -9,17 +9,17 @@
 	"mixins": [
 		"EntityMixin",
 		"LivingEntityMixin",
-		"PlayerEntityMixin",
-		"EntityPoseMixin"
+		"PlayerMixin",
+		"PoseMixin"
 	],
 	"client": [
-		"client.BipedEntityModelMixin",
-		"client.BipedEntityRenderStateMixin",
-		"client.LocalPlayerMixin",
+		"client.ControlsScreenMixin",
 		"client.EntityRendererMixin",
-		"client.PlayerEntityRendererMixin",
-		"client.ControlsOptionsScreenMixin",
-		"client.GameOptionsMixin"
+		"client.HumanoidModelMixin",
+		"client.HumanoidRenderStateMixin",
+		"client.LocalPlayerMixin",
+		"client.OptionsMixin",
+		"client.PlayerRendererMixin"
 	]
 
 }

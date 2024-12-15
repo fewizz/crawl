@@ -34,7 +34,7 @@ public class Plugin implements IMixinConfigPlugin {
 
 	@Override
 	public void preApply(String targetClassName, ClassNode targetClass, String mixinClassName, IMixinInfo mixinInfo) {
-		if (mixinClassName.equals("ru.fewizz.crawl.mixin.EntityPoseMixin")) {
+		if (mixinClassName.equals("ru.fewizz.crawl.mixin.PoseMixin")) {
 			String internalName = targetClassName.replace(".", "/");
 			String desc = "L"+internalName+";";
 

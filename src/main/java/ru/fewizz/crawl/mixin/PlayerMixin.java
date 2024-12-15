@@ -26,9 +26,9 @@ import ru.fewizz.crawl.Crawl.Shared;
 import ru.fewizz.crawl.mixininterface.PrevPoseState;
 
 @Mixin(Player.class)
-public abstract class PlayerEntityMixin extends LivingEntity implements PrevPoseState {
+public abstract class PlayerMixin extends LivingEntity implements PrevPoseState {
 
-	PlayerEntityMixin() { super(null, null); }
+	PlayerMixin() { super(null, null); }
 
 	@Shadow @Final
 	private Abilities abilities;

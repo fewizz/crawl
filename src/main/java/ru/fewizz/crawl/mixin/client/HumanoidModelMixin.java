@@ -22,7 +22,7 @@ import net.minecraft.world.InteractionHand;
 import ru.fewizz.crawl.mixininterface.CrawlingState;
 
 @Mixin(HumanoidModel.class)
-public abstract class BipedEntityModelMixin<T extends HumanoidRenderState> extends EntityModel<T> {
+public abstract class HumanoidModelMixin<T extends HumanoidRenderState> extends EntityModel<T> {
 
 	@Shadow
 	public ModelPart head;
@@ -39,7 +39,7 @@ public abstract class BipedEntityModelMixin<T extends HumanoidRenderState> exten
 	@Shadow
 	public ModelPart leftLeg;
 
-	BipedEntityModelMixin() { super(null);}
+	HumanoidModelMixin() { super(null);}
 
 	// Prevent model change when in swimming pose but not in water
 	@ModifyExpressionValue(

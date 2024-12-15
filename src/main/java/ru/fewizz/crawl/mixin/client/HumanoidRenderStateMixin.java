@@ -7,7 +7,7 @@ import net.minecraft.client.renderer.entity.state.HumanoidRenderState;
 import ru.fewizz.crawl.mixininterface.CrawlingState;
 
 @Mixin(HumanoidRenderState.class)
-public class BipedEntityRenderStateMixin implements CrawlingState {
+public class HumanoidRenderStateMixin implements CrawlingState {
 
 	@Unique
 	boolean isCrawling = false;

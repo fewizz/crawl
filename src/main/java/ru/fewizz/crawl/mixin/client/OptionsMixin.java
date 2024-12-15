@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(Options.class)
-public class GameOptionsMixin {
+public class OptionsMixin {
 
 	@Inject(method = "processDumpedOptions", at = @At("HEAD"))
 	void processDumpedOptions(Options.OptionAccess visitor, CallbackInfo ci) {

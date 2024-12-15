@@ -21,9 +21,9 @@ import ru.fewizz.crawl.mixininterface.CrawlingState;
 import ru.fewizz.crawl.mixininterface.PrevPoseState;
 
 @Mixin(PlayerRenderer.class)
-abstract class PlayerEntityRendererMixin extends LivingEntityRenderer<AbstractClientPlayer, PlayerRenderState, PlayerModel> {
+abstract class PlayerRendererMixin extends LivingEntityRenderer<AbstractClientPlayer, PlayerRenderState, PlayerModel> {
 
-	PlayerEntityRendererMixin() { super(null, null, 0.0F); }
+	PlayerRendererMixin() { super(null, null, 0.0F); }
 
 	@Inject(method = "setupRotations", at = @At("HEAD"), cancellable = true)
 	void setupCrawlTransformations(PlayerRenderState state, PoseStack matrixStack, float f, float g, CallbackInfo ci) {

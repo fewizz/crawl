@@ -14,9 +14,9 @@ import net.minecraft.client.gui.screens.options.controls.ControlsScreen;
 import ru.fewizz.crawl.CrawlClient;
 
 @Mixin(ControlsScreen.class)
-abstract class ControlsOptionsScreenMixin extends OptionsSubScreen {
+abstract class ControlsScreenMixin extends OptionsSubScreen {
 
-	ControlsOptionsScreenMixin() { super(null, null, null); }
+	ControlsScreenMixin() { super(null, null, null); }
 
 	@ModifyReturnValue(method = "options", at = @At("RETURN"))
 	private static OptionInstance<?>[] getOptionsWithCrawl(OptionInstance<?>[] original, @Local Options gameOptions) {
