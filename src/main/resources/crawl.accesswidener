@@ -1,5 +1,0 @@
-accessWidener	v1	named
-
-accessible field net/minecraft/client/Options MOVEMENT_TOGGLE Lnet/minecraft/network/chat/Component;
-accessible field net/minecraft/client/Options MOVEMENT_HOLD Lnet/minecraft/network/chat/Component;
-accessible class net/minecraft/client/Options$OptionAccess

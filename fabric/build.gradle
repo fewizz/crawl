@@ -1,0 +1,63 @@
+plugins {
+	id 'fabric-loom' version '1.9-SNAPSHOT'
+}
+
+sourceSets.main {
+	java { srcDir "../src/main/java" }
+	resources { srcDir "../src/main/resources" }
+}
+
+loom {
+	accessWidenerPath = file("src/main/resources/crawl.accesswidener")
+
+	runs {
+		client {
+			client()
+			setConfigName('Fabric Client')
+			ideConfigGenerated(true)
+			runDir('../run')
+			appendProjectPathToConfigName = false
+		}
+		server {
+			server()
+			setConfigName('Fabric Server')
+			ideConfigGenerated(true)
+			runDir('../run')
+			appendProjectPathToConfigName = false
+		}
+	}
+
+	mods {
+		"${mod_id}" {
+			sourceSet sourceSets.main
+		}
+	}
+}
+
+dependencies {
+	minecraft "com.mojang:minecraft:${project.minecraft_version}"
+	mappings loom.officialMojangMappings()
+	modImplementation "net.fabricmc:fabric-loader:${project.fabric_loader_version}"
+	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+}
+
+base {
+	archivesName = mod_id
+}
+
+processResources {
+	inputs.property "version", project.version
+
+	filesMatching("fabric.mod.json") {
+		expand "version": project.version
+	}
+}
+
+tasks.withType(JavaCompile).configureEach {
+	it.options.release = 21
+}
+
+java {
+	sourceCompatibility = JavaVersion.VERSION_21
+	targetCompatibility = JavaVersion.VERSION_21
+}

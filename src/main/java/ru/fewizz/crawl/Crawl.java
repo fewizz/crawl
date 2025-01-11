@@ -1,9 +1,8 @@
 package ru.fewizz.crawl;
 
+import java.util.function.Consumer;
+
 import io.netty.buffer.ByteBuf;
-import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
@@ -15,10 +14,10 @@ import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Player;
 
-public class Crawl implements ModInitializer {
+public class Crawl {
 
 	public record Payload(boolean crawl) implements CustomPacketPayload {
-		public static final CustomPacketPayload.Type<Payload> ID = new CustomPacketPayload.Type<>(CRAWL_ID);
+		public static final CustomPacketPayload.Type<Payload> ID = new CustomPacketPayload.Type<>(Crawl.CRAWL_ID);
 		public static final StreamCodec<ByteBuf, Payload> CODEC = ByteBufCodecs.BOOL.map(Payload::new, Payload::crawl);
 
 		@Override
@@ -27,16 +26,9 @@ public class Crawl implements ModInitializer {
 		}
 	};
 
+	public static Consumer<Boolean> crawlRequestPacket = null;
+
 	public static final ResourceLocation CRAWL_ID = ResourceLocation.parse("crawl:identifier");
-
-	@Override
-	public void onInitialize() {
-		PayloadTypeRegistry.playC2S().register(Payload.ID, Payload.CODEC);
-
-		ServerPlayNetworking.registerGlobalReceiver(Payload.ID, (payload, context) -> {
-			context.player().server.execute(() -> context.player().getEntityData().set(Shared.CRAWL_REQUEST, payload.crawl));
-		});
-	}
 
 	public static class Shared {
 		public static final Pose CRAWLING = Pose.valueOf("CRAWLING");

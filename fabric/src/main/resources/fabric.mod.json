@@ -13,10 +13,10 @@
 	"environment": "*",
 	"entrypoints": { 
 		"main": [
-			"ru.fewizz.crawl.Crawl"
+			"ru.fewizz.crawl.CrawlInitializer"
 		],
 		"client": [
-			"ru.fewizz.crawl.CrawlClient"
+			"ru.fewizz.crawl.CrawlClientInitializer"
 		]
 	},
 	"accessWidener": "crawl.accesswidener",

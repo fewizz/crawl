@@ -5,7 +5,7 @@
 # Gradle
 # ------
 .gradle
-/build
+build
 
 # IDEA
 # ----

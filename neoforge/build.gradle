@@ -1,0 +1,68 @@
+plugins {
+	id 'net.neoforged.moddev' version '2.0.49-beta'
+}
+
+base {
+	archivesName = mod_id
+}
+
+sourceSets.main {
+	java { srcDir "../src/main/java" }
+	resources { srcDir "../src/main/resources" }
+}
+
+dependencies {
+}
+
+neoForge {
+	version = neoforge_version
+	accessTransformers.from(file('src/main/resources/META-INF/accesstransformer.cfg'))
+
+	parchment {
+		minecraftVersion = parchment_minecraft
+		mappingsVersion = parchment_version
+	}
+
+	runs {
+		client {
+			client()
+			ideName = "NeoForge Client"
+			gameDirectory = new File(project.rootDir, "/run")
+		}
+		server {
+			server()
+			ideName = "NeoForge Server"
+			programArgument '--nogui'
+			gameDirectory = new File(project.rootDir, "/run")
+		}
+	}
+
+	mods {
+		"${mod_id}" {
+			sourceSet sourceSets.main
+		}
+	}
+}
+
+processResources {
+	var expandProps = [
+		'version'                      : version,
+		'group'                        : project.group,
+		'minecraft_version'            : minecraft_version,
+		'minecraft_version_range'      : minecraft_version_range,
+		'mod_name'                     : mod_name,
+		'mod_author'                   : mod_author,
+		'mod_id'                       : mod_id,
+		'license'                      : license,
+		'description'                  : project.description,
+		'neoforge_version'             : neoforge_version,
+		'neoforge_loader_version_range': neoforge_loader_version_range,
+		'credits'                      : credits,
+		'java_version'                 : java_version
+	]
+
+	filesMatching(['META-INF/neoforge.mods.toml']) {
+		expand expandProps
+	}
+	inputs.properties(expandProps)
+}

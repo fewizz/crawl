@@ -6,7 +6,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.player.ClientInput;
@@ -45,7 +44,7 @@ abstract class LocalPlayerMixin extends AbstractClientPlayer {
 		boolean wantsToCrawl = CrawlClient.key.isDown();
 
 		if (wantsToCrawl != getEntityData().get(Shared.CRAWL_REQUEST)) {
-			ClientPlayNetworking.send(new Crawl.Payload(wantsToCrawl));
+			Crawl.crawlRequestPacket.accept(wantsToCrawl);
 			getEntityData().set(Shared.CRAWL_REQUEST, wantsToCrawl);
 		}
 
