@@ -37,6 +37,7 @@ loom {
 dependencies {
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
 	mappings loom.officialMojangMappings()
+	compileOnly project(":common")
 	modImplementation "net.fabricmc:fabric-loader:${project.fabric_loader_version}"
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 }
@@ -46,12 +47,16 @@ base {
 }
 
 processResources {
+	from project(":common").sourceSets.main.resources
+
 	inputs.property "version", project.version
 
 	filesMatching("fabric.mod.json") {
 		expand "version": project.version
 	}
 }
+
+compileJava.source project(":common").sourceSets.main.allSource
 
 tasks.withType(JavaCompile).configureEach {
 	it.options.release = 21

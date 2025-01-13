@@ -1,6 +1,10 @@
 pluginManagement {
 	repositories {
 		maven {
+			name = 'Sponge'
+			url = 'https://repo.spongepowered.org/repository/maven-public/'
+		}
+		maven {
 			name = 'Fabric'
 			url = 'https://maven.fabricmc.net/'
 		}
@@ -22,5 +26,6 @@ plugins {
 
 rootProject.name = 'crawl'
 
+include('common')
 include('fabric')
 include('neoforge')

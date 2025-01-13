@@ -6,12 +6,8 @@ base {
 	archivesName = mod_id
 }
 
-sourceSets.main {
-	java { srcDir "../src/main/java" }
-	resources { srcDir "../src/main/resources" }
-}
-
 dependencies {
+	compileOnly project(":common")
 }
 
 neoForge {
@@ -44,7 +40,11 @@ neoForge {
 	}
 }
 
+compileJava.source project(":common").sourceSets.main.allSource
+
 processResources {
+	from project(":common").sourceSets.main.resources
+
 	var expandProps = [
 		'version'                      : version,
 		'group'                        : project.group,
