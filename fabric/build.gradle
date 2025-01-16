@@ -2,11 +2,6 @@ plugins {
 	id 'fabric-loom' version '1.9-SNAPSHOT'
 }
 
-sourceSets.main {
-	java { srcDir "../src/main/java" }
-	resources { srcDir "../src/main/resources" }
-}
-
 loom {
 	accessWidenerPath = file("src/main/resources/crawl.accesswidener")
 

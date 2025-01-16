@@ -21,7 +21,7 @@ build
 *.classpath
 *.project
 *.settings
-/bin
+bin
 .metadata/
 
 # NetBeans
