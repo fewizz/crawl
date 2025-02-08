@@ -43,7 +43,7 @@ public abstract class PlayerMixin extends LivingEntity implements PrevPoseState 
 	Pose prevTickPose;
 
 	@Inject(method = "defineSynchedData", at = @At("TAIL"))
-	public void onDefineSynchedData(SynchedEntityData.Builder builder, CallbackInfo ci) {
+	private void onDefineSynchedData(SynchedEntityData.Builder builder, CallbackInfo ci) {
 		builder.define(Crawl.Shared.CRAWL_REQUEST, false);
 	}
 	
@@ -54,7 +54,7 @@ public abstract class PlayerMixin extends LivingEntity implements PrevPoseState 
 			target = "net/minecraft/world/entity/player/Player.setPose(Lnet/minecraft/world/entity/Pose;)V"
 		)
 	)
-	public void onPreUpdatePlayerPose(Player instance, Pose pose, Operation<Void> original) {
+	private void onPreUpdatePlayerPose(Player instance, Pose pose, Operation<Void> original) {
 		if (!this.isSpectator() && !this.isPassenger() && !this.abilities.flying) {
 			boolean requested = getEntityData().get(Shared.CRAWL_REQUEST);
 			boolean swimming = isSwimming() || isInWater();

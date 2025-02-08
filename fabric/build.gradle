@@ -2,43 +2,41 @@ plugins {
 	id 'fabric-loom' version '1.9-SNAPSHOT'
 }
 
-loom {
-	accessWidenerPath = file("src/main/resources/crawl.accesswidener")
-
-	runs {
-		client {
-			client()
-			setConfigName('Fabric Client')
-			ideConfigGenerated(true)
-			runDir('../run')
-			appendProjectPathToConfigName = false
-		}
-		server {
-			server()
-			setConfigName('Fabric Server')
-			ideConfigGenerated(true)
-			runDir('../run')
-			appendProjectPathToConfigName = false
-		}
-	}
-
-	mods {
-		"${mod_id}" {
-			sourceSet sourceSets.main
-		}
-	}
+base {
+	archivesName = mod_id
 }
 
 dependencies {
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
 	mappings loom.officialMojangMappings()
-	compileOnly project(":common")
 	modImplementation "net.fabricmc:fabric-loader:${project.fabric_loader_version}"
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 }
 
-base {
-	archivesName = mod_id
+compileJava.source project(":common").sourceSets.main.allSource
+
+loom {
+	accessWidenerPath = file("src/main/resources/crawl.accesswidener")
+	mixin {
+		useLegacyMixinAp = false
+	}
+	runs {
+		client {
+			client()
+			configName = 'Fabric Client'
+			ideConfigGenerated = true
+			runDir = '../run'
+			programArg "--username=_fewizz"
+			appendProjectPathToConfigName = false
+		}
+		server {
+			server()
+			configName = 'Fabric Server'
+			ideConfigGenerated = true
+			runDir = '../run'
+			appendProjectPathToConfigName = false
+		}
+	}
 }
 
 processResources {
@@ -50,8 +48,6 @@ processResources {
 		expand "version": project.version
 	}
 }
-
-compileJava.source project(":common").sourceSets.main.allSource
 
 tasks.withType(JavaCompile).configureEach {
 	it.options.release = 21
