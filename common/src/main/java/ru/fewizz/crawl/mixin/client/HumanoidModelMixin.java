@@ -27,8 +27,6 @@ public abstract class HumanoidModelMixin<T extends HumanoidRenderState> extends 
 	@Shadow
 	public ModelPart head;
 	@Shadow
-	public ModelPart hat;
-	@Shadow
 	public ModelPart body;
 	@Shadow
 	public ModelPart rightArm;
@@ -136,8 +134,6 @@ public abstract class HumanoidModelMixin<T extends HumanoidRenderState> extends 
 
 		head.z = l(sa, 0.0F, torsoPosZ + cos(walkDist*2.0F)/2.0F);
 		head.y = torsoPosY;
-
-		hat.copyFrom(head);
 
 		lPos(sa, leftArm, 5.0F, torsoPosY + 2.0F, torsoPosZ);
 		lPos(sa, rightArm, -5.0F, torsoPosY + 2.0F, torsoPosZ);
