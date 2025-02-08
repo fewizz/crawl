@@ -37,4 +37,9 @@ public abstract class EntityMixin {
 		return original || getPose() == Crawl.Shared.CRAWLING;
 	}
 
+	@ModifyReturnValue(method = "isDiscrete", at = @At("RETURN"))
+	private boolean isDiscrete(boolean original) {
+		return original || getPose() == Crawl.Shared.CRAWLING;
+	}
+
 }

@@ -26,7 +26,7 @@ loom {
 			configName = 'Fabric Client'
 			ideConfigGenerated = true
 			runDir = '../run'
-			programArg "--username=_fewizz"
+			// programArg "--username=_fewizz"
 			appendProjectPathToConfigName = false
 		}
 		server {

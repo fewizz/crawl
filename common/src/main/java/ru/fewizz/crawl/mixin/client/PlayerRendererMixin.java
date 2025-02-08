@@ -51,7 +51,6 @@ abstract class PlayerRendererMixin extends LivingEntityRenderer<AbstractClientPl
 		((CrawlingState) state).setCrawling(crawling);
 
 		state.isCrouching &= !crawling;
-		state.isDiscrete &= !crawling;
 	}
 
 }
