@@ -1,18 +1,66 @@
 package ru.fewizz.crawl.mixin;
 
+import static org.objectweb.asm.Opcodes.AASTORE;
+import static org.objectweb.asm.Opcodes.ACC_ENUM;
+import static org.objectweb.asm.Opcodes.ACC_FINAL;
+import static org.objectweb.asm.Opcodes.ACC_PUBLIC;
+import static org.objectweb.asm.Opcodes.ACC_STATIC;
+import static org.objectweb.asm.Opcodes.ANEWARRAY;
+import static org.objectweb.asm.Opcodes.BIPUSH;
+import static org.objectweb.asm.Opcodes.DUP;
+import static org.objectweb.asm.Opcodes.GETSTATIC;
+import static org.objectweb.asm.Opcodes.INVOKESPECIAL;
+import static org.objectweb.asm.Opcodes.NEW;
+import static org.objectweb.asm.Opcodes.PUTSTATIC;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
+import java.util.Properties;
 import java.util.Set;
 import java.util.stream.StreamSupport;
 
-import static org.objectweb.asm.Opcodes.*;
-import org.objectweb.asm.tree.*;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.objectweb.asm.tree.ClassNode;
+import org.objectweb.asm.tree.FieldInsnNode;
+import org.objectweb.asm.tree.FieldNode;
+import org.objectweb.asm.tree.InsnList;
+import org.objectweb.asm.tree.InsnNode;
+import org.objectweb.asm.tree.IntInsnNode;
+import org.objectweb.asm.tree.LdcInsnNode;
+import org.objectweb.asm.tree.MethodInsnNode;
+import org.objectweb.asm.tree.MethodNode;
+import org.objectweb.asm.tree.TypeInsnNode;
 import org.spongepowered.asm.mixin.extensibility.IMixinConfigPlugin;
 import org.spongepowered.asm.mixin.extensibility.IMixinInfo;
 
 public class Plugin implements IMixinConfigPlugin {
+	private static final Path CONFIG_PATH = Path.of("./config/crawl.properties");
+	private static final Logger LOGGER = LogManager.getLogger("CrawlMixinPlugin");
+
+	final private Properties props = new Properties();
 
 	@Override
-	public void onLoad(String mixinPackage) {}
+	public void onLoad(String mixinPackage) {
+		props.setProperty("replace-crawl-animation", Boolean.toString(true));
+
+		if (!Files.exists(CONFIG_PATH)) {
+			try {
+				props.store(Files.newOutputStream(CONFIG_PATH), null);
+			} catch (IOException e) {
+				LOGGER.warn("Couldn't save config", e);
+			}
+			return;
+		}
+
+		try {
+			props.load(Files.newInputStream(CONFIG_PATH));
+		} catch (IOException e) {
+			LOGGER.warn("Couldn't load config", e);
+		}
+	}
 
 	@Override
 	public String getRefMapperConfig() {
@@ -21,7 +69,15 @@ public class Plugin implements IMixinConfigPlugin {
 
 	@Override
 	public boolean shouldApplyMixin(String targetClassName, String mixinClassName) {
-		return true;
+		boolean animationClass =
+			mixinClassName.equals("ru.fewizz.crawl.mixin.client.HumanoidRenderStateMixin") ||
+			mixinClassName.equals("ru.fewizz.crawl.mixin.client.HumanoidModelMixin") ||
+			mixinClassName.equals("ru.fewizz.crawl.mixin.client.PlayerRendererMixin");
+
+		boolean replaceAnimation =
+			Boolean.parseBoolean(props.getProperty("replace-crawl-animation"));
+
+		return !animationClass || replaceAnimation;
 	}
 
 	@Override

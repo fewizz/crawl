@@ -1,16 +1,16 @@
 plugins {
-	id 'fabric-loom' version '1.9-SNAPSHOT'
-}
-
-loom {
-	accessWidenerPath = new File(rootDir, "fabric/src/main/resources/crawl.accesswidener")
-	runs {}
+	id 'fabric-loom' version '1.10-SNAPSHOT'
 }
 
 dependencies {
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
 	mappings loom.officialMojangMappings()
 	modImplementation "net.fabricmc:fabric-loader:${project.fabric_loader_version}"
+}
+
+loom {
+	accessWidenerPath = new File(rootDir, "fabric/src/main/resources/crawl.accesswidener")
+	runs {}
 }
 
 tasks.withType(JavaCompile).configureEach {
