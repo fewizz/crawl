@@ -1,0 +1,16 @@
+{
+	"package": "ru.fewizz.crawl.client.mixin",
+	"minVersion": "0.8",
+	"required": true,
+	"injectors": {
+		"defaultRequire": 1
+	},
+	"mixins": [
+		"ControlsScreenMixin",
+		"HumanoidModelMixin",
+		"HumanoidRenderStateMixin",
+		"LocalPlayerMixin",
+		"OptionsMixin",
+		"PlayerRendererMixin"
+	]
+}

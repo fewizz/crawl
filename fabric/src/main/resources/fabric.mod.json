@@ -16,7 +16,10 @@
 			"ru.fewizz.crawl.CrawlInitializer"
 		],
 		"client": [
-			"ru.fewizz.crawl.CrawlClientInitializer"
+			"ru.fewizz.crawl.client.CrawlClientInitializer"
+		],
+		"modmenu": [
+			"ru.fewizz.crawl.client.ModMenyEntry"
 		]
 	},
 	"accessWidener": "crawl.accesswidener",
@@ -32,6 +35,8 @@
 		"java": ">=21"
 	},
 	"mixins": [
-		"mixins.crawl.json"
+		"crawl.mixins.json",
+		"crawl.client.mixins.json",
+		"crawl.compat.nea.mixins.json"
 	]
 }

@@ -1,16 +1,15 @@
-package ru.fewizz.crawl.mixin.client;
+package ru.fewizz.crawl.client.mixin;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 
 import net.minecraft.client.renderer.entity.state.HumanoidRenderState;
-import ru.fewizz.crawl.mixininterface.CrawlingState;
+import ru.fewizz.crawl.client.mixininterface.CrawlingState;
 
 @Mixin(HumanoidRenderState.class)
 public class HumanoidRenderStateMixin implements CrawlingState {
 
-	@Unique
-	boolean isCrawling = false;
+	@Unique boolean isCrawling = false;
 
 	@Override
 	public boolean isCrawling() {

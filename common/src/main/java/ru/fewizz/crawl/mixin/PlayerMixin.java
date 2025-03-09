@@ -30,17 +30,11 @@ public abstract class PlayerMixin extends LivingEntity implements PrevPoseState 
 
 	PlayerMixin() { super(null, null); }
 
-	@Shadow @Final
-	private Abilities abilities;
+	@Shadow @Final private Abilities abilities;
+	@Shadow @Final @Mutable private static Map<Pose, EntityDimensions> POSES;
 
-	@Shadow @Final @Mutable
-	private static Map<Pose, EntityDimensions> POSES;
-
-	@Unique
-	Pose prevPose;
-	
-	@Unique
-	Pose prevTickPose;
+	@Unique Pose prevPose;
+	@Unique Pose prevTickPose;
 
 	@Inject(method = "defineSynchedData", at = @At("TAIL"))
 	private void onDefineSynchedData(SynchedEntityData.Builder builder, CallbackInfo ci) {
@@ -95,4 +89,5 @@ public abstract class PlayerMixin extends LivingEntity implements PrevPoseState 
 	public Pose getPrevTickPose() {
 		return prevTickPose;
 	}
+
 }

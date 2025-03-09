@@ -1,4 +1,4 @@
-package ru.fewizz.crawl.mixin.client;
+package ru.fewizz.crawl.client.mixin;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -11,7 +11,7 @@ import net.minecraft.client.OptionInstance;
 import net.minecraft.client.Options;
 import net.minecraft.client.gui.screens.options.OptionsSubScreen;
 import net.minecraft.client.gui.screens.options.controls.ControlsScreen;
-import ru.fewizz.crawl.CrawlClient;
+import ru.fewizz.crawl.client.CrawlClient;
 
 @Mixin(ControlsScreen.class)
 abstract class ControlsScreenMixin extends OptionsSubScreen {

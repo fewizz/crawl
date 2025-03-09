@@ -1,0 +1,11 @@
+{
+	"package": "ru.fewizz.crawl.compat.nea.mixin",
+	"minVersion": "0.8",
+	"required": false,
+	"injectors": {
+		"defaultRequire": 1
+	},
+	"mixins": [
+		"CrawlingAnimationMixin"
+	]
+}

@@ -2,6 +2,13 @@ plugins {
 	id 'fabric-loom' version '1.10-SNAPSHOT'
 }
 
+repositories {
+	maven {
+		name = "Terraformers"
+		url = "https://maven.terraformersmc.com/"
+	}
+}
+
 base {
 	archivesName = mod_id
 }
@@ -11,6 +18,7 @@ dependencies {
 	mappings loom.officialMojangMappings()
 	modImplementation "net.fabricmc:fabric-loader:${project.fabric_loader_version}"
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+	modImplementation "com.terraformersmc:modmenu:${project.modmenu_version}"
 }
 
 compileJava.source project(":common").sourceSets.main.allSource

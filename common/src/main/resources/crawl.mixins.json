@@ -11,14 +11,5 @@
 		"LivingEntityMixin",
 		"PlayerMixin",
 		"PoseMixin"
-	],
-	"client": [
-		"client.ControlsScreenMixin",
-		"client.HumanoidModelMixin",
-		"client.HumanoidRenderStateMixin",
-		"client.LocalPlayerMixin",
-		"client.OptionsMixin",
-		"client.PlayerRendererMixin"
 	]
-
 }

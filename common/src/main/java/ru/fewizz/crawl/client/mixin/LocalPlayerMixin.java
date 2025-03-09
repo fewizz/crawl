@@ -1,4 +1,4 @@
-package ru.fewizz.crawl.mixin.client;
+package ru.fewizz.crawl.client.mixin;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -12,16 +12,13 @@ import net.minecraft.client.player.ClientInput;
 import net.minecraft.client.player.LocalPlayer;
 import ru.fewizz.crawl.Crawl;
 import ru.fewizz.crawl.Crawl.Shared;
-import ru.fewizz.crawl.CrawlClient;
+import ru.fewizz.crawl.client.CrawlClient;
 
 @Mixin(LocalPlayer.class)
 abstract class LocalPlayerMixin extends AbstractClientPlayer {
 
-	@Shadow
-	public ClientInput input;
-
-	@Shadow
-	protected int sprintTriggerTime;
+	@Shadow public ClientInput input;
+	@Shadow protected int sprintTriggerTime;
 
 	LocalPlayerMixin() { super(null, null); }
 

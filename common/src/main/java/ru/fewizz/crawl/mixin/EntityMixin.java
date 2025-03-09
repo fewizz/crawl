@@ -15,6 +15,8 @@ import ru.fewizz.crawl.Crawl;
 @Mixin(Entity.class)
 public abstract class EntityMixin {
 
+	@Shadow abstract public Pose getPose();
+
 	@WrapMethod(method = "getBlockJumpFactor")
 	float getBlockJumpFactor(Operation<Float> original) {
 		float result = original.call();
@@ -23,9 +25,6 @@ public abstract class EntityMixin {
 		}
 		return result;
 	}
-
-	@Shadow
-	abstract public Pose getPose();
 
 	@ModifyReturnValue(method = "isVisuallyCrawling", at = @At("RETURN"))
 	private boolean isVisuallyCrawling(boolean original) {
