@@ -1,3 +1,5 @@
 {
-  "key.crawl": "Ползти"
+  "key.crawl": "Ползти",
+  "crawl.gui.options_title": "Настройки Crawl",
+  "crawl.config.replace_animation": "Заменить анимацию ползания"
 }

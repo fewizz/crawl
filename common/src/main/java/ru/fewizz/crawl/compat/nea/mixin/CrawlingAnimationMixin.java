@@ -6,18 +6,17 @@ import org.spongepowered.asm.mixin.injection.At;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.sugar.Local;
 
+import dev.tr7zw.notenoughanimations.animations.fullbody.CrawlingAnimation;
 import net.minecraft.client.player.AbstractClientPlayer;
 import ru.fewizz.crawl.Crawl;
+import ru.fewizz.crawl.client.CrawlClient;
 
-@Mixin(
-	targets = {"dev.tr7zw.notenoughanimations.animations.fullbody.CrawlingAnimation"},
-	remap = false
-)
+@Mixin(value = CrawlingAnimation.class, remap = false)
 public class CrawlingAnimationMixin {
 
 	@ModifyReturnValue(method = "isValid", at = @At("RETURN"), remap = false)
 	boolean isValid(boolean original, @Local(argsOnly = true) AbstractClientPlayer entity) {
-		return original || entity.hasPose(Crawl.Shared.CRAWLING);
+		return (original || entity.hasPose(Crawl.Shared.CRAWLING)) && !CrawlClient.replaceAnimation;
 	}
 
 }

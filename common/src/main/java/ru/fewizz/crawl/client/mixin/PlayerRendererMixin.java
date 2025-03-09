@@ -73,7 +73,7 @@ abstract class PlayerRendererMixin extends LivingEntityRenderer<AbstractClientPl
 
 	@ModifyExpressionValue(method = "setupRotations", at = @At(value = "CONSTANT", args="floatValue=0.3F"))
 	float smootherZOffsetSwimmingPosTransition(float original, @Local PlayerRenderState state) {
-		return Mth.lerp(state.swimAmount, 0.0F, original-0.15F);
+		return Mth.lerp(state.swimAmount, 0.0F, original-0.1F);
 	}
 
 }

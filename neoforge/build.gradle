@@ -2,12 +2,27 @@ plugins {
 	id 'net.neoforged.moddev' version '2.0.49-beta'
 }
 
-base {
-	archivesName = mod_id
+repositories {
+	exclusiveContent {
+		forRepository {
+			maven {
+				name = "Modrinth"
+				url = uri("https://api.modrinth.com/maven")
+			}
+		}
+		filter {
+			includeGroup("maven.modrinth")
+		}
+	}
 }
 
 dependencies {
 	compileOnly project(":common")
+	implementation "maven.modrinth:not-enough-animations:${project.not_enough_animations_modrinth_neoforge_id}"
+}
+
+base {
+	archivesName = mod_id
 }
 
 neoForge {
