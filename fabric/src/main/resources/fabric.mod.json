@@ -1,15 +1,15 @@
 {
 	"schemaVersion": 1,
-	"id": "crawl",
-	"name": "Crawl",
-	"description": "Allows you to crawl",
+	"id": "${mod_id}",
+	"name": "${mod_name}",
+	"description": "${description}",
 	"version": "${version}",
 	"authors": [
-		"fewizz",
+		"${mod_author}",
 		"McSkinnerOG",
 		"Chocohead"
 	],
-	"icon": "assets/crawl/icon.png",
+	"icon": "assets/${mod_id}/icon.png",
 	"environment": "*",
 	"entrypoints": { 
 		"main": [
@@ -31,8 +31,8 @@
 	"depends": {
 		"fabricloader": ">=0.14.0",
 		"fabric-api": "*",
-		"minecraft": "1.21.1",
-		"java": ">=21"
+		"minecraft": "${minecraft_version}",
+		"java": ">=${java_version}"
 	},
 	"mixins": [
 		"crawl.mixins.json",
