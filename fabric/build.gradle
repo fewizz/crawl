@@ -62,11 +62,21 @@ loom {
 processResources {
 	from project(":common").sourceSets.main.resources
 
-	inputs.property "version", project.version
+	var expandProps = [
+		'version'            : version,
+		'minecraft_version'  : minecraft_version,
+		'mod_name'           : mod_name,
+		'mod_author'         : mod_author,
+		'mod_id'             : mod_id,
+		'description'        : project.description,
+		'java_version'       : java_version
+	]
 
 	filesMatching("fabric.mod.json") {
-		expand "version": project.version
+		expand expandProps
 	}
+
+	inputs.properties(expandProps)
 }
 
 tasks.withType(JavaCompile).configureEach {
