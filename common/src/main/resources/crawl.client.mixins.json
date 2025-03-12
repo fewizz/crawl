@@ -8,7 +8,6 @@
 	"mixins": [
 		"ControlsScreenMixin",
 		"HumanoidModelMixin",
-		"HumanoidRenderStateMixin",
 		"LocalPlayerMixin",
 		"OptionsMixin",
 		"PlayerRendererMixin"

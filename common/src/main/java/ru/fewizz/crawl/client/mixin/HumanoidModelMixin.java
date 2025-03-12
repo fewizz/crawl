@@ -16,14 +16,14 @@ import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelPart;
-import net.minecraft.client.renderer.entity.state.HumanoidRenderState;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.LivingEntity;
 import ru.fewizz.crawl.client.CrawlClient;
 import ru.fewizz.crawl.client.mixininterface.CrawlingState;
 
 @Mixin(HumanoidModel.class)
-public abstract class HumanoidModelMixin<T extends HumanoidRenderState> extends EntityModel<T> {
+public abstract class HumanoidModelMixin<T extends LivingEntity> extends EntityModel<T> implements CrawlingState {
 
 	@Shadow public ModelPart head;
 	@Shadow public ModelPart body;
@@ -32,6 +32,13 @@ public abstract class HumanoidModelMixin<T extends HumanoidRenderState> extends 
 	@Shadow public ModelPart rightLeg;
 	@Shadow public ModelPart leftLeg;
 
+	@Shadow public float swimAmount;
+
+	@Unique
+	private boolean crawling = false;
+	@Override public boolean isCrawling() { return this.crawling; }
+	@Override public void setCrawling(boolean v) { this.crawling = v; }
+
 	HumanoidModelMixin() { super(null);}
 
 	// Prevent model change when in swimming pose but not in water
@@ -39,27 +46,38 @@ public abstract class HumanoidModelMixin<T extends HumanoidRenderState> extends 
 		method = "setupAnim",
 		at = @At(
 			value = "FIELD",
-			target = "Lnet/minecraft/client/renderer/entity/state/HumanoidRenderState;swimAmount:F"
+			target = "Lnet/minecraft/client/model/HumanoidModel;swimAmount:F",
+			ordinal = 0
 		)
 	)
-	float skipSwimmingRenderingIfNotInWater(float leaningPitch, HumanoidRenderState state) {
-		return !CrawlClient.replaceAnimation || state.isVisuallySwimming ? leaningPitch : 0.0F;
+	float skipSwimmingRenderingIfNotInWater(float leaningPitch, LivingEntity state) {
+		return !CrawlClient.replaceAnimation || state.isVisuallySwimming() ? leaningPitch : 0.0F;
 	}
 
 	@Inject(
 		method = "setupAnim",
 		at = @At("TAIL")
 	)
-	void afterSetAngles(HumanoidRenderState state, CallbackInfo ci) {
-		if (!(CrawlClient.replaceAnimation && ((CrawlingState) state).isCrawling())) return;
+	void afterSetAngles(LivingEntity state, float walkDist, float f_0, float f_1, float f_2, float f_3, CallbackInfo ci) {
+		if (!(CrawlClient.replaceAnimation && this.crawling)) return;
 
-		float walkDist = state.walkAnimationPos;
-		float sa = state.swimAmount;
+		float sa = this.swimAmount;
 		float bodyYRotFreq = 6.0F;
 		float bodyXRot = 0.0F;
 		float bodyYRot = sin(walkDist) / 5.0F;
 		float zOffset = 0.0F;
 		float yOffset = 0.0F;
+
+		head.setPos(0.0F, 0.0F, 0.0F);
+		head.zRot = 0;
+
+		body.setRotation(0.0F, 0.0F, 0.0F);
+
+		leftLeg.x = 1.9F;
+		rightLeg.x = -1.9F;
+
+		leftArm.setPos(5.0F, 2.0F, 0.0F);
+		rightArm.setPos(-5.0F, 2.0F, 0.0F);
 
 		lPos(
 			sa, leftLeg,
@@ -92,7 +110,7 @@ public abstract class HumanoidModelMixin<T extends HumanoidRenderState> extends 
 		leftArm.y = body.y + 2.0F; leftArm.z = head.z;
 		rightArm.y = body.y + 2.0F; rightArm.z = head.z;
 
-		if ((state.isUsingItem || state.ticksUsingItem > 0) && state.useItemHand == InteractionHand.OFF_HAND) {
+		if ((state.isUsingItem() || this.attackTime > 0) && state.getUsedItemHand() == InteractionHand.OFF_HAND) {
 			lRot(
 				sa, leftArm,
 				-leftArm.yRot, 0.0F, leftArm.xRot - PI/2.0F
@@ -105,7 +123,7 @@ public abstract class HumanoidModelMixin<T extends HumanoidRenderState> extends 
 			);
 		}
 
-		if ((state.isUsingItem || state.ticksUsingItem > 0) && state.useItemHand == InteractionHand.MAIN_HAND) {
+		if ((state.isUsingItem() || this.attackTime > 0) && state.getUsedItemHand() == InteractionHand.MAIN_HAND) {
 			lRot(
 				sa, rightArm,
 				-rightArm.yRot, 0.0F, rightArm.xRot - PI/2.0F
@@ -127,7 +145,7 @@ public abstract class HumanoidModelMixin<T extends HumanoidRenderState> extends 
 
 	@Unique
 	private float la(float leaningPitch, float original, float changed) {
-		return Mth.rotLerpRad(leaningPitch, original, changed);
+		return Mth.rotLerp(leaningPitch, original*Mth.RAD_TO_DEG, changed*Mth.RAD_TO_DEG)*Mth.DEG_TO_RAD;
 	}
 
 	@Unique

@@ -12,7 +12,6 @@ import net.minecraft.client.model.PlayerModel;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.entity.player.PlayerRenderer;
-import net.minecraft.client.renderer.entity.state.PlayerRenderState;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Pose;
 import ru.fewizz.crawl.Crawl;
@@ -21,35 +20,34 @@ import ru.fewizz.crawl.client.mixininterface.CrawlingState;
 import ru.fewizz.crawl.mixininterface.PrevPoseState;
 
 @Mixin(PlayerRenderer.class)
-abstract class PlayerRendererMixin extends LivingEntityRenderer<AbstractClientPlayer, PlayerRenderState, PlayerModel> {
+abstract class PlayerRendererMixin extends LivingEntityRenderer<AbstractClientPlayer, PlayerModel<AbstractClientPlayer>> {
 
 	PlayerRendererMixin() { super(null, null, 0.0F); }
 
-	@Inject(method = "extractRenderState", at = @At("TAIL"))
-	void onUpdateRenderState(AbstractClientPlayer e, PlayerRenderState state, float tickDelta, CallbackInfo ci) {
+	@Inject(method = "setModelProperties", at = @At("TAIL"))
+	void onUpdateRenderState(AbstractClientPlayer e, CallbackInfo ci) {
 		boolean crawling =
-			e.getSwimAmount(tickDelta) > 0 &&
+			e.getSwimAmount(0.0F) > 0 &&
 			e.getPose() != Pose.SWIMMING && (
 				e.getPose() == Crawl.Shared.CRAWLING ||
 				((PrevPoseState) e).getPrevPose() == Crawl.Shared.CRAWLING ||
 				((PrevPoseState) e).getPrevTickPose() == Crawl.Shared.CRAWLING
 			);
 
-		((CrawlingState) state).setCrawling(CrawlClient.replaceAnimation ? crawling : false);
-		state.isVisuallySwimming = !CrawlClient.replaceAnimation && crawling;
-		state.isCrouching &= !crawling;
+		((CrawlingState) this.getModel()).setCrawling(CrawlClient.replaceAnimation ? crawling : false);
+		getModel().crouching &= !crawling;
 	}
 
 	// need this, to take ... } else if (h > 0.0F) { ... branch
 	@ModifyExpressionValue(
 		method = "setupRotations",
 		at = @At(
-			value = "FIELD",
-			target = "Lnet/minecraft/client/renderer/entity/state/PlayerRenderState;swimAmount:F"
+			value = "INVOKE",
+			target = "Lnet/minecraft/client/player/AbstractClientPlayer;getSwimAmount(F)F"
 		)
 	)
-	float rotateWhenCrawlingSameWayAsWhenSwimming(float swimAmount, @Local PlayerRenderState state) {
-		if (CrawlClient.replaceAnimation && ((CrawlingState) state).isCrawling()) {
+	float rotateWhenCrawlingSameWayAsWhenSwimming(float swimAmount) {
+		if (CrawlClient.replaceAnimation && ((CrawlingState) this.getModel()).isCrawling()) {
 			swimAmount += 0.001F;  // evil :)
 		}
 		return swimAmount;
@@ -58,22 +56,22 @@ abstract class PlayerRendererMixin extends LivingEntityRenderer<AbstractClientPl
 	@ModifyExpressionValue(
 		method = "setupRotations",
 		at = @At(
-			value = "FIELD",
-			target = "Lnet/minecraft/client/renderer/entity/state/PlayerRenderState;isVisuallySwimming:Z"
+			value = "INVOKE",
+			target = "Lnet/minecraft/client/player/AbstractClientPlayer;isVisuallySwimming()Z"
 		)
 	)
-	boolean applyXRotationWhenCrawling(boolean isVisuallySwimming, @Local PlayerRenderState state) {
-		return (CrawlClient.replaceAnimation && ((CrawlingState) state).isCrawling()) || isVisuallySwimming;
+	boolean applyXRotationWhenCrawling(boolean isVisuallySwimming) {
+		return (CrawlClient.replaceAnimation && ((CrawlingState) this.getModel()).isCrawling()) || isVisuallySwimming;
 	}
 
 	@ModifyExpressionValue(method = "setupRotations", at = @At(value = "CONSTANT", args="floatValue=-1.0F"))
-	float smootherYOffsetSwimmingPosTransition(float original, @Local PlayerRenderState state) {
-		return Mth.lerp(state.swimAmount, 0.0F, original);
+	float smootherYOffsetSwimmingPosTransition(float original, @Local AbstractClientPlayer state, @Local(ordinal = 2) float pt) {
+		return Mth.lerp(state.getSwimAmount(pt), 0.0F, original);
 	}
 
 	@ModifyExpressionValue(method = "setupRotations", at = @At(value = "CONSTANT", args="floatValue=0.3F"))
-	float smootherZOffsetSwimmingPosTransition(float original, @Local PlayerRenderState state) {
-		return Mth.lerp(state.swimAmount, 0.0F, original-0.1F);
+	float smootherZOffsetSwimmingPosTransition(float original, @Local AbstractClientPlayer state, @Local(ordinal = 2) float pt) {
+		return Mth.lerp(state.getSwimAmount(pt), 0.0F, original-0.1F);
 	}
 
 }

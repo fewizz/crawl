@@ -8,7 +8,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.AbstractClientPlayer;
-import net.minecraft.client.player.ClientInput;
+import net.minecraft.client.player.Input;
 import net.minecraft.client.player.LocalPlayer;
 import ru.fewizz.crawl.Crawl;
 import ru.fewizz.crawl.Crawl.Shared;
@@ -17,7 +17,7 @@ import ru.fewizz.crawl.client.CrawlClient;
 @Mixin(LocalPlayer.class)
 abstract class LocalPlayerMixin extends AbstractClientPlayer {
 
-	@Shadow public ClientInput input;
+	@Shadow public Input input;
 	@Shadow protected int sprintTriggerTime;
 
 	LocalPlayerMixin() { super(null, null); }
@@ -27,6 +27,7 @@ abstract class LocalPlayerMixin extends AbstractClientPlayer {
 		Minecraft mc = Minecraft.getInstance();
 		if (mc.player.getPose() == Shared.CRAWLING) {
 			this.sprintTriggerTime = 0;
+			this.input.shiftKeyDown = false;
 		}
 	}
 
