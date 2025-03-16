@@ -9,11 +9,10 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.google.common.collect.ImmutableMap;
-import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
-import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.world.entity.EntityDimensions;
@@ -41,17 +40,17 @@ public abstract class PlayerMixin extends LivingEntity implements PrevPoseState 
 		builder.define(Crawl.Shared.CRAWL_REQUEST, false);
 	}
 	
-	@WrapOperation(
+	@ModifyArg(
 		method = "updatePlayerPose",
 		at = @At(
 			value = "INVOKE",
 			target = "net/minecraft/world/entity/player/Player.setPose(Lnet/minecraft/world/entity/Pose;)V"
 		)
 	)
-	private void onPreUpdatePlayerPose(Player instance, Pose pose, Operation<Void> original) {
+	private Pose onPreUpdatePlayerPose(Pose pose) {
 		if (!this.isSpectator() && !this.isPassenger() && !this.abilities.flying) {
-			boolean requested = getEntityData().get(Shared.CRAWL_REQUEST);
-			boolean swimming = isSwimming() || isInWater();
+			boolean requested = this.getEntityData().get(Shared.CRAWL_REQUEST);
+			boolean swimming = this.isSwimming() || this.isInWater();
 
 			if (requested) {
 				pose = swimming ? Pose.SWIMMING : Shared.CRAWLING;
@@ -61,7 +60,7 @@ public abstract class PlayerMixin extends LivingEntity implements PrevPoseState 
 			}
 		}
 
-		original.call(instance, pose);
+		return pose;
 	}
 
 	@Inject(method = "<clinit>", at = @At("TAIL"))
@@ -74,10 +73,10 @@ public abstract class PlayerMixin extends LivingEntity implements PrevPoseState 
 	
 	@Inject(method = "tick", at = @At(value = "TAIL"))
 	public void onTickEnd(CallbackInfo ci) {
-		if (getPose() != prevTickPose) {
+		if (this.getPose() != prevTickPose) {
 			prevPose = prevTickPose;
 		}
-		prevTickPose = getPose();
+		prevTickPose = this.getPose();
 	}
 
 	@Override
