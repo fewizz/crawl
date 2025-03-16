@@ -36,7 +36,7 @@ abstract class PlayerRendererMixin extends LivingEntityRenderer<AbstractClientPl
 			);
 
 		((CrawlingState) state).setCrawling(CrawlClient.replaceAnimation ? crawling : false);
-		state.isVisuallySwimming = !CrawlClient.replaceAnimation && crawling;
+		state.isVisuallySwimming |= !CrawlClient.replaceAnimation && crawling;
 		state.isCrouching &= !crawling;
 	}
 
