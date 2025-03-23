@@ -18,6 +18,7 @@ import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
 import ru.fewizz.crawl.client.CrawlClient;
 import ru.fewizz.crawl.client.mixininterface.CrawlingState;
@@ -33,6 +34,7 @@ public abstract class HumanoidModelMixin<T extends LivingEntity> extends EntityM
 	@Shadow public ModelPart leftLeg;
 
 	@Shadow public float swimAmount;
+	@Shadow private HumanoidArm getAttackArm(LivingEntity livingEntity) { return null; }
 
 	@Unique
 	private boolean crawling = false;
@@ -110,7 +112,10 @@ public abstract class HumanoidModelMixin<T extends LivingEntity> extends EntityM
 		leftArm.y = body.y + 2.0F; leftArm.z = head.z;
 		rightArm.y = body.y + 2.0F; rightArm.z = head.z;
 
-		if ((state.isUsingItem() || this.attackTime > 0) && state.getUsedItemHand() == InteractionHand.OFF_HAND) {
+		if (
+			(state.isUsingItem() && ((state.getUsedItemHand() == InteractionHand.OFF_HAND) == (state.getMainArm() == HumanoidArm.LEFT))) ||
+			(this.attackTime > 0 && this.getAttackArm(state) == HumanoidArm.LEFT)
+		) {
 			lRot(
 				sa, leftArm,
 				-leftArm.yRot, 0.0F, leftArm.xRot - PI/2.0F
@@ -123,7 +128,10 @@ public abstract class HumanoidModelMixin<T extends LivingEntity> extends EntityM
 			);
 		}
 
-		if ((state.isUsingItem() || this.attackTime > 0) && state.getUsedItemHand() == InteractionHand.MAIN_HAND) {
+		if (
+			(state.isUsingItem() && ((state.getUsedItemHand() == InteractionHand.MAIN_HAND) == (state.getMainArm() == HumanoidArm.RIGHT))) ||
+			(this.attackTime > 0 && this.getAttackArm(state) == HumanoidArm.RIGHT)
+		) {
 			lRot(
 				sa, rightArm,
 				-rightArm.yRot, 0.0F, rightArm.xRot - PI/2.0F

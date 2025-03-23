@@ -3,32 +3,35 @@ loaderVersion = "${neoforge_loader_version_range}"
 license = "${license}"
 
 [[mods]] #mandatory
-modId = "${mod_id}"
+modId = "crawl"
 version = "${version}"
 displayName = "${mod_name}"
-logoFile = "assets/${mod_id}/icon.png"
+logoFile = "assets/crawl/icon.png"
 logoBlur = false
 credits = "${credits}"
 authors = "${mod_author}"
 description = '''${description}'''
 
 [[mixins]]
-config = "${mod_id}.mixins.json"
+config = "crawl.mixins.json"
 
 [[mixins]]
-config = "${mod_id}.client.mixins.json"
+config = "crawl.client.mixins.json"
 
 [[mixins]]
-config = "${mod_id}.compat.nea.mixins.json"
+config = "crawl.compat.nea.mixins.json"
 
-[[dependencies.${mod_id}]] #optional
+[[mixins]]
+config = "crawl.compat.fpm.mixins.json"
+
+[[dependencies.crawl]] #optional
 modId = "neoforge"
 type = "required"
 versionRange = "[${neoforge_version},)"
 ordering = "NONE"
 side = "BOTH"
 
-[[dependencies.${mod_id}]]
+[[dependencies.crawl]]
 modId = "minecraft"
 type = "required" #mandatory (Can be one of "required", "optional", "incompatible" or "discouraged")
 versionRange = "${minecraft_version_range}"

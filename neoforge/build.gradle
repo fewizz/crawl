@@ -19,10 +19,11 @@ repositories {
 dependencies {
 	compileOnly project(":common")
 	implementation "maven.modrinth:not-enough-animations:${project.not_enough_animations_modrinth_neoforge_id}"
+	implementation "maven.modrinth:first-person-model:${project.first_person_model_neoforge_id}"
 }
 
 base {
-	archivesName = mod_id
+	archivesName = "crawl"
 }
 
 neoForge {
@@ -49,7 +50,7 @@ neoForge {
 	}
 
 	mods {
-		"${mod_id}" {
+		"crawl" {
 			sourceSet sourceSets.main
 		}
 	}
@@ -66,7 +67,6 @@ processResources {
 		'minecraft_version_range'      : minecraft_version_range,
 		'mod_name'                     : mod_name,
 		'mod_author'                   : mod_author,
-		'mod_id'                       : mod_id,
 		'license'                      : license,
 		'description'                  : project.description,
 		'neoforge_version'             : neoforge_version,
