@@ -1,0 +1,11 @@
+{
+	"package": "ru.fewizz.crawl.compat.fpm.mixin",
+	"minVersion": "0.8",
+	"required": false,
+	"injectors": {
+		"defaultRequire": 1
+	},
+	"mixins": [
+		"LogicHandlerMixin"
+	]
+}

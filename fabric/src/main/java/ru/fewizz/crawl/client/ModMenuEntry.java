@@ -5,7 +5,7 @@ import com.terraformersmc.modmenu.api.ModMenuApi;
 
 import net.minecraft.client.gui.screens.Screen;
 
-public class ModMenyEntry implements ModMenuApi {
+public class ModMenuEntry implements ModMenuApi {
 
 	@Override
 	public ConfigScreenFactory<?> getModConfigScreenFactory() {

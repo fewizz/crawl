@@ -20,7 +20,8 @@ dependencies {
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
 	mappings loom.officialMojangMappings()
 	modImplementation "net.fabricmc:fabric-loader:${project.fabric_loader_version}"
-	modImplementation "maven.modrinth:not-enough-animations:${project.not_enough_animations_modrinth_fabric_id}"
+	modCompileOnly "maven.modrinth:not-enough-animations:${project.not_enough_animations_modrinth_fabric_id}"
+	modCompileOnly "maven.modrinth:first-person-model:${project.first_person_model_fabric_id}"
 }
 
 loom {

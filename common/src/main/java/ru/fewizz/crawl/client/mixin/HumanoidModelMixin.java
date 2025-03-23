@@ -19,6 +19,7 @@ import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.renderer.entity.state.HumanoidRenderState;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.HumanoidArm;
 import ru.fewizz.crawl.client.CrawlClient;
 import ru.fewizz.crawl.client.mixininterface.CrawlingState;
 
@@ -92,7 +93,10 @@ public abstract class HumanoidModelMixin<T extends HumanoidRenderState> extends 
 		leftArm.y = body.y + 2.0F; leftArm.z = head.z;
 		rightArm.y = body.y + 2.0F; rightArm.z = head.z;
 
-		if ((state.isUsingItem || state.ticksUsingItem > 0) && state.useItemHand == InteractionHand.OFF_HAND) {
+		if (
+			(state.isUsingItem && ((state.useItemHand == InteractionHand.OFF_HAND) == (state.mainArm == HumanoidArm.LEFT))) ||
+			(state.attackTime > 0 && state.attackArm == HumanoidArm.LEFT)
+		) {
 			lRot(
 				sa, leftArm,
 				-leftArm.yRot, 0.0F, leftArm.xRot - PI/2.0F
@@ -105,7 +109,10 @@ public abstract class HumanoidModelMixin<T extends HumanoidRenderState> extends 
 			);
 		}
 
-		if ((state.isUsingItem || state.ticksUsingItem > 0) && state.useItemHand == InteractionHand.MAIN_HAND) {
+		if (
+			(state.isUsingItem && ((state.useItemHand == InteractionHand.MAIN_HAND) == (state.mainArm == HumanoidArm.RIGHT))) ||
+			(state.attackTime > 0 && state.attackArm == HumanoidArm.RIGHT)
+		) {
 			lRot(
 				sa, rightArm,
 				-rightArm.yRot, 0.0F, rightArm.xRot - PI/2.0F

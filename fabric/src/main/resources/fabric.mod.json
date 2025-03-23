@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"id": "${mod_id}",
+	"id": "crawl",
 	"name": "${mod_name}",
 	"description": "${description}",
 	"version": "${version}",
@@ -9,7 +9,7 @@
 		"McSkinnerOG",
 		"Chocohead"
 	],
-	"icon": "assets/${mod_id}/icon.png",
+	"icon": "assets/crawl/icon.png",
 	"environment": "*",
 	"entrypoints": { 
 		"main": [
@@ -19,7 +19,7 @@
 			"ru.fewizz.crawl.client.CrawlClientInitializer"
 		],
 		"modmenu": [
-			"ru.fewizz.crawl.client.ModMenyEntry"
+			"ru.fewizz.crawl.client.ModMenuEntry"
 		]
 	},
 	"accessWidener": "crawl.accesswidener",
@@ -37,6 +37,7 @@
 	"mixins": [
 		"crawl.mixins.json",
 		"crawl.client.mixins.json",
-		"crawl.compat.nea.mixins.json"
+		"crawl.compat.nea.mixins.json",
+		"crawl.compat.fpm.mixins.json"
 	]
 }
