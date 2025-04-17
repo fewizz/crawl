@@ -31,7 +31,7 @@
 	"depends": {
 		"fabricloader": ">=0.14.0",
 		"fabric-api": "*",
-		"minecraft": "${minecraft_version}",
+		"minecraft": "${fabric_minecraft_version_range}",
 		"java": ">=${java_version}"
 	},
 	"mixins": [

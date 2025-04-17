@@ -27,13 +27,8 @@ base {
 }
 
 neoForge {
-	version = neoforge_version
+	version = neoforge_current_version
 	accessTransformers.from(file('src/main/resources/META-INF/accesstransformer.cfg'))
-
-	parchment {
-		minecraftVersion = parchment_minecraft
-		mappingsVersion = parchment_version
-	}
 
 	runs {
 		client {
@@ -62,16 +57,16 @@ processResources {
 	from project(":common").sourceSets.main.resources
 
 	var expandProps = [
-		'version'                      : version,
-		'minecraft_version'            : minecraft_version,
-		'minecraft_version_range'      : minecraft_version_range,
-		'mod_name'                     : mod_name,
-		'mod_author'                   : mod_author,
-		'license'                      : license,
-		'description'                  : project.description,
-		'neoforge_version'             : neoforge_version,
-		'neoforge_loader_version_range': neoforge_loader_version_range,
-		'credits'                      : credits,
+		'version'                         : version,
+		'minecraft_version'               : minecraft_version,
+		'mod_name'                        : mod_name,
+		'mod_author'                      : mod_author,
+		'license'                         : license,
+		'description'                     : project.description,
+		'neoforge_minimum_version'        : neoforge_minimum_version,
+		'neoforge_loader_version_range'   : neoforge_loader_version_range,
+		'neoforge_minecraft_version_range': neoforge_minecraft_version_range,
+		'credits'                         : credits,
 	]
 
 	filesMatching(['META-INF/neoforge.mods.toml']) {

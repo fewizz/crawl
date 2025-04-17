@@ -27,13 +27,13 @@ config = "crawl.compat.fpm.mixins.json"
 [[dependencies.crawl]] #optional
 modId = "neoforge"
 type = "required"
-versionRange = "[${neoforge_version},)"
+versionRange = "[${neoforge_minimum_version},)"
 ordering = "NONE"
 side = "BOTH"
 
 [[dependencies.crawl]]
 modId = "minecraft"
 type = "required" #mandatory (Can be one of "required", "optional", "incompatible" or "discouraged")
-versionRange = "${minecraft_version_range}"
+versionRange = "${neoforge_minecraft_version_range}"
 ordering = "NONE"
 side = "BOTH"
