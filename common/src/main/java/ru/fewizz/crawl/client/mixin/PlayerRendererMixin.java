@@ -13,7 +13,6 @@ import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.entity.player.PlayerRenderer;
 import net.minecraft.util.Mth;
-import net.minecraft.world.entity.Pose;
 import ru.fewizz.crawl.Crawl;
 import ru.fewizz.crawl.client.CrawlClient;
 import ru.fewizz.crawl.client.mixininterface.CrawlingState;
@@ -27,11 +26,9 @@ abstract class PlayerRendererMixin extends LivingEntityRenderer<AbstractClientPl
 	@Inject(method = "setModelProperties", at = @At("TAIL"))
 	void onUpdateRenderState(AbstractClientPlayer e, CallbackInfo ci) {
 		boolean crawling =
-			e.getSwimAmount(0.0F) > 0 &&
-			e.getPose() != Pose.SWIMMING && (
-				e.getPose() == Crawl.Shared.CRAWLING ||
-				((PrevPoseState) e).getPrevPose() == Crawl.Shared.CRAWLING ||
-				((PrevPoseState) e).getPrevTickPose() == Crawl.Shared.CRAWLING
+			e.getPose() == Crawl.Shared.CRAWLING || (
+				e.getSwimAmount(0.0F) > 0 &&
+				((PrevPoseState) e).getPrevPose() == Crawl.Shared.CRAWLING
 			);
 
 		((CrawlingState) this.getModel()).setCrawling(CrawlClient.replaceAnimation ? crawling : false);
@@ -48,7 +45,7 @@ abstract class PlayerRendererMixin extends LivingEntityRenderer<AbstractClientPl
 	)
 	float rotateWhenCrawlingSameWayAsWhenSwimming(float swimAmount) {
 		if (CrawlClient.replaceAnimation && ((CrawlingState) this.getModel()).isCrawling()) {
-			swimAmount += 0.001F;  // evil :)
+			swimAmount += 0.0001F;  // evil :)
 		}
 		return swimAmount;
 	}

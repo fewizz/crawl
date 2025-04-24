@@ -64,12 +64,13 @@ processResources {
 	from project(":common").sourceSets.main.resources
 
 	var expandProps = [
-		'version'            : version,
-		'minecraft_version'  : minecraft_version,
-		'mod_name'           : mod_name,
-		'mod_author'         : mod_author,
-		'description'        : project.description,
-		'java_version'       : java_version
+		'version'                       : version,
+		'minecraft_version'             : minecraft_version,
+		'mod_name'                      : mod_name,
+		'mod_author'                    : mod_author,
+		'description'                   : project.description,
+		'java_version'                  : java_version,
+		'fabric_minecraft_version_range': project.fabric_minecraft_version_range
 	]
 
 	filesMatching("fabric.mod.json") {

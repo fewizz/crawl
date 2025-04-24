@@ -39,7 +39,7 @@ public abstract class PlayerMixin extends LivingEntity implements PrevPoseState 
 	private void onDefineSynchedData(SynchedEntityData.Builder builder, CallbackInfo ci) {
 		builder.define(Crawl.Shared.CRAWL_REQUEST, false);
 	}
-	
+
 	@ModifyArg(
 		method = "updatePlayerPose",
 		at = @At(
@@ -82,11 +82,6 @@ public abstract class PlayerMixin extends LivingEntity implements PrevPoseState 
 	@Override
 	public Pose getPrevPose() {
 		return prevPose;
-	}
-	
-	@Override
-	public Pose getPrevTickPose() {
-		return prevTickPose;
 	}
 
 }
