@@ -16,6 +16,10 @@ pluginManagement {
 			name = 'Cotton'
 			url = 'https://server.bbkr.space/artifactory/libs-release/'
 		}
+		maven {
+			name = 'MinecraftForge'
+			url = 'https://maven.minecraftforge.net/'
+		}
 		gradlePluginPortal()
 	}
 }
@@ -29,3 +33,4 @@ rootProject.name = 'crawl'
 include('common')
 include('fabric')
 include('neoforge')
+include('forge')
