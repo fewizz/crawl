@@ -1,5 +1,5 @@
 modLoader = "javafml"
-loaderVersion = "${neoforge_loader_version_range}"
+loaderVersion = "${forge_loader_version_range}"
 license = "${license}"
 
 [[mods]]
@@ -12,28 +12,18 @@ credits = "${credits}"
 authors = "${mod_author}"
 description = '''${description}'''
 
-[[mixins]]
-config = "crawl.mixins.json"
-
-[[mixins]]
-config = "crawl.client.mixins.json"
-
-[[mixins]]
-config = "crawl.compat.nea.mixins.json"
-
-[[mixins]]
-config = "crawl.compat.fpm.mixins.json"
-
 [[dependencies.crawl]]
-modId = "neoforge"
+modId = "forge"
+mandatory = true
 type = "required"
-versionRange = "[${neoforge_minimum_version},)"
+versionRange = "[${forge_minimum_version},)"
 ordering = "NONE"
 side = "BOTH"
 
 [[dependencies.crawl]]
 modId = "minecraft"
+mandatory = true
 type = "required"
-versionRange = "${neoforge_minecraft_version_range}"
+versionRange = "${forge_minecraft_version_range}"
 ordering = "NONE"
 side = "BOTH"
