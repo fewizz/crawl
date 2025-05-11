@@ -35,13 +35,13 @@ public class CrawlClient {
 		key = new ToggleKeyMapping("key.crawl", GLFW.GLFW_KEY_UNKNOWN, KeyMapping.CATEGORY_MOVEMENT, crawlToggled::get);
 
 		if (Files.exists(CONFIG_PATH)) {
-			Properties props = new Properties();
-			props.setProperty("replace-crawl-animation", Boolean.toString(replaceAnimation));
+			Properties props = createProps();
 			try {
 				props.load(Files.newInputStream(CONFIG_PATH));
 			} catch (IOException e) {
 				LOGGER.warn("Couldn't load config", e);
 			}
+			replaceAnimation = Boolean.parseBoolean(props.getProperty("replace-crawl-animation"));
 		}
 		else {
 			saveOptions();
@@ -49,13 +49,17 @@ public class CrawlClient {
 	}
 
 	public static void saveOptions() {
-		Properties props = new Properties();
-		props.setProperty("replace-crawl-animation", Boolean.toString(replaceAnimation));
 		try {
-			props.store(Files.newOutputStream(CONFIG_PATH), null);
+			createProps().store(Files.newOutputStream(CONFIG_PATH), null);
 		} catch (IOException e) {
 			LOGGER.warn("Couldn't save config", e);
 		}
+	}
+
+	private static Properties createProps() {
+		Properties props = new Properties();
+		props.setProperty("replace-crawl-animation", Boolean.toString(replaceAnimation));
+		return props;
 	}
 
 }
