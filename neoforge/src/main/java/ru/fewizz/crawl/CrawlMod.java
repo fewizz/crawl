@@ -3,7 +3,7 @@ package ru.fewizz.crawl;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
-import net.neoforged.neoforge.network.PacketDistributor;
+import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 
@@ -26,7 +26,7 @@ public class CrawlMod {
 			}
 		);
 		Crawl.crawlRequestPacket = (wantsToCrawl) -> {
-			PacketDistributor.sendToServer(new Crawl.Payload(wantsToCrawl));
+			ClientPacketDistributor.sendToServer(new Crawl.Payload(wantsToCrawl));
 		};
 	}
 

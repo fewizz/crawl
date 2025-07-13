@@ -1,5 +1,5 @@
 plugins {
-	id 'fabric-loom' version '1.10-SNAPSHOT'
+	id "fabric-loom" version "1.11-SNAPSHOT"
 }
 
 repositories {
@@ -30,8 +30,8 @@ dependencies {
 	modImplementation "net.fabricmc:fabric-loader:${project.fabric_loader_version}"
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 	modImplementation "com.terraformersmc:modmenu:${project.modmenu_version}"
-	modImplementation "maven.modrinth:not-enough-animations:${project.not_enough_animations_modrinth_fabric_id}"
-	modImplementation "maven.modrinth:first-person-model:${project.first_person_model_fabric_id}"
+	modCompileOnly "maven.modrinth:not-enough-animations:${project.not_enough_animations_modrinth_fabric_id}"
+	modCompileOnly "maven.modrinth:first-person-model:${project.first_person_model_fabric_id}"
 }
 
 compileJava.source project(":common").sourceSets.main.allSource

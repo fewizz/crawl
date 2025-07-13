@@ -30,7 +30,7 @@ import org.objectweb.asm.tree.TypeInsnNode;
 import org.spongepowered.asm.mixin.extensibility.IMixinConfigPlugin;
 import org.spongepowered.asm.mixin.extensibility.IMixinInfo;
 
-public class Plugin implements IMixinConfigPlugin {;
+public class Plugin implements IMixinConfigPlugin {
 
 	@Override
 	public void onLoad(String mixinPackage) {
