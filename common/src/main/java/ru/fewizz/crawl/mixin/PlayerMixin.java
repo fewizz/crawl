@@ -35,10 +35,10 @@ public abstract class PlayerMixin extends LivingEntity implements PrevPoseState 
 	@Unique Pose prevPose;
 	@Unique Pose prevTickPose;
 
-	@Inject(method = "defineSynchedData", at = @At("TAIL"))
+	/*@Inject(method = "defineSynchedData", at = @At("TAIL"))
 	private void onDefineSynchedData(SynchedEntityData.Builder builder, CallbackInfo ci) {
 		builder.define(Crawl.Shared.CRAWL_REQUEST, false);
-	}
+	}*/
 
 	@ModifyArg(
 		method = "updatePlayerPose",
@@ -49,7 +49,7 @@ public abstract class PlayerMixin extends LivingEntity implements PrevPoseState 
 	)
 	private Pose onPreUpdatePlayerPose(Pose pose) {
 		if (!this.isSpectator() && !this.isPassenger() && !this.abilities.flying) {
-			boolean requested = this.getEntityData().get(Shared.CRAWL_REQUEST);
+			boolean requested = Crawl.isEntityRequestingCrawling.apply(this);
 			boolean swimming = this.isSwimming() || this.isInWater();
 
 			if (requested) {

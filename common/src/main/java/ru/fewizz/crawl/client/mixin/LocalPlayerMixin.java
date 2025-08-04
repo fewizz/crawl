@@ -40,9 +40,9 @@ abstract class LocalPlayerMixin extends AbstractClientPlayer {
 	public void beforeSuperAiStep(CallbackInfo ci) {
 		boolean wantsToCrawl = CrawlClient.key.isDown();
 
-		if (wantsToCrawl != getEntityData().get(Shared.CRAWL_REQUEST)) {
+		if (wantsToCrawl != Crawl.isEntityRequestingCrawling.apply(this)) {
 			Crawl.crawlRequestPacket.accept(wantsToCrawl);
-			getEntityData().set(Shared.CRAWL_REQUEST, wantsToCrawl);
+			Crawl.setEntityRequestingCrawling.accept(this, wantsToCrawl);
 		}
 
 		if (getPose() == Shared.CRAWLING) {

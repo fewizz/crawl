@@ -13,13 +13,13 @@
 	"environment": "*",
 	"entrypoints": { 
 		"main": [
-			"ru.fewizz.crawl.CrawlInitializer"
+			"ru.fewizz.crawl.fabric.CrawlInitializer"
 		],
 		"client": [
-			"ru.fewizz.crawl.client.CrawlClientInitializer"
+			"ru.fewizz.crawl.fabric.client.CrawlClientInitializer"
 		],
 		"modmenu": [
-			"ru.fewizz.crawl.client.ModMenuEntry"
+			"ru.fewizz.crawl.fabric.client.ModMenuEntry"
 		]
 	},
 	"accessWidener": "crawl.accesswidener",

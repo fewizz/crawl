@@ -22,7 +22,9 @@ public class CrawlMod {
 			Crawl.Payload.CODEC,
 			(payload, context) -> {
 				var server = context.player().getServer();
-				server.execute(() -> context.player().getEntityData().set(Crawl.Shared.CRAWL_REQUEST, payload.crawl()));
+				server.execute(() -> {
+					Crawl.setEntityRequestingCrawling.accept(context.player(), payload.crawl());
+				});
 			}
 		);
 		Crawl.crawlRequestPacket = (wantsToCrawl) -> {

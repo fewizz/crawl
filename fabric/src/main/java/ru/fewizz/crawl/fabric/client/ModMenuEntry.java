@@ -1,9 +1,10 @@
-package ru.fewizz.crawl.client;
+package ru.fewizz.crawl.fabric.client;
 
 import com.terraformersmc.modmenu.api.ConfigScreenFactory;
 import com.terraformersmc.modmenu.api.ModMenuApi;
 
 import net.minecraft.client.gui.screens.Screen;
+import ru.fewizz.crawl.client.OptionsScreen;
 
 public class ModMenuEntry implements ModMenuApi {
 
