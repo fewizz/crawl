@@ -1,8 +1,7 @@
-package ru.fewizz.crawl;
+package ru.fewizz.crawl.forge;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.network.protocol.PacketFlow;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.ConfigScreenHandler.ConfigScreenFactory;
 import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
@@ -12,8 +11,8 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.network.ChannelBuilder;
-import net.minecraftforge.network.NetworkProtocol;
 import net.minecraftforge.network.SimpleChannel;
+import ru.fewizz.crawl.Crawl;
 import ru.fewizz.crawl.client.CrawlClient;
 import ru.fewizz.crawl.client.OptionsScreen;
 
@@ -24,7 +23,7 @@ public class CrawlMod {
 
 	@SuppressWarnings("null")
 	public CrawlMod(FMLJavaModLoadingContext modContext) {
-		CHANNEL.messageBuilder(Crawl.Payload.class, NetworkProtocol.PLAY)
+		/*CHANNEL.messageBuilder(Crawl.Payload.class, NetworkProtocol.PLAY)
 			// can't set codec directly because of FriendlyByteBuf
 			.encoder((msg, buf) -> Crawl.Payload.CODEC.encode(buf, msg))
 			.decoder(buf -> Crawl.Payload.CODEC.decode(buf))
@@ -35,7 +34,7 @@ public class CrawlMod {
 				);
 			})
 			.direction(PacketFlow.SERVERBOUND)
-			.add();
+			.add();*/
 		CHANNEL.build();
 
 		Crawl.crawlRequestPacket = (wantsToCrawl) -> {

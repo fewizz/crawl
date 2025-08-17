@@ -1,5 +1,5 @@
 plugins {
-	id 'net.neoforged.moddev' version '2.0.99'
+	id "net.neoforged.moddev" version "${mod_dev_gradle_version}"
 }
 
 repositories {
@@ -28,7 +28,7 @@ base {
 
 neoForge {
 	version = neoforge_current_version
-	accessTransformers.from(file('src/main/resources/META-INF/accesstransformer.cfg'))
+	accessTransformers.from(file("src/main/resources/META-INF/accesstransformer.cfg"))
 
 	runs {
 		client {
@@ -39,7 +39,7 @@ neoForge {
 		server {
 			server()
 			ideName = "NeoForge Server"
-			programArgument '--nogui'
+			programArgument "--nogui"
 			gameDirectory = new File(project.rootDir, "/run")
 		}
 	}
@@ -57,19 +57,19 @@ processResources {
 	from project(":common").sourceSets.main.resources
 
 	var expandProps = [
-		'version'                         : version,
-		'minecraft_version'               : minecraft_version,
-		'mod_name'                        : mod_name,
-		'mod_author'                      : mod_author,
-		'license'                         : license,
-		'description'                     : project.description,
-		'neoforge_minimum_version'        : neoforge_minimum_version,
-		'neoforge_loader_version_range'   : neoforge_loader_version_range,
-		'neoforge_minecraft_version_range': neoforge_minecraft_version_range,
-		'credits'                         : credits,
+		"version"                         : version,
+		"minecraft_version"               : minecraft_version,
+		"mod_name"                        : mod_name,
+		"mod_author"                      : mod_author,
+		"license"                         : license,
+		"description"                     : project.description,
+		"neoforge_minimum_version"        : neoforge_minimum_version,
+		"neoforge_loader_version_range"   : neoforge_loader_version_range,
+		"neoforge_minecraft_version_range": neoforge_minecraft_version_range,
+		"credits"                         : credits,
 	]
 
-	filesMatching(['META-INF/neoforge.mods.toml']) {
+	filesMatching(["META-INF/neoforge.mods.toml"]) {
 		expand expandProps
 	}
 

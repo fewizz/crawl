@@ -1,4 +1,4 @@
-package ru.fewizz.crawl;
+package ru.fewizz.crawl.neoforge;
 
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
@@ -6,6 +6,7 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
+import ru.fewizz.crawl.Crawl;
 
 @Mod(value = "crawl")
 public class CrawlMod {

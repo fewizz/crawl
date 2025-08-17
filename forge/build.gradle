@@ -1,6 +1,6 @@
 plugins {
-	id 'net.minecraftforge.gradle' version '6.+'
-	id 'org.spongepowered.mixin' version '0.7-SNAPSHOT'
+	id "net.minecraftforge.gradle" version "${forge_gradle_version}"
+	id "org.spongepowered.mixin" version "0.7-SNAPSHOT"
 }
 
 repositories {
@@ -43,15 +43,15 @@ jar {
 }
 
 minecraft {
-	mappings channel: 'official', version: minecraft_version
+	mappings channel: "official", version: minecraft_version
 	reobf = false
 
-	accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
+	accessTransformer = file("src/main/resources/META-INF/accesstransformer.cfg")
 
 	runs {
 		client {
 			workingDirectory new File(project.rootDir, "/run")
-			taskName 'runClient'
+			taskName "runClient"
 			mods {
 				modClientRun {
 					source sourceSets.main
@@ -61,7 +61,7 @@ minecraft {
 
 		server {
 			workingDirectory new File(project.rootDir, "/run")
-			taskName 'runServer'
+			taskName "runServer"
 			mods {
 				modServerRun {
 					source sourceSets.main
@@ -75,19 +75,19 @@ processResources {
 	from project(":common").sourceSets.main.resources
 
 	var expandProps = [
-		'version'                      : version,
-		'minecraft_version'            : minecraft_version,
-		'mod_name'                     : mod_name,
-		'mod_author'                   : mod_author,
-		'license'                      : license,
-		'description'                  : project.description,
-		'forge_minimum_version'        : forge_minimum_version,
-		'forge_loader_version_range'   : forge_loader_version_range,
-		'forge_minecraft_version_range': forge_minecraft_version_range,
-		'credits'                      : credits,
+		"version"                      : version,
+		"minecraft_version"            : minecraft_version,
+		"mod_name"                     : mod_name,
+		"mod_author"                   : mod_author,
+		"license"                      : license,
+		"description"                  : project.description,
+		"forge_minimum_version"        : forge_minimum_version,
+		"forge_loader_version_range"   : forge_loader_version_range,
+		"forge_minecraft_version_range": forge_minecraft_version_range,
+		"credits"                      : credits,
 	]
 
-	filesMatching(['META-INF/mods.toml']) {
+	filesMatching(["META-INF/mods.toml"]) {
 		expand expandProps
 	}
 

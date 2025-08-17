@@ -1,4 +1,4 @@
-package ru.fewizz.crawl.client;
+package ru.fewizz.crawl.neoforge.client;
 
 import net.minecraft.client.gui.screens.Screen;
 import net.neoforged.api.distmarker.Dist;
@@ -7,6 +7,8 @@ import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
+import ru.fewizz.crawl.client.CrawlClient;
+import ru.fewizz.crawl.client.OptionsScreen;
 
 @Mod(value = "crawl", dist = Dist.CLIENT)
 public class CrawlModClient {
