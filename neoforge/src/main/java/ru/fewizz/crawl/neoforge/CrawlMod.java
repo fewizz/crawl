@@ -19,17 +19,17 @@ public class CrawlMod {
 	public static void registerPacket(RegisterPayloadHandlersEvent event) {
 		PayloadRegistrar registrar = event.registrar("1");
 		registrar.playToServer(
-			Crawl.Payload.ID,
-			Crawl.Payload.CODEC,
+			Crawl.Request.TYPE,
+			Crawl.Request.CODEC,
 			(payload, context) -> {
 				var server = context.player().getServer();
 				server.execute(() -> {
-					Crawl.setEntityRequestingCrawling.accept(context.player(), payload.crawl());
+					Crawl.onCrawlRequestFromClient(context.player(), payload.crawl());
 				});
 			}
 		);
-		Crawl.crawlRequestPacket = (wantsToCrawl) -> {
-			ClientPacketDistributor.sendToServer(new Crawl.Payload(wantsToCrawl));
+		Crawl.sendCrawlRequestPacketToServer = (wantsToCrawl) -> {
+			ClientPacketDistributor.sendToServer(new Crawl.Request(wantsToCrawl));
 		};
 	}
 

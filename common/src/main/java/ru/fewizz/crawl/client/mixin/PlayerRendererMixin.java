@@ -15,9 +15,9 @@ import net.minecraft.client.renderer.entity.player.PlayerRenderer;
 import net.minecraft.client.renderer.entity.state.PlayerRenderState;
 import net.minecraft.util.Mth;
 import ru.fewizz.crawl.Crawl;
+import ru.fewizz.crawl.PlayerExtended;
 import ru.fewizz.crawl.client.CrawlClient;
 import ru.fewizz.crawl.client.mixininterface.CrawlingState;
-import ru.fewizz.crawl.mixininterface.PrevPoseState;
 
 @Mixin(PlayerRenderer.class)
 abstract class PlayerRendererMixin extends LivingEntityRenderer<AbstractClientPlayer, PlayerRenderState, PlayerModel> {
@@ -29,7 +29,7 @@ abstract class PlayerRendererMixin extends LivingEntityRenderer<AbstractClientPl
 		boolean crawling =
 			e.getPose() == Crawl.Shared.CRAWLING || (
 				e.getSwimAmount(tickDelta) > 0 &&
-				((PrevPoseState) e).getPrevPose() == Crawl.Shared.CRAWLING
+				((PlayerExtended) e).crawl_getPrevPose() == Crawl.Shared.CRAWLING
 			);
 
 		((CrawlingState) state).setCrawling(CrawlClient.replaceAnimation ? crawling : false);

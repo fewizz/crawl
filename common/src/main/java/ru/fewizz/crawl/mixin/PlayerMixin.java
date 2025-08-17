@@ -20,24 +20,35 @@ import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Abilities;
 import net.minecraft.world.entity.player.Player;
 import ru.fewizz.crawl.Crawl;
+import ru.fewizz.crawl.PlayerExtended;
 import ru.fewizz.crawl.Crawl.Shared;
-import ru.fewizz.crawl.mixininterface.PrevPoseState;
 
 @Mixin(Player.class)
-public abstract class PlayerMixin extends LivingEntity implements PrevPoseState {
+public abstract class PlayerMixin extends LivingEntity implements PlayerExtended {
 
 	PlayerMixin() { super(null, null); }
 
 	@Shadow @Final private Abilities abilities;
 	@Shadow @Final @Mutable private static Map<Pose, EntityDimensions> POSES;
 
-	@Unique Pose prevPose;
-	@Unique Pose prevTickPose;
+	@Unique Pose craw_prevPose;
+	@Unique Pose craw_prevTickPose;
+	@Unique boolean crawl_requested;
 
-	/*@Inject(method = "defineSynchedData", at = @At("TAIL"))
-	private void onDefineSynchedData(SynchedEntityData.Builder builder, CallbackInfo ci) {
-		builder.define(Crawl.Shared.CRAWL_REQUEST, false);
-	}*/
+	@Override
+	public Pose crawl_getPrevPose() {
+		return craw_prevPose;
+	}
+
+	@Override
+	public boolean crawl_getRequestedCrawling() {
+		return this.crawl_requested;
+	}
+
+	@Override
+	public void crawl_setRequestedCrawling(boolean value) {
+		this.crawl_requested = value;
+	}
 
 	@ModifyArg(
 		method = "updatePlayerPose",
@@ -48,10 +59,9 @@ public abstract class PlayerMixin extends LivingEntity implements PrevPoseState 
 	)
 	private Pose onPreUpdatePlayerPose(Pose pose) {
 		if (!this.isSpectator() && !this.isPassenger() && !this.abilities.flying) {
-			boolean requested = Crawl.isEntityRequestingCrawling.apply(this);
 			boolean swimming = this.isSwimming() || this.isInWater();
 
-			if (requested) {
+			if (this.crawl_requested) {
 				pose = swimming ? Pose.SWIMMING : Shared.CRAWLING;
 			}
 			else if (pose == Pose.SWIMMING && !swimming) {
@@ -72,15 +82,10 @@ public abstract class PlayerMixin extends LivingEntity implements PrevPoseState 
 	
 	@Inject(method = "tick", at = @At(value = "TAIL"))
 	public void onTickEnd(CallbackInfo ci) {
-		if (this.getPose() != prevTickPose) {
-			prevPose = prevTickPose;
+		if (this.getPose() != craw_prevTickPose) {
+			craw_prevPose = craw_prevTickPose;
 		}
-		prevTickPose = this.getPose();
-	}
-
-	@Override
-	public Pose getPrevPose() {
-		return prevPose;
+		craw_prevTickPose = this.getPose();
 	}
 
 }

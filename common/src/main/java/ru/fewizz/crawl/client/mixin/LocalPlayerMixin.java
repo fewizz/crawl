@@ -11,6 +11,7 @@ import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.player.ClientInput;
 import net.minecraft.client.player.LocalPlayer;
 import ru.fewizz.crawl.Crawl;
+import ru.fewizz.crawl.PlayerExtended;
 import ru.fewizz.crawl.Crawl.Shared;
 import ru.fewizz.crawl.client.CrawlClient;
 
@@ -39,10 +40,11 @@ abstract class LocalPlayerMixin extends AbstractClientPlayer {
 	)
 	public void beforeSuperAiStep(CallbackInfo ci) {
 		boolean wantsToCrawl = CrawlClient.key.isDown();
+		PlayerExtended pe = (PlayerExtended) this;
 
-		if (wantsToCrawl != Crawl.isEntityRequestingCrawling.apply(this)) {
-			Crawl.crawlRequestPacket.accept(wantsToCrawl);
-			Crawl.setEntityRequestingCrawling.accept(this, wantsToCrawl);
+		if (wantsToCrawl != pe.crawl_getRequestedCrawling()) {
+			Crawl.sendCrawlRequestPacketToServer.accept(wantsToCrawl);
+			pe.crawl_setRequestedCrawling(wantsToCrawl);
 		}
 
 		if (getPose() == Shared.CRAWLING) {

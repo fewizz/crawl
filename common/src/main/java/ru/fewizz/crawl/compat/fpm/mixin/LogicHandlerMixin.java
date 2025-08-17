@@ -16,7 +16,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 import ru.fewizz.crawl.Crawl;
-import ru.fewizz.crawl.mixininterface.PrevPoseState;
+import ru.fewizz.crawl.PlayerExtended;
 
 // Can't use PlayerOffsetHandler/ActivationHandler,
 // because default handler messes with crawling
@@ -29,7 +29,7 @@ public class LogicHandlerMixin {
 	private boolean isCrawling(Player player, float delta) {
 		return player.getPose() == Crawl.Shared.CRAWLING || (
 			player.getSwimAmount(0.0F) > 0 &&
-			((PrevPoseState) player).getPrevPose() == Crawl.Shared.CRAWLING
+			((PlayerExtended) player).crawl_getPrevPose() == Crawl.Shared.CRAWLING
 		);
 	}
 
