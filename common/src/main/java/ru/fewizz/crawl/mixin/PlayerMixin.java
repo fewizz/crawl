@@ -31,13 +31,16 @@ public abstract class PlayerMixin extends LivingEntity implements PlayerExtended
 	@Shadow @Final private Abilities abilities;
 	@Shadow @Final @Mutable private static Map<Pose, EntityDimensions> POSES;
 
-	@Unique Pose craw_prevPose;
-	@Unique Pose craw_prevTickPose;
+	@Unique Pose crawl_prevPose;
+	@Unique Pose crawl_prevTickPose;
 	@Unique boolean crawl_requested;
 
 	@Override
-	public Pose crawl_getPrevPose() {
-		return craw_prevPose;
+	public boolean crawl_wasPreviouslyCrawling() {
+		return (
+			this.crawl_prevPose == Crawl.Shared.CRAWLING ||
+			this.crawl_prevTickPose == Crawl.Shared.CRAWLING
+		);
 	}
 
 	@Override
@@ -82,10 +85,11 @@ public abstract class PlayerMixin extends LivingEntity implements PlayerExtended
 	
 	@Inject(method = "tick", at = @At(value = "TAIL"))
 	public void onTickEnd(CallbackInfo ci) {
-		if (this.getPose() != craw_prevTickPose) {
-			craw_prevPose = craw_prevTickPose;
+		var newPose = this.getPose();
+		if (newPose != this.crawl_prevTickPose) {
+			this.crawl_prevPose = this.crawl_prevTickPose;
 		}
-		craw_prevTickPose = this.getPose();
+		this.crawl_prevTickPose = newPose;
 	}
 
 }

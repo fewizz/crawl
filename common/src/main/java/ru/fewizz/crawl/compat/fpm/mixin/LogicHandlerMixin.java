@@ -28,8 +28,8 @@ public class LogicHandlerMixin {
 	@Unique
 	private boolean isCrawling(Player player, float delta) {
 		return player.getPose() == Crawl.Shared.CRAWLING || (
-			player.getSwimAmount(0.0F) > 0 &&
-			((PlayerExtended) player).crawl_getPrevPose() == Crawl.Shared.CRAWLING
+			player.getSwimAmount(0.0F) > 0.0F &&
+			((PlayerExtended) player).crawl_wasPreviouslyCrawling()
 		);
 	}
 

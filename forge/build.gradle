@@ -52,6 +52,7 @@ minecraft {
 		client {
 			workingDirectory new File(project.rootDir, "/run")
 			taskName "runClient"
+			// args "--username", "Player2"
 			mods {
 				modClientRun {
 					source sourceSets.main

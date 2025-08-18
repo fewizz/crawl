@@ -28,8 +28,8 @@ abstract class PlayerRendererMixin extends LivingEntityRenderer<AbstractClientPl
 	void onUpdateRenderState(AbstractClientPlayer e, PlayerRenderState state, float tickDelta, CallbackInfo ci) {
 		boolean crawling =
 			e.getPose() == Crawl.Shared.CRAWLING || (
-				e.getSwimAmount(tickDelta) > 0 &&
-				((PlayerExtended) e).crawl_getPrevPose() == Crawl.Shared.CRAWLING
+				e.getSwimAmount(tickDelta) > 0.0F &&
+				((PlayerExtended) e).crawl_wasPreviouslyCrawling()
 			);
 
 		((CrawlingState) state).setCrawling(CrawlClient.replaceAnimation ? crawling : false);
