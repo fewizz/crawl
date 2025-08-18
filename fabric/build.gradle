@@ -21,7 +21,7 @@ repositories {
 }
 
 base {
-	archivesName = "crawl"
+	archivesBaseName = "crawl-mc${project.minecraft_version}-fabric"
 }
 
 dependencies {

@@ -23,7 +23,7 @@ dependencies {
 }
 
 base {
-	archivesName = "crawl"
+	archivesName = "crawl-mc${project.minecraft_version}-neoforge"
 }
 
 neoForge {
