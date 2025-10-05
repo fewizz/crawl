@@ -34,7 +34,7 @@ neoForge {
 		client {
 			client()
 			ideName = "NeoForge Client"
-			// programArguments.addAll("--username", "Player3")
+			// programArguments.addAll("--username", "Entity404")
 			gameDirectory = new File(project.rootDir, "/run")
 		}
 		server {

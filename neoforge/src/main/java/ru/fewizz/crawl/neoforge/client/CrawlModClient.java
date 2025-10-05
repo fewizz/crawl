@@ -16,9 +16,7 @@ public class CrawlModClient {
 	public CrawlModClient(IEventBus modEventBus, ModContainer modContainer) {
 		modContainer.registerExtensionPoint(
 			IConfigScreenFactory.class,
-			(ModContainer mod, Screen parentScreen) -> {
-				return new OptionsScreen(parentScreen);
-			}
+			(ModContainer mod, Screen parentScreen) -> new OptionsScreen(parentScreen)
 		);
 		modEventBus.addListener(CrawlModClient::registerBindings);
 	}
