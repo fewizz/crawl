@@ -10,6 +10,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Player;
+import org.jetbrains.annotations.NotNull;
 
 public class Crawl {
 
@@ -18,7 +19,7 @@ public class Crawl {
 		public static final StreamCodec<ByteBuf, Request> CODEC = ByteBufCodecs.BOOL.map(Request::new, Request::crawl);
 
 		@Override
-		public CustomPacketPayload.Type<? extends CustomPacketPayload> type() {
+		public @NotNull CustomPacketPayload.Type<? extends CustomPacketPayload> type() {
 			return TYPE;
 		}
 	};
@@ -27,7 +28,7 @@ public class Crawl {
 
 	public static void onCrawlRequestFromClient(Player serverPlayer, boolean value) {
 		serverPlayer.getServer().execute(() -> {
-			((PlayerExtended) serverPlayer).crawl_setRequestedCrawling(value);
+			((PlayerExtended) serverPlayer).setRequestedCrawling(value);
 		});
 	}
 

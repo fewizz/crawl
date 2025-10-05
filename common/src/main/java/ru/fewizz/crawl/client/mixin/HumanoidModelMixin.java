@@ -4,6 +4,7 @@ import static net.minecraft.util.Mth.PI;
 import static net.minecraft.util.Mth.cos;
 import static net.minecraft.util.Mth.sin;
 
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -26,18 +27,18 @@ import ru.fewizz.crawl.client.mixininterface.CrawlingState;
 @Mixin(HumanoidModel.class)
 public abstract class HumanoidModelMixin<T extends HumanoidRenderState> extends EntityModel<T> {
 
-	@Shadow public ModelPart head;
-	@Shadow public ModelPart body;
-	@Shadow public ModelPart rightArm;
-	@Shadow public ModelPart leftArm;
-	@Shadow public ModelPart rightLeg;
-	@Shadow public ModelPart leftLeg;
+    @Shadow @Final public ModelPart head;
+    @Shadow @Final public ModelPart body;
+    @Shadow @Final public ModelPart rightArm;
+    @Shadow @Final public ModelPart leftArm;
+    @Shadow @Final public ModelPart rightLeg;
+    @Shadow @Final public ModelPart leftLeg;
 
 	HumanoidModelMixin() { super(null);}
 
 	// Prevent model change when in swimming pose but not in water
 	@ModifyExpressionValue(
-		method = "setupAnim",
+		method = "setupAnim*",
 		at = @At(
 			value = "FIELD",
 			target = "Lnet/minecraft/client/renderer/entity/state/HumanoidRenderState;swimAmount:F"
@@ -48,7 +49,7 @@ public abstract class HumanoidModelMixin<T extends HumanoidRenderState> extends 
 	}
 
 	@Inject(
-		method = "setupAnim",
+		method = "setupAnim*",
 		at = @At("TAIL")
 	)
 	void afterSetAngles(HumanoidRenderState state, CallbackInfo ci) {

@@ -29,7 +29,7 @@ public class LogicHandlerMixin {
 	private boolean isCrawling(Player player, float delta) {
 		return player.getPose() == Crawl.Shared.CRAWLING || (
 			player.getSwimAmount(0.0F) > 0.0F &&
-			((PlayerExtended) player).crawl_wasPreviouslyCrawling()
+			((PlayerExtended) player).wasPreviouslyCrawling()
 		);
 	}
 
@@ -64,7 +64,7 @@ public class LogicHandlerMixin {
 	private void applyCrawlOffset(Entity entiy, float delta, CallbackInfo ci) {
 		if (entiy instanceof Player player && isCrawling(player, delta)) {
 			double yaw = Mth.rotLerp(delta, player.yBodyRotO, player.yBodyRot);
-			float a = ((Player) entiy).getSwimAmount(delta);
+			float a = player.getSwimAmount(delta);
 			float offset = (float) Mth.lerp(
 				a,
 				0.0F,

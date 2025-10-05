@@ -23,6 +23,7 @@ import ru.fewizz.crawl.Crawl;
 import ru.fewizz.crawl.PlayerExtended;
 import ru.fewizz.crawl.Crawl.Shared;
 
+@SuppressWarnings("AddedMixinMembersNamePattern")
 @Mixin(Player.class)
 public abstract class PlayerMixin extends LivingEntity implements PlayerExtended {
 
@@ -36,7 +37,7 @@ public abstract class PlayerMixin extends LivingEntity implements PlayerExtended
 	@Unique boolean crawl_requested;
 
 	@Override
-	public boolean crawl_wasPreviouslyCrawling() {
+	public boolean wasPreviouslyCrawling() {
 		return (
 			this.crawl_prevPose == Crawl.Shared.CRAWLING ||
 			this.crawl_prevTickPose == Crawl.Shared.CRAWLING
@@ -44,12 +45,12 @@ public abstract class PlayerMixin extends LivingEntity implements PlayerExtended
 	}
 
 	@Override
-	public boolean crawl_getRequestedCrawling() {
+	public boolean getRequestedCrawling() {
 		return this.crawl_requested;
 	}
 
 	@Override
-	public void crawl_setRequestedCrawling(boolean value) {
+	public void setRequestedCrawling(boolean value) {
 		this.crawl_requested = value;
 	}
 

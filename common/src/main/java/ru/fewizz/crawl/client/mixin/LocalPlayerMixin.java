@@ -42,9 +42,9 @@ abstract class LocalPlayerMixin extends AbstractClientPlayer {
 		boolean wantsToCrawl = CrawlClient.key.isDown();
 		PlayerExtended pe = (PlayerExtended) this;
 
-		if (wantsToCrawl != pe.crawl_getRequestedCrawling()) {
+		if (wantsToCrawl != pe.getRequestedCrawling()) {
 			Crawl.sendCrawlRequestPacketToServer.accept(wantsToCrawl);
-			pe.crawl_setRequestedCrawling(wantsToCrawl);
+			pe.setRequestedCrawling(wantsToCrawl);
 		}
 
 		if (getPose() == Shared.CRAWLING) {
