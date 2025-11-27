@@ -31,7 +31,7 @@ public class CrawlMod {
 					Boolean.class,
 					ByteBufCodecs.BOOL.<RegistryFriendlyByteBuf>cast(),
 					(Boolean value, Context ctx) -> {
-						Crawl.onCrawlRequestFromClient(ctx.getSender(), value);
+						Crawl.onCrawlRequestFromClient(ctx.getSender(), ctx.getSender().level().getServer(), value);
 					}
 				)
 		.build();
@@ -42,6 +42,9 @@ public class CrawlMod {
 			Minecraft mc = Minecraft.getInstance();
 			CHANNEL.send(wantsToCrawl, mc.getConnection().getConnection());
 		};
+		RegisterKeyMappingsEvent.BUS.addListener((RegisterKeyMappingsEvent event) -> {
+			event.register(CrawlClient.key);
+		});
 	}
 
 	@Mod.EventBusSubscriber(modid = "crawl", bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
@@ -58,10 +61,10 @@ public class CrawlMod {
 			);
 		}
 
-		@SubscribeEvent
+		/*@SubscribeEvent
 		public static void registerBindings(RegisterKeyMappingsEvent event) {
 			event.register(CrawlClient.key);
-		}
+		}*/
 
 	}
 

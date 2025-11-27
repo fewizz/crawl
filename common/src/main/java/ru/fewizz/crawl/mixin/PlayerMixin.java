@@ -14,8 +14,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.google.common.collect.ImmutableMap;
 
+import net.minecraft.world.entity.Avatar;
 import net.minecraft.world.entity.EntityDimensions;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Abilities;
 import net.minecraft.world.entity.player.Player;
@@ -24,12 +24,11 @@ import ru.fewizz.crawl.PlayerExtended;
 import ru.fewizz.crawl.Crawl.Shared;
 
 @Mixin(Player.class)
-public abstract class PlayerMixin extends LivingEntity implements PlayerExtended {
+public abstract class PlayerMixin extends Avatar implements PlayerExtended {
 
 	PlayerMixin() { super(null, null); }
 
 	@Shadow @Final private Abilities abilities;
-	@Shadow @Final @Mutable private static Map<Pose, EntityDimensions> POSES;
 
 	@Unique Pose crawl_prevPose;
 	@Unique Pose crawl_prevTickPose;
@@ -73,14 +72,6 @@ public abstract class PlayerMixin extends LivingEntity implements PlayerExtended
 		}
 
 		return pose;
-	}
-
-	@Inject(method = "<clinit>", at = @At("TAIL"))
-	private static void onPoseMapCreation(CallbackInfo ci) {
-		POSES = ImmutableMap.<Pose, EntityDimensions>builder()
-			.putAll(POSES)
-			.put(Crawl.Shared.CRAWLING, Crawl.Shared.CRAWLING_DIMENSIONS)
-			.build();
 	}
 	
 	@Inject(method = "tick", at = @At(value = "TAIL"))

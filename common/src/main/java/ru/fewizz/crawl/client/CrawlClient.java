@@ -26,13 +26,13 @@ public class CrawlClient {
 		crawlToggled = new OptionInstance<>(
 			"key.crawl",
 			OptionInstance.noTooltip(),
-			(optionText, value) -> value ? Options.MOVEMENT_TOGGLE : Options.MOVEMENT_HOLD,
+			(optionText, value) -> value ? Options.KEY_TOGGLE : Options.KEY_HOLD,
 			OptionInstance.BOOLEAN_VALUES,
 			false,
 			(value) -> {}
 		);
 
-		key = new ToggleKeyMapping("key.crawl", GLFW.GLFW_KEY_UNKNOWN, KeyMapping.CATEGORY_MOVEMENT, crawlToggled::get);
+		key = new ToggleKeyMapping("key.crawl", GLFW.GLFW_KEY_UNKNOWN, KeyMapping.Category.MOVEMENT, crawlToggled::get, false);
 
 		if (Files.exists(CONFIG_PATH)) {
 			Properties props = createProps();

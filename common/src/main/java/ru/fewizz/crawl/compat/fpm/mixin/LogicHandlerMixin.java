@@ -13,6 +13,7 @@ import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import dev.tr7zw.firstperson.LogicHandler;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 import ru.fewizz.crawl.Crawl;
@@ -28,7 +29,7 @@ public class LogicHandlerMixin {
 	@Unique
 	private boolean isCrawling(Player player, float delta) {
 		return player.getPose() == Crawl.Shared.CRAWLING || (
-			player.getSwimAmount(0.0F) > 0.0F &&
+			player.getSwimAmount(delta) > 0.0F &&
 			((PlayerExtended) player).crawl_wasPreviouslyCrawling()
 		);
 	}

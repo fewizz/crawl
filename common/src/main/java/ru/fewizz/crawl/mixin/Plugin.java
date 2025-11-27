@@ -84,7 +84,8 @@ public class Plugin implements IMixinConfigPlugin {
 			createNewEntry.add(new LdcInsnNode("CRAWLING"));
 			createNewEntry.add(new IntInsnNode(BIPUSH, newEntryIndex));
 			createNewEntry.add(new IntInsnNode(BIPUSH, newEntryIndex));
-			createNewEntry.add(new MethodInsnNode(INVOKESPECIAL, internalName, "<init>", "(Ljava/lang/String;II)V"));
+			createNewEntry.add(new LdcInsnNode("crawling"));
+			createNewEntry.add(new MethodInsnNode(INVOKESPECIAL, internalName, "<init>", "(Ljava/lang/String;IILjava/lang/String;)V"));
 			createNewEntry.add(new FieldInsnNode(PUTSTATIC, internalName, "CRAWLING", desc));
 			classInitMethod.instructions.insertBefore(
 				StreamSupport.stream(classInitMethod.instructions.spliterator(), false)

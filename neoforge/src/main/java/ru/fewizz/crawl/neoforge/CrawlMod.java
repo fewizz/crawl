@@ -22,9 +22,9 @@ public class CrawlMod {
 			Crawl.Request.TYPE,
 			Crawl.Request.CODEC,
 			(payload, context) -> {
-				var server = context.player().getServer();
+				var server = context.player().level().getServer();
 				server.execute(() -> {
-					Crawl.onCrawlRequestFromClient(context.player(), payload.crawl());
+					Crawl.onCrawlRequestFromClient(context.player(), server, payload.crawl());
 				});
 			}
 		);
