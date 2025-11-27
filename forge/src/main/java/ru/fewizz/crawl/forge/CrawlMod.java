@@ -9,10 +9,13 @@ import net.minecraftforge.client.ConfigScreenHandler.ConfigScreenFactory;
 import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.event.network.CustomPayloadEvent.Context;
 import net.minecraftforge.eventbus.api.listener.SubscribeEvent;
+import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.ModList;
+import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.fml.javafmlmod.FMLModContainer;
 import net.minecraftforge.network.ChannelBuilder;
 import net.minecraftforge.network.SimpleChannel;
 import ru.fewizz.crawl.Crawl;
@@ -29,15 +32,15 @@ public class CrawlMod {
 			.serverbound()
 				.addMain(
 					Boolean.class,
-					ByteBufCodecs.BOOL.<RegistryFriendlyByteBuf>cast(),
-					(Boolean value, Context ctx) -> {
-						Crawl.onCrawlRequestFromClient(ctx.getSender(), value);
-					}
+					ByteBufCodecs.BOOL.cast(),
+					(Boolean value, Context ctx) -> Crawl.onCrawlRequestFromClient(ctx.getSender(), value)
 				)
 		.build();
+    private final ModContainer container;
 
 	@SuppressWarnings("null")
 	public CrawlMod(FMLJavaModLoadingContext modContext) {
+        this.container = modContext.getContainer();
 		Crawl.sendCrawlRequestPacketToServer = (wantsToCrawl) -> {
 			Minecraft mc = Minecraft.getInstance();
 			CHANNEL.send(wantsToCrawl, mc.getConnection().getConnection());
@@ -45,16 +48,13 @@ public class CrawlMod {
 	}
 
 	@Mod.EventBusSubscriber(modid = "crawl", bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
-	public static class ClientModEvents {
+	public class ClientModEvents {
 
 		@SubscribeEvent
-		public static void onClientSetup(FMLClientSetupEvent e) {
-			var container = ModList.get().getModContainerById("crawl").get();
-			container.registerExtensionPoint(
+		public void onClientSetup(FMLClientSetupEvent e) {
+			CrawlMod.this.container.registerExtensionPoint(
 				ConfigScreenFactory.class,
-				() -> { return new ConfigScreenFactory((Screen parentScreen) -> {
-					return new OptionsScreen(parentScreen);
-				});}
+				() -> new ConfigScreenFactory(OptionsScreen::new)
 			);
 		}
 

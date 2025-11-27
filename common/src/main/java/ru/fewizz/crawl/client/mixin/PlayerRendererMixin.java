@@ -24,22 +24,22 @@ abstract class PlayerRendererMixin extends LivingEntityRenderer<AbstractClientPl
 
 	PlayerRendererMixin() { super(null, null, 0.0F); }
 
-	@Inject(method = "extractRenderState", at = @At("TAIL"))
+	@Inject(method = "extractRenderState*", at = @At("TAIL"))
 	void onUpdateRenderState(AbstractClientPlayer e, PlayerRenderState state, float tickDelta, CallbackInfo ci) {
 		boolean crawling =
 			e.getPose() == Crawl.Shared.CRAWLING || (
 				e.getSwimAmount(tickDelta) > 0.0F &&
-				((PlayerExtended) e).crawl_wasPreviouslyCrawling()
+				((PlayerExtended) e).wasPreviouslyCrawling()
 			);
 
-		((CrawlingState) state).setCrawling(CrawlClient.replaceAnimation ? crawling : false);
+		((CrawlingState) state).setCrawling(CrawlClient.replaceAnimation && crawling);
 		state.isVisuallySwimming |= !CrawlClient.replaceAnimation && crawling;
 		state.isCrouching &= !crawling;
 	}
 
 	// need this, to take ... } else if (h > 0.0F) { ... branch
 	@ModifyExpressionValue(
-		method = "setupRotations",
+		method = "setupRotations*",
 		at = @At(
 			value = "FIELD",
 			target = "Lnet/minecraft/client/renderer/entity/state/PlayerRenderState;swimAmount:F"
@@ -53,7 +53,7 @@ abstract class PlayerRendererMixin extends LivingEntityRenderer<AbstractClientPl
 	}
 
 	@ModifyExpressionValue(
-		method = "setupRotations",
+		method = "setupRotations*",
 		at = @At(
 			value = "FIELD",
 			target = "Lnet/minecraft/client/renderer/entity/state/PlayerRenderState;isVisuallySwimming:Z"
@@ -63,12 +63,12 @@ abstract class PlayerRendererMixin extends LivingEntityRenderer<AbstractClientPl
 		return (CrawlClient.replaceAnimation && ((CrawlingState) state).isCrawling()) || isVisuallySwimming;
 	}
 
-	@ModifyExpressionValue(method = "setupRotations", at = @At(value = "CONSTANT", args="floatValue=-1.0F"))
+	@ModifyExpressionValue(method = "setupRotations*", at = @At(value = "CONSTANT", args="floatValue=-1.0F"))
 	float smootherYOffsetSwimmingPosTransition(float original, @Local PlayerRenderState state) {
 		return Mth.lerp(state.swimAmount, 0.0F, original);
 	}
 
-	@ModifyExpressionValue(method = "setupRotations", at = @At(value = "CONSTANT", args="floatValue=0.3F"))
+	@ModifyExpressionValue(method = "setupRotations*", at = @At(value = "CONSTANT", args="floatValue=0.3F"))
 	float smootherZOffsetSwimmingPosTransition(float original, @Local PlayerRenderState state) {
 		return Mth.lerp(state.swimAmount, 0.0F, original-0.1F);
 	}

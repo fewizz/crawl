@@ -6,6 +6,7 @@ import org.spongepowered.asm.mixin.Unique;
 import net.minecraft.client.renderer.entity.state.HumanoidRenderState;
 import ru.fewizz.crawl.client.mixininterface.CrawlingState;
 
+@SuppressWarnings("AddedMixinMembersNamePattern")
 @Mixin(HumanoidRenderState.class)
 public class HumanoidRenderStateMixin implements CrawlingState {
 
