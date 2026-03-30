@@ -18,8 +18,8 @@ repositories {
 
 dependencies {
 	compileOnly project(":common")
-	implementation "maven.modrinth:not-enough-animations:${project.not_enough_animations_modrinth_neoforge_id}"
-	implementation "maven.modrinth:first-person-model:${project.first_person_model_neoforge_id}"
+	compileOnly "maven.modrinth:not-enough-animations:${project.not_enough_animations_modrinth_neoforge_id}"
+	compileOnly "maven.modrinth:first-person-model:${project.first_person_model_neoforge_id}"
 }
 
 base {

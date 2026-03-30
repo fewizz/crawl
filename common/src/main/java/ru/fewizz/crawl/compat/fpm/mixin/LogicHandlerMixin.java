@@ -13,7 +13,6 @@ import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import dev.tr7zw.firstperson.LogicHandler;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 import ru.fewizz.crawl.Crawl;

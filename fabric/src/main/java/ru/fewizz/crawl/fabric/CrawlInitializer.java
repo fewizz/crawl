@@ -10,7 +10,7 @@ public class CrawlInitializer implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
-		PayloadTypeRegistry.playC2S().register(Crawl.Request.TYPE, Crawl.Request.CODEC);
+		PayloadTypeRegistry.serverboundPlay().register(Crawl.Request.TYPE, Crawl.Request.CODEC);
 
 		ServerPlayNetworking.registerGlobalReceiver(Crawl.Request.TYPE, (payload, context) -> {
 			Crawl.onCrawlRequestFromClient(context.player(), context.server(), payload.crawl());

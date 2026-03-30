@@ -1,5 +1,5 @@
 plugins {
-	id "fabric-loom" version "${fabric_loom_version}"
+	id "net.fabricmc.fabric-loom" version "${fabric_loom_version}"
 }
 
 repositories {
@@ -18,10 +18,9 @@ repositories {
 
 dependencies {
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
-	mappings loom.officialMojangMappings()
-	modImplementation "net.fabricmc:fabric-loader:${project.fabric_loader_version}"
-	modCompileOnly "maven.modrinth:not-enough-animations:${project.not_enough_animations_modrinth_fabric_id}"
-	modCompileOnly "maven.modrinth:first-person-model:${project.first_person_model_fabric_id}"
+	implementation "net.fabricmc:fabric-loader:${project.fabric_loader_version}"
+	compileOnly "maven.modrinth:not-enough-animations:${project.not_enough_animations_modrinth_fabric_id}"
+	compileOnly "maven.modrinth:first-person-model:${project.first_person_model_fabric_id}"
 }
 
 loom {
@@ -30,10 +29,10 @@ loom {
 }
 
 tasks.withType(JavaCompile).configureEach {
-	it.options.release = 21
+	it.options.release = 25
 }
 
 java {
-	sourceCompatibility = JavaVersion.VERSION_21
-	targetCompatibility = JavaVersion.VERSION_21
+	sourceCompatibility = JavaVersion.VERSION_25
+	targetCompatibility = JavaVersion.VERSION_25
 }
