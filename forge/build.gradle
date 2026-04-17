@@ -22,8 +22,8 @@ dependencies {
 	compileOnly(annotationProcessor("io.github.llamalad7:mixinextras-common:0.4.1"))
 	implementation jarJar("io.github.llamalad7:mixinextras-forge:0.4.1") { jarJar.ranged(it, "[0.4.1,)") }
 	compileOnly project(":common")
-	implementation "maven.modrinth:not-enough-animations:${project.not_enough_animations_modrinth_forge_id}"
-	implementation "maven.modrinth:first-person-model:${project.first_person_model_forge_id}"
+	compileOnly "maven.modrinth:not-enough-animations:${project.not_enough_animations_modrinth_forge_id}"
+	compileOnly "maven.modrinth:first-person-model:${project.first_person_model_forge_id}"
 }
 
 base {
