@@ -6,13 +6,12 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.player.ClientInput;
 import net.minecraft.client.player.LocalPlayer;
 import ru.fewizz.crawl.Crawl;
-import ru.fewizz.crawl.PlayerExtended;
 import ru.fewizz.crawl.Crawl.Shared;
+import ru.fewizz.crawl.PlayerExtended;
 import ru.fewizz.crawl.client.CrawlClient;
 
 @Mixin(LocalPlayer.class)
@@ -25,8 +24,7 @@ abstract class LocalPlayerMixin extends AbstractClientPlayer {
 
 	@Inject(method = "aiStep", at = @At("HEAD"))
 	public void aiStep(CallbackInfo ci) {
-		Minecraft mc = Minecraft.getInstance();
-		if (mc.player.getPose() == Shared.CRAWLING) {
+		if (this.getPose() == Shared.CRAWLING) {
 			this.sprintTriggerTime = 0;
 		}
 	}

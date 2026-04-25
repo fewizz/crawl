@@ -90,9 +90,6 @@ public abstract class HumanoidModelMixin<T extends HumanoidRenderState> extends 
 		lPos(sa, head, head.x, head.y+yOffset, head.z+cos(walkDist*2.0F)/2.0F+zOffset);
 		lRot(sa, head, -head.yRot, 0.0F, head.xRot - PI/2.0F);
 
-		leftArm.y = body.y + 2.0F; leftArm.z = head.z;
-		rightArm.y = body.y + 2.0F; rightArm.z = head.z;
-
 		if (
 			(state.isUsingItem && ((state.useItemHand == InteractionHand.OFF_HAND) == (state.mainArm == HumanoidArm.LEFT))) ||
 			(state.attackTime > 0 && state.attackArm == HumanoidArm.LEFT)
