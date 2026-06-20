@@ -29,8 +29,8 @@ dependencies {
 	implementation "net.fabricmc:fabric-loader:${project.fabric_loader_version}"
 	implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 	implementation "com.terraformersmc:modmenu:${project.modmenu_version}"
-	compileOnly "maven.modrinth:not-enough-animations:${project.not_enough_animations_modrinth_fabric_id}"
-	implementation "maven.modrinth:first-person-model:${project.first_person_model_fabric_id}"
+	implementation "maven.modrinth:not-enough-animations:${project.not_enough_animations_modrinth_fabric_id}"
+	compileOnly "maven.modrinth:first-person-model:${project.first_person_model_fabric_id}"
 }
 
 compileJava.source project(":common").sourceSets.main.allSource
@@ -47,14 +47,12 @@ loom {
 			ideConfigGenerated = true
 			runDir = '../run'
 			// programArg "--username=_fewizz"
-			appendProjectPathToConfigName = false
 		}
 		server {
 			server()
 			configName = 'Fabric Server'
 			ideConfigGenerated = true
 			runDir = '../run'
-			appendProjectPathToConfigName = false
 		}
 	}
 }
