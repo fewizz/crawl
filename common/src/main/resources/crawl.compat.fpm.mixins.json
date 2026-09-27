@@ -5,6 +5,7 @@
 	"injectors": {
 		"defaultRequire": 1
 	},
+	"plugin": "ru.fewizz.crawl.compat.fpm.MixinPlugin",
 	"client": [
 		"LogicHandlerMixin"
 	]
