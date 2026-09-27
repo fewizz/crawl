@@ -31,6 +31,7 @@ dependencies {
 	implementation "com.terraformersmc:modmenu:${project.modmenu_version}"
 	implementation "maven.modrinth:not-enough-animations:${project.not_enough_animations_modrinth_fabric_id}"
 	compileOnly "maven.modrinth:first-person-model:${project.first_person_model_fabric_id}"
+	// implementation "maven.modrinth:carpet:26.2"
 }
 
 compileJava.source project(":common").sourceSets.main.allSource

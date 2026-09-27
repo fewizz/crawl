@@ -7,7 +7,7 @@ import java.util.Properties;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.lwjgl.glfw.GLFW;
+import org.lwjgl.sdl.SDLKeycode;
 
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.OptionInstance;
@@ -32,7 +32,7 @@ public class CrawlClient {
 			(value) -> {}
 		);
 
-		key = new ToggleKeyMapping("key.crawl", GLFW.GLFW_KEY_UNKNOWN, KeyMapping.Category.MOVEMENT, crawlToggled::get, false);
+		key = new ToggleKeyMapping("key.crawl", SDLKeycode.SDLK_UNKNOWN, KeyMapping.Category.MOVEMENT, crawlToggled::get, false);
 
 		if (Files.exists(CONFIG_PATH)) {
 			Properties props = createProps();

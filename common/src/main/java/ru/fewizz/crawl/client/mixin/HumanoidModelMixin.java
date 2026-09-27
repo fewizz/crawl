@@ -13,12 +13,12 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 
+import net.minecraft.client.model.AnimationUtils;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.renderer.entity.state.HumanoidRenderState;
 import net.minecraft.util.Mth;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.HumanoidArm;
 import ru.fewizz.crawl.client.CrawlClient;
 import ru.fewizz.crawl.client.mixininterface.CrawlingState;
@@ -90,26 +90,30 @@ public abstract class HumanoidModelMixin<T extends HumanoidRenderState> extends 
 		lPos(sa, head, head.x, head.y+yOffset, head.z+cos(walkDist*2.0F)/2.0F+zOffset);
 		lRot(sa, head, -head.yRot, 0.0F, head.xRot - PI/2.0F);
 
-		if (
-			(state.isUsingItem && ((state.useItemHand == InteractionHand.OFF_HAND) == (state.mainArm == HumanoidArm.LEFT))) ||
-			(state.attackTime > 0 && state.attackArm == HumanoidArm.LEFT)
-		) {
+		HumanoidArm activeArm = null;
+
+		if (state.isUsingItem) activeArm = state.useItemHand.asArm(state.mainArm);
+		if (state.currentSwing != null) activeArm = state.currentSwing.hand().asArm(state.mainArm);
+
+		boolean both = false;
+		if (activeArm != null && state.getArmPose(activeArm).isTwoHanded()) {
+			both = true;
+		}
+
+		if (activeArm == HumanoidArm.LEFT || both) {
 			lRot(
-				sa, leftArm,
-				-leftArm.yRot, 0.0F, leftArm.xRot - PI/2.0F
+				sa, this.leftArm,
+				-this.leftArm.yRot, 0.0F, this.leftArm.xRot - PI/2.0F
 			);
 		}
 		else {
 			lRot(
-				sa, leftArm,
+				sa, this.leftArm,
 				-PI/2.0F + magicF0(walkDist + PI/2.0F), body.yRot - PI/2.0F, -0.5F
 			);
 		}
 
-		if (
-			(state.isUsingItem && ((state.useItemHand == InteractionHand.MAIN_HAND) == (state.mainArm == HumanoidArm.RIGHT))) ||
-			(state.attackTime > 0 && state.attackArm == HumanoidArm.RIGHT)
-		) {
+		if (activeArm == HumanoidArm.RIGHT || both) {
 			lRot(
 				sa, rightArm,
 				-rightArm.yRot, 0.0F, rightArm.xRot - PI/2.0F
